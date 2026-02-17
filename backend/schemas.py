@@ -1,16 +1,6 @@
 from pydantic import BaseModel
 
 
-class IngredientBase(BaseModel):
-    name: str
-
-
-class IngredientResponse(IngredientBase):
-    id: int
-
-    model_config = {"from_attributes": True}
-
-
 class MenuBase(BaseModel):
     title: str
     ingredients: list[str]
@@ -47,3 +37,11 @@ class WeekResponse(BaseModel):
 class NextWeekStatus(BaseModel):
     exists: bool
     start_date: str
+
+
+class LoginRequest(BaseModel):
+    password: str
+
+
+class LoginResponse(BaseModel):
+    token: str

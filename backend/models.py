@@ -42,3 +42,10 @@ class WeekDay(Base):
     menu_id = Column(Integer, ForeignKey("menus.id", ondelete="SET NULL"), nullable=True)
     menu = relationship("Menu", lazy="joined")
     week = relationship("Week", back_populates="days")
+
+
+class Session(Base):
+    __tablename__ = "sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String, nullable=False, unique=True, index=True)

@@ -14,10 +14,6 @@ export class ApiService {
     return this.http.get<Menu[]>(`${this.baseUrl}/menus`);
   }
 
-  getMenu(id: number): Observable<Menu> {
-    return this.http.get<Menu>(`${this.baseUrl}/menus/${id}`);
-  }
-
   createMenu(menu: MenuCreate): Observable<Menu> {
     return this.http.post<Menu>(`${this.baseUrl}/menus`, menu);
   }

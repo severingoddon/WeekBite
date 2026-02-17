@@ -1,0 +1,44 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  padding: 16px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: #1e1e1e;
+  text-align: center;
+  padding: 24px 8px;
+}
+
+.lock-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #00bcd4;
+  margin-bottom: 8px;
+}
+
+h2 {
+  margin: 0 0 24px;
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.login-btn {
+  margin-top: 8px;
+  height: 44px;
+}
+
+.error {
+  color: #ef5350;
+  font-size: 0.85rem;
+  margin: -8px 0 8px;
+}

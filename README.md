@@ -13,6 +13,7 @@ A weekly meal planning application. Assign menus to weekdays, archive past weeks
 - **Week reset** — clear all assigned menus of the displayed week (confirmation dialog)
 - **CSV export** — download all menus as a semicolon-separated CSV file (desktop only)
 - **CSV import** — import menus from a CSV file with structure validation and user-friendly error messages (desktop only)
+- **Password protection** — single shared password (bcrypt-hashed), persistent session tokens, login screen with visibility toggle
 - **Persistence** — all data (menus, weeks, assignments) stored in SQLite and survives page reloads
 - **Mobile first** — touch-optimized, responsive layout that scales up on desktop
 - **Dark mode** — Angular Material dark theme throughout
@@ -22,7 +23,7 @@ A weekly meal planning application. Assign menus to weekdays, archive past weeks
 | Layer    | Technology                                        |
 |----------|---------------------------------------------------|
 | Frontend | Angular 19, Angular Material, Material Datepicker, SCSS |
-| Backend  | Python 3.12, FastAPI, SQLAlchemy, Pydantic        |
+| Backend  | Python 3.12, FastAPI, SQLAlchemy, Pydantic, bcrypt |
 | Database | SQLite                                            |
 | Server   | Nginx (reverse proxy), Uvicorn                    |
 | Docker   | Docker Compose, multi-stage builds                |
@@ -37,6 +38,15 @@ cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+Create a `.env` file in `backend/` with the bcrypt-hashed password:
+```bash
+# Generate hash: python3 -c "import bcrypt; print(bcrypt.hashpw(b'YOUR_PASSWORD', bcrypt.gensalt()).decode())"
+APP_PASSWORD_HASH=$2b$12$...your_hash_here...
+```
+
+```bash
 uvicorn main:app --reload --host 0.0.0.0
 ```
 
@@ -67,6 +77,14 @@ App available on port `80`, API on port `8000`.
 | POST   | `/api/menus`      | Create a menu  |
 | PUT    | `/api/menus/{id}` | Update a menu  |
 | DELETE | `/api/menus/{id}` | Delete a menu  |
+
+### Auth
+
+| Method | Endpoint           | Description                        |
+|--------|--------------------|------------------------------------|
+| POST   | `/api/auth/login`  | Login with password, returns token |
+
+All other endpoints require `Authorization: Bearer <token>` header.
 
 ### Weeks
 
