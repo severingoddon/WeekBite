@@ -1,0 +1,73 @@
+.week-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+}
+
+.day-card {
+  cursor: pointer;
+  background: #1e1e1e;
+  transition: background 0.2s;
+  padding-left: 5px;
+
+  &:hover {
+    background: #2a2a2a;
+  }
+
+  &:active {
+    background: #333;
+  }
+}
+
+.day-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.day-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.day-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.menu-title {
+  font-size: 0.85rem;
+  color: #00bcd4;
+}
+
+.menu-empty {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+.day-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chevron {
+  color: #666;
+}

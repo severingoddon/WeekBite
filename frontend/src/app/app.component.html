@@ -1,0 +1,26 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav [(opened)]="sidenavOpen" mode="over" class="sidenav">
+    <mat-nav-list>
+      <a mat-list-item (click)="navigateTo('')">
+        <mat-icon matListItemIcon>calendar_today</mat-icon>
+        <span matListItemTitle>Wochenplan</span>
+      </a>
+      <a mat-list-item (click)="navigateTo('menus')">
+        <mat-icon matListItemIcon>restaurant_menu</mat-icon>
+        <span matListItemTitle>Menus verwalten</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenavOpen = !sidenavOpen">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>WeekBite 🐀</span>
+    </mat-toolbar>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

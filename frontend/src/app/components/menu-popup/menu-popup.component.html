@@ -1,0 +1,41 @@
+<div class="popup-container">
+  <mat-toolbar class="popup-toolbar">
+    <button mat-icon-button (click)="close()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span>Menu wählen für {{ data.day }}</span>
+  </mat-toolbar>
+
+  <div class="menu-list">
+    @if (menus.length === 0) {
+      <div class="empty-state">
+        <mat-icon>restaurant</mat-icon>
+        <p>Noch keine Menus vorhanden.</p>
+        <p>Erstelle zuerst Menus unter "Menus verwalten".</p>
+      </div>
+    }
+
+    @for (menu of menus; track menu.id) {
+      <mat-card class="menu-card" (click)="selectMenu(menu)">
+        <mat-card-content class="menu-card-content">
+          <div class="menu-info">
+            <span class="menu-title">{{ menu.title }}</span>
+            <span class="ingredient-count">{{ menu.ingredients.length }} Zutaten</span>
+          </div>
+          <button mat-icon-button (click)="toggleDetails(menu.id, $event)" aria-label="Details anzeigen">
+            <mat-icon>{{ expandedMenuId === menu.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </button>
+        </mat-card-content>
+        @if (expandedMenuId === menu.id) {
+          <div class="ingredients-detail" (click)="$event.stopPropagation()">
+            <mat-chip-set>
+              @for (ingredient of menu.ingredients; track ingredient) {
+                <mat-chip>{{ ingredient }}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        }
+      </mat-card>
+    }
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="week-plan">
+  <div class="header">
+    <h2>Wochenplan</h2>
+    <button mat-stroked-button color="warn" (click)="resetWeek()">
+      <mat-icon>delete_sweep</mat-icon>
+      Woche leeren
+    </button>
+  </div>
+
+  @for (weekDay of week; track weekDay.id) {
+    <mat-card class="day-card" (click)="openMenuPopup(weekDay)">
+      <mat-card-content class="day-content">
+        <div class="day-info">
+          <span class="day-name">{{ weekDay.day }}</span>
+          @if (weekDay.menu) {
+            <span class="menu-title">{{ weekDay.menu.title }}</span>
+          } @else {
+            <span class="menu-empty">Kein Menu gewählt</span>
+          }
+        </div>
+        <div class="day-actions">
+          @if (weekDay.menu) {
+            <button mat-icon-button color="warn" (click)="removeMenu(weekDay, $event)" aria-label="Menu entfernen">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          <mat-icon class="chevron">chevron_right</mat-icon>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

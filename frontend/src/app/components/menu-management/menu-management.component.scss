@@ -1,0 +1,92 @@
+.management {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+}
+
+.form-card {
+  background: #1e1e1e;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.ingredient-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .ingredient-field {
+    flex: 1;
+  }
+}
+
+.ingredient-chips {
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.divider {
+  margin: 8px 0;
+}
+
+.empty-hint {
+  color: #666;
+  font-style: italic;
+}
+
+.menu-item-card {
+  background: #1e1e1e;
+}
+
+.menu-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-item-title {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.menu-item-actions {
+  display: flex;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.csv-export,
+.csv-import {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: inline-flex;
+  }
+}

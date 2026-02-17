@@ -1,0 +1,94 @@
+<div class="management">
+  <h2>Menus verwalten</h2>
+
+  <!-- Form -->
+  <mat-card class="form-card">
+    <mat-card-content>
+      <h3>{{ editingMenu ? 'Menu bearbeiten' : 'Neues Menu erstellen' }}</h3>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Menu Titel</mat-label>
+        <input matInput [(ngModel)]="menuTitle" placeholder="z.B. Spaghetti Bolognese">
+      </mat-form-field>
+
+      <div class="ingredient-input-row">
+        <mat-form-field appearance="outline" class="ingredient-field">
+          <mat-label>Zutat hinzufügen</mat-label>
+          <input matInput [(ngModel)]="ingredientInput" (keyup.enter)="addIngredient()" placeholder="z.B. Tomaten">
+        </mat-form-field>
+        <button mat-icon-button color="primary" (click)="addIngredient()" [disabled]="!ingredientInput.trim()">
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </div>
+
+      @if (ingredients.length > 0) {
+        <mat-chip-set class="ingredient-chips">
+          @for (ingredient of ingredients; track ingredient) {
+            <mat-chip (removed)="removeIngredient(ingredient)">
+              {{ ingredient }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          }
+        </mat-chip-set>
+      }
+
+      <div class="form-actions">
+        <button mat-flat-button color="primary" (click)="saveMenu()" [disabled]="!menuTitle.trim()">
+          {{ editingMenu ? 'Aktualisieren' : 'Hinzufügen' }}
+        </button>
+        @if (editingMenu) {
+          <button mat-stroked-button (click)="resetForm()">Abbrechen</button>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <!-- Existing menus list -->
+  <div class="list-header">
+    <h3>Bestehende Menus ({{ menus.length }})</h3>
+    @if (menus.length > 0) {
+      <button mat-stroked-button class="csv-export" (click)="exportCsv()">
+        <mat-icon>download</mat-icon>
+        CSV Export
+      </button>
+    }
+    <button mat-stroked-button class="csv-import" (click)="csvInput.click()">
+      <mat-icon>upload</mat-icon>
+      CSV Import
+    </button>
+    <input #csvInput type="file" accept=".csv" hidden (change)="importCsv($event)">
+  </div>
+
+  @if (menus.length === 0) {
+    <p class="empty-hint">Noch keine Menus vorhanden.</p>
+  }
+
+  @for (menu of menus; track menu.id) {
+    <mat-card class="menu-item-card">
+      <mat-card-content>
+        <div class="menu-item-header">
+          <span class="menu-item-title">{{ menu.title }}</span>
+          <div class="menu-item-actions">
+            <button mat-icon-button (click)="editMenu(menu)" aria-label="Bearbeiten">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteMenu(menu)" aria-label="Löschen">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        @if (menu.ingredients.length > 0) {
+          <mat-chip-set class="ingredient-chips">
+            @for (ingredient of menu.ingredients; track ingredient) {
+              <mat-chip disabled>{{ ingredient }}</mat-chip>
+            }
+          </mat-chip-set>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
