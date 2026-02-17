@@ -41,9 +41,24 @@ pip install -r requirements.txt
 ```
 
 Create a `.env` file in `backend/` with the bcrypt-hashed password:
+```
+APP_PASSWORD_HASH='$2b$12$...your_hash_here...'
+ALLOWED_ORIGINS=https://your-domain.com,http://localhost:4200
+```
+
+**Generate a password hash** (locally):
 ```bash
-# Generate hash: python3 -c "import bcrypt; print(bcrypt.hashpw(b'YOUR_PASSWORD', bcrypt.gensalt()).decode())"
-APP_PASSWORD_HASH=$2b$12$...your_hash_here...
+python3 -c "import bcrypt; pw=input('Password: '); print(bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode())"
+```
+
+**Or via the running Docker container** (no local bcrypt needed):
+```bash
+docker exec -it weekbite-backend python -c "import bcrypt; pw=input('Password: '); print(bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode())"
+```
+
+After changing the `.env`, rebuild the container:
+```bash
+docker compose down && docker compose up --build -d
 ```
 
 ```bash
