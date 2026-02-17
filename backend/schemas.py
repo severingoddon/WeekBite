@@ -34,3 +34,16 @@ class WeekDayResponse(BaseModel):
 
 class WeekDayUpdate(BaseModel):
     menu_id: int | None = None
+
+
+class WeekResponse(BaseModel):
+    id: int
+    start_date: str
+    days: list[WeekDayResponse]
+
+    model_config = {"from_attributes": True}
+
+
+class NextWeekStatus(BaseModel):
+    exists: bool
+    start_date: str

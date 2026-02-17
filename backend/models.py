@@ -25,10 +25,20 @@ class Menu(Base):
     ingredients = relationship("Ingredient", secondary=menu_ingredients, cascade="all, delete", lazy="joined")
 
 
+class Week(Base):
+    __tablename__ = "weeks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    start_date = Column(String, nullable=False, unique=True)
+    days = relationship("WeekDay", back_populates="week", cascade="all, delete-orphan", lazy="joined")
+
+
 class WeekDay(Base):
     __tablename__ = "weekdays"
 
     id = Column(Integer, primary_key=True, index=True)
-    day = Column(String, nullable=False, unique=True)
+    day = Column(String, nullable=False)
+    week_id = Column(Integer, ForeignKey("weeks.id", ondelete="CASCADE"), nullable=False)
     menu_id = Column(Integer, ForeignKey("menus.id", ondelete="SET NULL"), nullable=True)
     menu = relationship("Menu", lazy="joined")
+    week = relationship("Week", back_populates="days")

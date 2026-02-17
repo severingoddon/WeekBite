@@ -14,3 +14,14 @@ export interface WeekDay {
   day: string;
   menu: Menu | null;
 }
+
+export interface Week {
+  id: number;
+  start_date: string;
+  days: WeekDay[];
+}
+
+export interface NextWeekStatus {
+  exists: boolean;
+  start_date: string;
+}

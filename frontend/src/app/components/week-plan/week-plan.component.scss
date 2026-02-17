@@ -5,16 +5,39 @@
 }
 
 .header {
+  margin-bottom: 4px;
+}
+
+.header-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  align-items: baseline;
 
   h2 {
     margin: 0;
     font-size: 1.4rem;
     font-weight: 400;
   }
+}
+
+.week-label {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.action-btn {
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0 10px;
+  min-height: 36px;
 }
 
 .day-card {

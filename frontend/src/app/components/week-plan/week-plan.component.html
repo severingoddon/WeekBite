@@ -1,13 +1,32 @@
 <div class="week-plan">
   <div class="header">
-    <h2>Wochenplan</h2>
-    <button mat-stroked-button color="warn" (click)="resetWeek()">
-      <mat-icon>delete_sweep</mat-icon>
-      Woche leeren
-    </button>
+    <div class="header-top">
+      <h2>Wochenplan</h2>
+      <span class="week-label">{{ weekLabel }}</span>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button (click)="openDatePicker()" aria-label="Datum wählen">
+        <mat-icon>calendar_month</mat-icon>
+      </button>
+      @if (!isCurrentWeek) {
+        <button mat-stroked-button class="action-btn" (click)="goToCurrentWeek()">
+          Aktuell
+        </button>
+      }
+      <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()">
+        {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche' }}
+      </button>
+      <button mat-icon-button color="warn" (click)="resetWeek()" aria-label="Woche leeren">
+        <mat-icon>delete_sweep</mat-icon>
+      </button>
+    </div>
   </div>
 
-  @for (weekDay of week; track weekDay.id) {
+  <!-- Hidden datepicker trigger -->
+  <input matInput [matDatepicker]="picker" hidden (dateChange)="onDateSelected($event.value)">
+  <mat-datepicker #picker></mat-datepicker>
+
+  @for (weekDay of currentWeek?.days; track weekDay.id) {
     <mat-card class="day-card" (click)="openMenuPopup(weekDay)">
       <mat-card-content class="day-content">
         <div class="day-info">

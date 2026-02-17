@@ -1,28 +1,31 @@
 # WeekBite
 
-A weekly meal planning application. Assign menus to weekdays and manage your recipes.
+A weekly meal planning application. Assign menus to weekdays, archive past weeks and plan ahead.
 
 ## Features
 
 - **Weekly planner** — 7 weekdays displayed vertically; tap a day to open a fullscreen menu picker and assign a meal
 - **Menu picker** — scrollable fullscreen popup showing all available menus; tap to assign, detail button to view ingredients
 - **Menu management** — create, edit and delete menus with title and ingredients via a form
-- **Week reset** — clear all assigned menus with a single button (confirmation dialog)
+- **Week archiving** — browse past and future weeks via a datepicker; date range displayed in the header
+- **Auto-creation** — the current week is created automatically on first visit each Monday
+- **Next week** — create next week in advance or navigate to it if it already exists
+- **Week reset** — clear all assigned menus of the displayed week (confirmation dialog)
 - **CSV export** — download all menus as a semicolon-separated CSV file (desktop only)
-- **CSV import** — import menus from a CSV file with structure validation and error feedback (desktop only)
-- **Persistence** — all data (menus, weekly assignments) stored in SQLite and survives page reloads
+- **CSV import** — import menus from a CSV file with structure validation and user-friendly error messages (desktop only)
+- **Persistence** — all data (menus, weeks, assignments) stored in SQLite and survives page reloads
 - **Mobile first** — touch-optimized, responsive layout that scales up on desktop
 - **Dark mode** — Angular Material dark theme throughout
 
 ## Tech Stack
 
-| Layer    | Technology                          |
-|----------|-------------------------------------|
-| Frontend | Angular 19, Angular Material, SCSS  |
-| Backend  | Python 3.12, FastAPI, SQLAlchemy    |
-| Database | SQLite                              |
-| Server   | Nginx (reverse proxy), Uvicorn      |
-| Docker   | Docker Compose, multi-stage builds  |
+| Layer    | Technology                                        |
+|----------|---------------------------------------------------|
+| Frontend | Angular 19, Angular Material, Material Datepicker, SCSS |
+| Backend  | Python 3.12, FastAPI, SQLAlchemy, Pydantic        |
+| Database | SQLite                                            |
+| Server   | Nginx (reverse proxy), Uvicorn                    |
+| Docker   | Docker Compose, multi-stage builds                |
 
 ## Getting Started
 
@@ -56,14 +59,23 @@ App available on port `80`, API on port `8000`.
 
 ## API Endpoints
 
-| Method | Endpoint             | Description              |
-|--------|----------------------|--------------------------|
-| GET    | `/api/menus`         | List all menus           |
-| POST   | `/api/menus`         | Create a menu            |
-| PUT    | `/api/menus/{id}`    | Update a menu            |
-| DELETE | `/api/menus/{id}`    | Delete a menu            |
-| GET    | `/api/week`          | Get weekly plan          |
-| PUT    | `/api/week/{day}`    | Assign menu to a weekday |
-| DELETE | `/api/week`          | Reset entire week        |
+### Menus
+
+| Method | Endpoint          | Description    |
+|--------|-------------------|----------------|
+| GET    | `/api/menus`      | List all menus |
+| POST   | `/api/menus`      | Create a menu  |
+| PUT    | `/api/menus/{id}` | Update a menu  |
+| DELETE | `/api/menus/{id}` | Delete a menu  |
+
+### Weeks
+
+| Method | Endpoint                          | Description                               |
+|--------|-----------------------------------|-------------------------------------------|
+| GET    | `/api/week?date_param=YYYY-MM-DD` | Get week containing date (default: today) |
+| GET    | `/api/week/next-exists`           | Check if next week exists                 |
+| POST   | `/api/week/next`                  | Create next week                          |
+| PUT    | `/api/week/{week_id}/{day}`       | Assign menu to a day in a week            |
+| DELETE | `/api/week/{week_id}`             | Reset (clear) a specific week             |
 
 @Author Severin Goddon, 2026

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Menu, MenuCreate, WeekDay } from '../models/menu.model';
+import { Menu, MenuCreate, Week, WeekDay, NextWeekStatus } from '../models/menu.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -31,15 +31,24 @@ export class ApiService {
   }
 
   // Week
-  getWeek(): Observable<WeekDay[]> {
-    return this.http.get<WeekDay[]>(`${this.baseUrl}/week`);
+  getWeek(date?: string): Observable<Week> {
+    const params = date ? `?date_param=${date}` : '';
+    return this.http.get<Week>(`${this.baseUrl}/week${params}`);
   }
 
-  updateWeekDay(day: string, menuId: number | null): Observable<WeekDay> {
-    return this.http.put<WeekDay>(`${this.baseUrl}/week/${day}`, { menu_id: menuId });
+  updateWeekDay(weekId: number, day: string, menuId: number | null): Observable<WeekDay> {
+    return this.http.put<WeekDay>(`${this.baseUrl}/week/${weekId}/${day}`, { menu_id: menuId });
   }
 
-  resetWeek(): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/week`);
+  resetWeek(weekId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/week/${weekId}`);
+  }
+
+  getNextWeekStatus(): Observable<NextWeekStatus> {
+    return this.http.get<NextWeekStatus>(`${this.baseUrl}/week/next-exists`);
+  }
+
+  createNextWeek(): Observable<Week> {
+    return this.http.post<Week>(`${this.baseUrl}/week/next`, {});
   }
 }
