@@ -3,8 +3,15 @@
     <button mat-icon-button (click)="close()">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <span>Menu wählen für {{ data.day }}</span>
+    <span class="menu-popup-header">Menu wählen für {{ data.day }}</span>
   </mat-toolbar>
+
+  <div class="search-bar">
+    <mat-form-field appearance="outline">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Menu suchen..." [(ngModel)]="searchQuery" (ngModelChange)="filterMenus()">
+    </mat-form-field>
+  </div>
 
   <div class="menu-list">
     @if (menus.length === 0) {
@@ -15,7 +22,7 @@
       </div>
     }
 
-    @for (menu of menus; track menu.id) {
+    @for (menu of filteredMenus; track menu.id) {
       <mat-card class="menu-card" (click)="selectMenu(menu)">
         <mat-card-content class="menu-card-content">
           <div class="menu-info">

@@ -14,9 +14,9 @@
         </button>
       }
       <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()">
-        {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche' }}
+        {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche erstellen' }}
       </button>
-      <button mat-icon-button color="warn" (click)="resetWeek()" aria-label="Woche leeren">
+      <button mat-icon-button color="warn" class="reset-btn" (click)="resetWeek()" aria-label="Woche leeren">
         <mat-icon>delete_sweep</mat-icon>
       </button>
     </div>
@@ -27,7 +27,7 @@
   <mat-datepicker #picker></mat-datepicker>
 
   @for (weekDay of currentWeek?.days; track weekDay.id) {
-    <mat-card class="day-card" (click)="openMenuPopup(weekDay)">
+    <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" (click)="openMenuPopup(weekDay)">
       <mat-card-content class="day-content">
         <div class="day-info">
           <span class="day-name">{{ weekDay.day }}</span>

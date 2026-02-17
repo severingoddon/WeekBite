@@ -6,6 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { Menu } from '../../models/menu.model';
 
@@ -19,12 +22,17 @@ import { Menu } from '../../models/menu.model';
     MatIconModule,
     MatChipsModule,
     MatToolbarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
   ],
   templateUrl: './menu-popup.component.html',
   styleUrl: './menu-popup.component.scss',
 })
 export class MenuPopupComponent implements OnInit {
   menus: Menu[] = [];
+  filteredMenus: Menu[] = [];
+  searchQuery = '';
   expandedMenuId: number | null = null;
 
   constructor(
@@ -34,7 +42,15 @@ export class MenuPopupComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.api.getMenus().subscribe((menus) => (this.menus = menus));
+    this.api.getMenus().subscribe((menus) => {
+      this.menus = menus;
+      this.filteredMenus = menus;
+    });
+  }
+
+  filterMenus() {
+    const q = this.searchQuery.toLowerCase();
+    this.filteredMenus = this.menus.filter((m) => m.title.toLowerCase().includes(q));
   }
 
   selectMenu(menu: Menu) {
