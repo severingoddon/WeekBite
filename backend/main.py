@@ -66,8 +66,7 @@ def get_current_session(request: Request, db: DBSession = Depends(get_db)):
 
 @app.get("/api/auth/google/login")
 async def google_login(request: Request):
-    # Use GOOGLE_REDIRECT_URI if set, otherwise derive from FRONTEND_URL
-    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", FRONTEND_URL.rstrip("/") + "/api/auth/google/callback")
+    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback")
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
