@@ -67,8 +67,10 @@ export class WeekPlanComponent implements OnInit {
         this.currentWeek = week;
         this.checkNextWeek();
       },
-      error: () => {
-        this.snackBar.open('Keine Woche für dieses Datum gefunden', 'OK', { duration: 3000 });
+      error: (err) => {
+        if (err.status !== 401) {
+          this.snackBar.open('Keine Woche für dieses Datum gefunden', 'OK', { duration: 3000 });
+        }
       },
     });
   }
