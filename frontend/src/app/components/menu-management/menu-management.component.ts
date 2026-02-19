@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,7 +10,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ApiService } from '../../services/api.service';
-import { Menu } from '../../models/menu.model';
+import { Menu, MenuCreate } from '../../models/menu.model';
 
 @Component({
   selector: 'app-menu-management',
@@ -30,12 +30,16 @@ import { Menu } from '../../models/menu.model';
   styleUrl: './menu-management.component.scss',
 })
 export class MenuManagementComponent implements OnInit {
+  @ViewChild('formCard', { read: ElementRef }) formCard!: ElementRef;
+
   menus: Menu[] = [];
   editingMenu: Menu | null = null;
 
   menuTitle = '';
   ingredientInput = '';
   ingredients: string[] = [];
+  menuNote = '';
+  menuEffort = 20;
 
   constructor(
     private api: ApiService,
@@ -65,7 +69,12 @@ export class MenuManagementComponent implements OnInit {
   saveMenu() {
     if (!this.menuTitle.trim()) return;
 
-    const data = { title: this.menuTitle.trim(), ingredients: this.ingredients };
+    const data: MenuCreate = {
+      title: this.menuTitle.trim(),
+      ingredients: this.ingredients,
+      note: this.menuNote,
+      effort_min: this.menuEffort,
+    };
 
     if (this.editingMenu) {
       this.api.updateMenu(this.editingMenu.id, data).subscribe({
@@ -92,7 +101,9 @@ export class MenuManagementComponent implements OnInit {
     this.editingMenu = menu;
     this.menuTitle = menu.title;
     this.ingredients = [...menu.ingredients];
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.menuNote = menu.note;
+    this.menuEffort = menu.effort_min;
+    this.formCard.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   deleteMenu(menu: Menu) {
@@ -110,6 +121,8 @@ export class MenuManagementComponent implements OnInit {
     this.menuTitle = '';
     this.ingredientInput = '';
     this.ingredients = [];
+    this.menuNote = '';
+    this.menuEffort = 20;
   }
 
   importCsv(event: Event) {
@@ -129,13 +142,15 @@ export class MenuManagementComponent implements OnInit {
       }
 
       const header = lines[0].trim();
-      if (header !== 'Menu;Zutaten') {
+      const validHeaders = ['Menu;Zutaten', 'Menu;Zutaten;Notiz;Aufwand'];
+      if (!validHeaders.includes(header)) {
         this.showImportError();
         input.value = '';
         return;
       }
+      const hasExtendedFields = header === 'Menu;Zutaten;Notiz;Aufwand';
 
-      const parsed: { title: string; ingredients: string[] }[] = [];
+      const parsed: MenuCreate[] = [];
       for (let i = 1; i < lines.length; i++) {
         const row = this.parseCsvRow(lines[i]);
         if (row.length < 2) {
@@ -148,12 +163,14 @@ export class MenuManagementComponent implements OnInit {
           .split(',')
           .map((s) => s.trim())
           .filter((s) => s);
+        const note = hasExtendedFields && row.length > 2 ? row[2].trim() : '';
+        const effort_min = hasExtendedFields && row.length > 3 ? parseInt(row[3].trim(), 10) || 20 : 20;
         if (!title) {
           this.showImportError(i + 1);
           input.value = '';
           return;
         }
-        parsed.push({ title, ingredients });
+        parsed.push({ title, ingredients, note, effort_min });
       }
 
       this.importMenusSequentially(parsed, 0, 0);
@@ -193,7 +210,7 @@ export class MenuManagementComponent implements OnInit {
     return result;
   }
 
-  private importMenusSequentially(items: { title: string; ingredients: string[] }[], index: number, successCount: number) {
+  private importMenusSequentially(items: MenuCreate[], index: number, successCount: number) {
     if (index >= items.length) {
       this.snackBar.open(`${successCount} Menus importiert`, 'OK', { duration: 3000 });
       this.loadMenus();
@@ -210,17 +227,18 @@ export class MenuManagementComponent implements OnInit {
 
   private showImportError(line?: number) {
     const msg = line
-      ? `CSV-Fehler in Zeile ${line}. Format: Menu;Zutaten (Zutaten kommagetrennt)`
-      : 'Ungültiges CSV-Format. Erste Zeile muss "Menu;Zutaten" sein, danach pro Zeile: "Titel";"Zutat1, Zutat2"';
+      ? `CSV-Fehler in Zeile ${line}. Format: Menu;Zutaten;Notiz;Aufwand`
+      : 'Ungültiges CSV-Format. Erste Zeile muss "Menu;Zutaten" oder "Menu;Zutaten;Notiz;Aufwand" sein';
     this.snackBar.open(msg, 'OK', { duration: 8000 });
   }
 
   exportCsv() {
-    const header = 'Menu;Zutaten';
+    const header = 'Menu;Zutaten;Notiz;Aufwand';
     const rows = this.menus.map((m) => {
       const title = m.title.replace(/"/g, '""');
       const ingredients = m.ingredients.join(', ').replace(/"/g, '""');
-      return `"${title}";"${ingredients}"`;
+      const note = (m.note || '').replace(/"/g, '""');
+      return `"${title}";"${ingredients}";"${note}";${m.effort_min}`;
     });
     const csv = [header, ...rows].join('\n');
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });

@@ -23,6 +23,8 @@ class Menu(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False, unique=True)
+    note = Column(String, nullable=False, default="")
+    effort_min = Column(Integer, nullable=False, default=20)
     ingredients = relationship("Ingredient", secondary=menu_ingredients, cascade="all, delete", lazy="joined")
 
 

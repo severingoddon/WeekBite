@@ -24,6 +24,19 @@
   width: 100%;
 }
 
+.note-effort-row {
+  display: flex;
+  gap: 12px;
+
+  .note-field {
+    flex: 1;
+  }
+
+  .effort-field {
+    width: 120px;
+  }
+}
+
 .ingredient-input-row {
   display: flex;
   align-items: center;
@@ -70,6 +83,18 @@
 
 .menu-item-actions {
   display: flex;
+}
+
+.menu-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #999;
+  margin: 4px 0 8px;
+}
+
+.menu-effort {
+  white-space: nowrap;
 }
 
 .list-header {

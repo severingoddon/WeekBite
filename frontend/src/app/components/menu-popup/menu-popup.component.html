@@ -7,10 +7,15 @@
   </mat-toolbar>
 
   <div class="search-bar">
-    <mat-form-field appearance="outline">
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Menu suchen..." [(ngModel)]="searchQuery" (ngModelChange)="filterMenus()">
-    </mat-form-field>
+    <div class="search-row">
+      <mat-form-field appearance="outline">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Menu suchen..." [(ngModel)]="searchQuery" (ngModelChange)="filterMenus()">
+      </mat-form-field>
+      <button mat-icon-button (click)="toggleSort()" [class.sort-active]="sortByEffort" aria-label="Nach Aufwand sortieren">
+        <mat-icon>sort</mat-icon>
+      </button>
+    </div>
   </div>
 
   <div class="menu-list">
@@ -27,14 +32,21 @@
         <mat-card-content class="menu-card-content">
           <div class="menu-info">
             <span class="menu-title">{{ menu.title }}</span>
-            <span class="ingredient-count">{{ menu.ingredients.length }} Zutaten</span>
+            <span class="menu-subtitle">{{ menu.ingredients.length }} Zutaten · {{ menu.effort_min }} Min.</span>
           </div>
           <button mat-icon-button (click)="toggleDetails(menu.id, $event)" aria-label="Details anzeigen">
             <mat-icon>{{ expandedMenuId === menu.id ? 'expand_less' : 'expand_more' }}</mat-icon>
           </button>
         </mat-card-content>
         @if (expandedMenuId === menu.id) {
-          <div class="ingredients-detail" (click)="$event.stopPropagation()">
+          <div class="menu-detail" (click)="$event.stopPropagation()">
+            @if (menu.note) {
+              <p class="menu-note">{{ menu.note }}</p>
+            }
+            <div class="menu-effort-detail">
+              <mat-icon>timer</mat-icon>
+              <span>{{ menu.effort_min }} Minuten</span>
+            </div>
             <mat-chip-set>
               @for (ingredient of menu.ingredients; track ingredient) {
                 <mat-chip>{{ ingredient }}</mat-chip>

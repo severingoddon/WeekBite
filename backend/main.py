@@ -146,6 +146,8 @@ def menu_to_response(menu: Menu) -> MenuResponse:
         id=menu.id,
         title=menu.title,
         ingredients=[ing.name for ing in menu.ingredients],
+        note=menu.note,
+        effort_min=menu.effort_min,
     )
 
 
@@ -191,7 +193,7 @@ def create_menu(menu_data: MenuBase, _=Depends(get_current_session), db: DBSessi
         raise HTTPException(status_code=400, detail="Menu with this title already exists")
 
     ingredients = [Ingredient(name=name) for name in menu_data.ingredients]
-    menu = Menu(title=menu_data.title, ingredients=ingredients)
+    menu = Menu(title=menu_data.title, note=menu_data.note, effort_min=menu_data.effort_min, ingredients=ingredients)
     db.add(menu)
     db.commit()
     db.refresh(menu)
@@ -205,6 +207,8 @@ def update_menu(menu_id: int, menu_data: MenuBase, _=Depends(get_current_session
         raise HTTPException(status_code=404, detail="Menu not found")
 
     menu.title = menu_data.title
+    menu.note = menu_data.note
+    menu.effort_min = menu_data.effort_min
 
     # Remove old ingredients
     db.execute(menu_ingredients.delete().where(menu_ingredients.c.menu_id == menu_id))

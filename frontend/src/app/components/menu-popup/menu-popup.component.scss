@@ -17,14 +17,25 @@
   margin: 0 auto;
   width: 100%;
 
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   mat-form-field {
-    width: 100%;
+    flex: 1;
+    margin-bottom: -1.25em;
   }
 
   mat-icon {
     margin-right: 8px;
     color: #888;
   }
+}
+
+.sort-active {
+  color: #00bcd4 !important;
 }
 
 .menu-list {
@@ -70,13 +81,34 @@
   font-weight: 500;
 }
 
-.ingredient-count {
+.menu-subtitle {
   font-size: 0.8rem;
   color: #888;
 }
 
-.ingredients-detail {
+.menu-detail {
   padding: 8px 16px 16px;
+}
+
+.menu-note {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin: 0 0 8px;
+}
+
+.menu-effort-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 10px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .empty-state {

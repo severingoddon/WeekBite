@@ -4,12 +4,16 @@ from pydantic import BaseModel
 class MenuBase(BaseModel):
     title: str
     ingredients: list[str]
+    note: str = ""
+    effort_min: int = 20
 
 
 class MenuResponse(BaseModel):
     id: int
     title: str
     ingredients: list[str]
+    note: str
+    effort_min: int
 
     model_config = {"from_attributes": True}
 

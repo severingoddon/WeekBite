@@ -34,6 +34,7 @@ export class MenuPopupComponent implements OnInit {
   filteredMenus: Menu[] = [];
   searchQuery = '';
   expandedMenuId: number | null = null;
+  sortByEffort = false;
 
   constructor(
     private api: ApiService,
@@ -50,7 +51,16 @@ export class MenuPopupComponent implements OnInit {
 
   filterMenus() {
     const q = this.searchQuery.toLowerCase();
-    this.filteredMenus = this.menus.filter((m) => m.title.toLowerCase().includes(q));
+    let result = this.menus.filter((m) => m.title.toLowerCase().includes(q));
+    if (this.sortByEffort) {
+      result = [...result].sort((a, b) => a.effort_min - b.effort_min);
+    }
+    this.filteredMenus = result;
+  }
+
+  toggleSort() {
+    this.sortByEffort = !this.sortByEffort;
+    this.filterMenus();
   }
 
   selectMenu(menu: Menu) {

@@ -2,7 +2,7 @@
   <h2>Menus verwalten</h2>
 
   <!-- Form -->
-  <mat-card class="form-card">
+  <mat-card class="form-card" #formCard>
     <mat-card-content>
       <h3>{{ editingMenu ? 'Menu bearbeiten' : 'Neues Menu erstellen' }}</h3>
 
@@ -10,6 +10,17 @@
         <mat-label>Menu Titel</mat-label>
         <input matInput [(ngModel)]="menuTitle" placeholder="z.B. Spaghetti Bolognese">
       </mat-form-field>
+
+      <div class="note-effort-row">
+        <mat-form-field appearance="outline" class="note-field">
+          <mat-label>Notiz</mat-label>
+          <input matInput [(ngModel)]="menuNote" placeholder="z.B. Rezept von Oma">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="effort-field">
+          <mat-label>Aufwand (Min.)</mat-label>
+          <input matInput type="number" [(ngModel)]="menuEffort" min="0">
+        </mat-form-field>
+      </div>
 
       <div class="ingredient-input-row">
         <mat-form-field appearance="outline" class="ingredient-field">
@@ -80,6 +91,12 @@
               <mat-icon>delete</mat-icon>
             </button>
           </div>
+        </div>
+        <div class="menu-meta">
+          @if (menu.note) {
+            <span class="menu-note">{{ menu.note }}</span>
+          }
+          <span class="menu-effort">{{ menu.effort_min }} Min.</span>
         </div>
         @if (menu.ingredients.length > 0) {
           <mat-chip-set class="ingredient-chips">

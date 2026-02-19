@@ -2,11 +2,15 @@ export interface Menu {
   id: number;
   title: string;
   ingredients: string[];
+  note: string;
+  effort_min: number;
 }
 
 export interface MenuCreate {
   title: string;
   ingredients: string[];
+  note: string;
+  effort_min: number;
 }
 
 export interface WeekDay {
