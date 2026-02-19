@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
+
+export interface UserInfo {
+  email: string;
+  name: string | null;
+  avatar_letter: string;
+  picture: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,12 +19,16 @@ export class AuthService {
     private router: Router,
   ) {}
 
-  login(password: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>('/api/auth/login', { password }).pipe(
-      tap((res) => {
-        localStorage.setItem(this.tokenKey, res.token);
-      }),
-    );
+  loginWithGoogle() {
+    // In production, same origin. In dev, the backend runs on port 8000.
+    const backendUrl = window.location.port === '4200'
+      ? 'http://localhost:8000'
+      : '';
+    window.location.href = `${backendUrl}/api/auth/google/login`;
+  }
+
+  saveToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
   }
 
   getToken(): string | null {
@@ -26,6 +37,10 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  getMe(): Observable<UserInfo> {
+    return this.http.get<UserInfo>('/api/auth/me');
   }
 
   logout() {

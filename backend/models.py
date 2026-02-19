@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, inspect
 from sqlalchemy.orm import relationship
-from database import Base
+from database import Base, engine
+
 
 menu_ingredients = Table(
     "menu_ingredients",
@@ -44,8 +45,35 @@ class WeekDay(Base):
     week = relationship("Week", back_populates="days")
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    google_id = Column(String, nullable=False, unique=True, index=True)
+    email = Column(String, nullable=False)
+    name = Column(String, nullable=True)
+    picture = Column(String, nullable=True)
+
+
 class Session(Base):
     __tablename__ = "sessions"
 
     id = Column(Integer, primary_key=True, index=True)
     token = Column(String, nullable=False, unique=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user = relationship("User")
+
+
+def migrate_sessions_table():
+    """Drop old sessions table if it lacks user_id column, so it gets recreated."""
+    insp = inspect(engine)
+    if insp.has_table("sessions"):
+        columns = [col["name"] for col in insp.get_columns("sessions")]
+        if "user_id" not in columns:
+            Session.__table__.drop(engine)
+    if insp.has_table("users"):
+        columns = [col["name"] for col in insp.get_columns("users")]
+        if "picture" not in columns:
+            User.__table__.drop(engine)
+            if insp.has_table("sessions"):
+                Session.__table__.drop(engine)

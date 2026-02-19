@@ -18,6 +18,24 @@
         <mat-icon>menu</mat-icon>
       </button>
       <span class="application-title">WeekBite 🐀</span>
+      <span class="spacer"></span>
+      @if (user) {
+        <button class="avatar-btn" [matMenuTriggerFor]="userMenu">
+          @if (user.picture) {
+            <img [src]="user.picture" alt="avatar" class="avatar-img" referrerpolicy="no-referrer">
+          } @else {
+            {{ user.avatar_letter }}
+          }
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <div class="user-menu-header">{{ user.email }}</div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Abmelden</span>
+          </button>
+        </mat-menu>
+      }
     </mat-toolbar>
     <main class="content">
       <router-outlet></router-outlet>

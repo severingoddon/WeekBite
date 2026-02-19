@@ -39,9 +39,8 @@ class NextWeekStatus(BaseModel):
     start_date: str
 
 
-class LoginRequest(BaseModel):
-    password: str
-
-
-class LoginResponse(BaseModel):
-    token: str
+class UserResponse(BaseModel):
+    email: str
+    name: str | None
+    avatar_letter: str
+    picture: str | None

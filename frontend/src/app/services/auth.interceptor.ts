@@ -8,8 +8,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  // Don't add token to login requests
-  if (req.url.includes('/api/auth/login')) {
+  // Don't add token to Google OAuth requests
+  if (req.url.includes('/api/auth/google')) {
     return next(req);
   }
 

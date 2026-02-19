@@ -2,18 +2,16 @@ import os
 import secrets
 from datetime import date, timedelta
 
-import bcrypt
+from authlib.integrations.starlette_client import OAuth
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
+from fastapi.responses import RedirectResponse
+from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy.orm import Session as DBSession
 
 from database import Base, engine, get_db
-from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, menu_ingredients
+from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, User, menu_ingredients, migrate_sessions_table
 from schemas import (
     MenuBase,
     MenuResponse,
@@ -21,32 +19,18 @@ from schemas import (
     WeekDayUpdate,
     WeekResponse,
     NextWeekStatus,
-    LoginRequest,
-    LoginResponse,
+    UserResponse,
 )
 
 load_dotenv()
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
-
-def get_real_ip(request: Request) -> str:
-    forwarded = request.headers.get("X-Real-IP")
-    if forwarded:
-        return forwarded
-    return get_remote_address(request)
-
-
-limiter = Limiter(key_func=get_real_ip)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:4200")
+SESSION_SECRET = os.getenv("SESSION_SECRET", "dev-secret-not-for-production")
 
 app = FastAPI(title="WeekBite API")
-app.state.limiter = limiter
 
-
-@app.exception_handler(RateLimitExceeded)
-async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
-    return JSONResponse(status_code=429, content={"detail": "Too many login attempts. Try again later."})
-
-
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -54,7 +38,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-PASSWORD_HASH = os.getenv("APP_PASSWORD_HASH", "")
+oauth = OAuth()
+oauth.register(
+    name="google",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
 
 WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
@@ -73,17 +64,47 @@ def get_current_session(request: Request, db: DBSession = Depends(get_db)):
     return session
 
 
-@app.post("/api/auth/login", response_model=LoginResponse)
-@limiter.limit("5/minute")
-def login(request: Request, body: LoginRequest, db: DBSession = Depends(get_db)):
-    if not PASSWORD_HASH:
-        raise HTTPException(status_code=500, detail="No password configured")
-    if not bcrypt.checkpw(body.password.encode(), PASSWORD_HASH.encode()):
-        raise HTTPException(status_code=401, detail="Wrong password")
-    token = secrets.token_urlsafe(32)
-    db.add(SessionModel(token=token))
+@app.get("/api/auth/google/login")
+async def google_login(request: Request):
+    redirect_uri = str(request.base_url).rstrip("/") + "/api/auth/google/callback"
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+
+@app.get("/api/auth/google/callback")
+async def google_callback(request: Request, db: DBSession = Depends(get_db)):
+    token_data = await oauth.google.authorize_access_token(request)
+    userinfo = token_data.get("userinfo")
+    if not userinfo:
+        raise HTTPException(status_code=400, detail="Failed to get user info from Google")
+
+    google_id = userinfo["sub"]
+    email = userinfo["email"]
+    name = userinfo.get("name", "")
+
+    picture = userinfo.get("picture", "")
+
+    user = db.query(User).filter(User.google_id == google_id).first()
+    if user:
+        user.email = email
+        user.name = name
+        user.picture = picture
+    else:
+        user = User(google_id=google_id, email=email, name=name, picture=picture)
+        db.add(user)
+    db.flush()
+
+    session_token = secrets.token_urlsafe(32)
+    db.add(SessionModel(token=session_token, user_id=user.id))
     db.commit()
-    return LoginResponse(token=token)
+
+    return RedirectResponse(url=f"{FRONTEND_URL}/login?token={session_token}")
+
+
+@app.get("/api/auth/me", response_model=UserResponse)
+def get_me(session: SessionModel = Depends(get_current_session)):
+    user = session.user
+    letter = user.email[0].upper() if user.email else "?"
+    return UserResponse(email=user.email, name=user.name, avatar_letter=letter, picture=user.picture)
 
 
 # --- Helpers ---
@@ -105,6 +126,7 @@ def create_week(db: DBSession, start_date: date) -> Week:
 
 
 def init_db():
+    migrate_sessions_table()
     Base.metadata.create_all(bind=engine)
     db = next(get_db())
     try:
