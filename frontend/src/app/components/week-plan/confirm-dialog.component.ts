@@ -15,6 +15,16 @@ import { MatButtonModule } from '@angular/material/button';
       <button mat-flat-button color="warn" (click)="dialogRef.close(true)">Ja, leeren</button>
     </mat-dialog-actions>
   `,
+  styles: [`
+    h2 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+    mat-dialog-content {
+      color: var(--text-secondary);
+    }
+  `],
 })
 export class ConfirmDialogComponent {
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>) {}

@@ -1,13 +1,50 @@
 @use '@angular/material' as mat;
 
+:root {
+  // Backgrounds — deep navy palette
+  --bg-deepest: #0d1117;
+  --bg-card: #161b22;
+  --bg-hover: #1c2330;
+  --bg-active: #242d3a;
+  --bg-elevated: #1f2937;
+  --bg-weekend: #1a2233;
+
+  // Accent
+  --accent-cyan: #06b6d4;
+  --accent-violet: #8b5cf6;
+
+  // Text
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  // Borders
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(6, 182, 212, 0.3);
+
+  // Radius
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  // Shadows
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 30px rgba(6, 182, 212, 0.15);
+
+  // Transitions
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
 html {
   @include mat.theme((
     color: (
       theme-type: dark,
       primary: mat.$cyan-palette,
-      tertiary: mat.$magenta-palette,
+      tertiary: mat.$violet-palette,
     ),
-    typography: Roboto,
+    typography: Inter,
     density: 0,
   ));
 }
@@ -16,28 +53,65 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #121212;
-  color: #e0e0e0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--bg-deepest);
+  color: var(--text-primary);
+  font-family: Inter, "Helvetica Neue", sans-serif;
+  letter-spacing: -0.01em;
 }
 
 * {
   box-sizing: border-box;
 }
 
+// --- Scrollbar ---
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e1e1e;
+  background: var(--bg-deepest);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #444;
+  background: var(--text-muted);
   border-radius: 3px;
 }
 
+// --- Utility classes ---
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-panel {
+  background: rgba(31, 41, 55, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--border-subtle);
+}
+
+// --- Global Material overrides ---
+.mat-mdc-card {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.mat-mdc-raised-button,
+.mat-mdc-flat-button {
+  border-radius: var(--radius-sm) !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: var(--bg-elevated) !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-subtle);
+}
+
+// --- Fullscreen dialog ---
 .fullscreen-dialog {
   .mat-mdc-dialog-container {
     padding: 0;

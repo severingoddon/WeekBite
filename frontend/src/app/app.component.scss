@@ -4,25 +4,33 @@
 
 .sidenav {
   width: 250px;
-  background: #1e1e1e;
+  background: rgba(31, 41, 55, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--border-subtle);
 }
 
 mat-toolbar {
-  background: #1e1e1e;
-  color: #e0e0e0;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
   position: sticky;
   top: 0;
   z-index: 10;
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
 }
 
 .content {
-  padding: 16px;
-  max-width: 600px;
+  padding: 20px 16px;
+  max-width: 640px;
   margin: 0 auto;
 }
 
 .application-title {
   margin-left: 5px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
 }
 
 .spacer {
@@ -34,7 +42,7 @@ mat-toolbar {
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: #00bcd4;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
   color: #fff;
   font-size: 16px;
   font-weight: 500;
@@ -44,10 +52,13 @@ mat-toolbar {
   justify-content: center;
   padding: 0;
   overflow: hidden;
-}
+  box-shadow: 0 0 0 2px var(--bg-elevated), 0 0 0 4px var(--accent-cyan);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 
-.avatar-btn:hover {
-  opacity: 0.85;
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--bg-elevated), 0 0 0 4px var(--accent-violet);
+  }
 }
 
 .avatar-img {
@@ -60,5 +71,5 @@ mat-toolbar {
 .user-menu-header {
   padding: 12px 16px;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
 }

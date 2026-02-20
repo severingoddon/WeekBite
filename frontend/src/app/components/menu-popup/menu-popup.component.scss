@@ -2,13 +2,15 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #121212;
+  background: var(--bg-deepest);
 }
 
 .popup-toolbar {
-  background: #1e1e1e;
-  color: #e0e0e0;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
   flex-shrink: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
 }
 
 .search-bar {
@@ -30,12 +32,12 @@
 
   mat-icon {
     margin-right: 8px;
-    color: #888;
+    color: var(--text-muted);
   }
 }
 
 .sort-active {
-  color: #00bcd4 !important;
+  color: var(--accent-cyan) !important;
 }
 
 .menu-list {
@@ -52,15 +54,18 @@
 
 .menu-card {
   cursor: pointer;
-  background: #1e1e1e;
-  transition: background 0.2s;
+  background: var(--bg-card) !important;
+  transition: transform var(--transition-fast), box-shadow var(--transition-normal), background var(--transition-fast);
 
   &:hover {
-    background: #2a2a2a;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover) !important;
+    background: var(--bg-hover) !important;
   }
 
   &:active {
-    background: #333;
+    background: var(--bg-active) !important;
+    transform: translateY(0);
   }
 }
 
@@ -83,16 +88,28 @@
 
 .menu-subtitle {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .menu-detail {
   padding: 8px 16px 16px;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .menu-note {
   font-size: 0.85rem;
-  color: #aaa;
+  color: var(--text-secondary);
   margin: 0 0 8px;
 }
 
@@ -101,7 +118,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-secondary);
   margin-bottom: 10px;
 
   mat-icon {
@@ -114,13 +131,14 @@
 .empty-state {
   text-align: center;
   padding: 48px 16px;
-  color: #666;
+  color: var(--text-muted);
 
   mat-icon {
     font-size: 48px;
     width: 48px;
     height: 48px;
     margin-bottom: 16px;
+    opacity: 0.5;
   }
 
   p {
