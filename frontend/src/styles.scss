@@ -123,3 +123,22 @@ html, body {
 .cdk-overlay-pane.fullscreen-dialog {
   max-width: 100vw !important;
 }
+
+// --- Snackbar overrides ---
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--bg-elevated);
+  --mdc-snackbar-supporting-text-color: var(--text-primary);
+  --mat-snack-bar-button-color: var(--accent-cyan);
+
+  .mdc-snackbar__surface {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm) !important;
+    box-shadow: var(--shadow-hover);
+  }
+}
+
+.mat-mdc-snack-bar-handset,
+.mat-mdc-snack-bar-container {
+  margin-bottom: 10px !important;
+  max-width: 75vw !important;
+}
