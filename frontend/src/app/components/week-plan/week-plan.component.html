@@ -8,14 +8,14 @@
       <button mat-icon-button (click)="openDatePicker()" aria-label="Datum wählen">
         <mat-icon>calendar_month</mat-icon>
       </button>
+      <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()">
+        {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche erstellen' }}
+      </button>
       @if (!isCurrentWeek) {
         <button mat-stroked-button class="action-btn" (click)="goToCurrentWeek()">
           Aktuell
         </button>
       }
-      <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()">
-        {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche erstellen' }}
-      </button>
       <button mat-icon-button [matMenuTriggerFor]="weekMenu" class="more-btn" aria-label="Weitere Optionen">
         <mat-icon>more_vert</mat-icon>
       </button>
