@@ -4,7 +4,7 @@
   <mat-card class="form-card">
     <mat-card-content>
       <div class="add-row">
-        <mat-form-field class="quantity-field" appearance="outline" subscriptSizing="dynamic">
+        <mat-form-field class="quantity-field" appearance="outline" subscriptSizing="dynamic" floatLabel="always">
           <mat-label>Menge</mat-label>
           <input matInput [(ngModel)]="newQuantity" (keyup.enter)="addItem()" placeholder="z.B. 500g">
         </mat-form-field>
