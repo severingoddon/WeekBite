@@ -37,6 +37,33 @@ mat-toolbar {
   flex: 1;
 }
 
+.context-chip {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 10px;
+  padding: 4px 8px 4px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--accent-cyan);
+    color: var(--text-primary);
+  }
+
+  .context-arrow {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .avatar-btn {
   width: 36px;
   height: 36px;

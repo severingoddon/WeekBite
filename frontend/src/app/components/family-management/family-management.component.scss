@@ -1,0 +1,122 @@
+.family-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  h4 {
+    margin: 12px 0 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+}
+
+.form-card {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+.family-card.active-family {
+  border-color: var(--accent-cyan) !important;
+}
+
+.add-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .name-field {
+    flex: 1;
+  }
+}
+
+.add-btn {
+  height: 46px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet)) !important;
+  color: #fff !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.family-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.rename-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+
+  .name-field {
+    flex: 1;
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.active-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--accent-cyan);
+  color: #000;
+  font-weight: 500;
+}
+
+.activate-btn {
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0 10px;
+  min-height: 32px;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-secondary) !important;
+  --mdc-outlined-button-label-text-color: var(--text-secondary);
+
+  &:hover {
+    border-color: var(--accent-cyan) !important;
+    color: var(--text-primary) !important;
+  }
+}
+
+.members-section {
+  mat-list-item {
+    &:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+  }
+}
+
+.member-email {
+  color: var(--text-muted) !important;
+  font-size: 0.8rem !important;
+}
+
+.invite-section {
+  margin-top: 12px;
+}
+
+.empty-hint {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  margin-top: 8px;
+}

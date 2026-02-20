@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Family } from '../models/menu.model';
 
 export interface UserInfo {
   email: string;
@@ -9,7 +10,8 @@ export interface UserInfo {
   avatar_letter: string;
   picture: string | null;
   is_admin: boolean;
-  is_allowed: boolean;
+  active_family_id: number | null;
+  families: Family[];
 }
 
 @Injectable({ providedIn: 'root' })

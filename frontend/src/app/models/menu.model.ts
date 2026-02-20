@@ -42,3 +42,21 @@ export interface ShoppingItemCreate {
   name: string;
   quantity: string;
 }
+
+export interface FamilyMember {
+  user_id: number;
+  email: string;
+  name: string | null;
+  picture: string | null;
+}
+
+export interface Family {
+  id: number;
+  name: string;
+  created_by: number;
+  members: FamilyMember[];
+}
+
+export interface FamilyCreate {
+  name: string;
+}

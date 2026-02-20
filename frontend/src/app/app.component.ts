@@ -9,6 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { filter } from 'rxjs';
 import { AuthService, UserInfo } from './services/auth.service';
+import { ApiService } from './services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -33,23 +34,43 @@ export class AppComponent {
   constructor(
     private router: Router,
     private auth: AuthService,
+    private api: ApiService,
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((e) => {
         this.currentPath = (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url;
-        if (this.auth.isLoggedIn() && !this.user) {
-          this.auth.getMe().subscribe({
-            next: (u) => {
-              this.user = u;
-              if (!u.is_allowed) {
-                this.router.navigate(['/access-denied']);
-              }
-            },
-            error: () => (this.user = null),
-          });
+        if (this.auth.isLoggedIn()) {
+          this.loadUser();
         }
       });
+  }
+
+  get activeContextName(): string {
+    if (!this.user) return 'Privat';
+    if (this.user.active_family_id) {
+      const family = this.user.families.find((f) => f.id === this.user!.active_family_id);
+      return family ? family.name : 'Privat';
+    }
+    return 'Privat';
+  }
+
+  loadUser() {
+    this.auth.getMe().subscribe({
+      next: (u) => (this.user = u),
+      error: () => (this.user = null),
+    });
+  }
+
+  switchContext(familyId: number | null) {
+    this.api.switchContext(familyId).subscribe(() => {
+      this.loadUser();
+      // Reload current route data
+      const currentUrl = this.router.url;
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigateByUrl(currentUrl);
+      });
+    });
   }
 
   navigateTo(path: string) {

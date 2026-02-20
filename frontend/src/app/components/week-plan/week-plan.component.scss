@@ -34,9 +34,8 @@
   margin-top: 6px;
 }
 
-.reset-btn {
+.more-btn {
   margin-left: auto;
-  margin-right: 5px;
 }
 
 .action-btn {
@@ -125,4 +124,33 @@
 .chevron {
   color: var(--text-muted);
   transition: transform var(--transition-fast);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.empty-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
 }

@@ -8,6 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { ApiService } from '../../services/api.service';
 import { Week, WeekDay } from '../../models/menu.model';
 import { MenuPopupComponent } from '../menu-popup/menu-popup.component';
@@ -25,6 +26,7 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
+    MatMenuModule,
   ],
   templateUrl: './week-plan.component.html',
   styleUrl: './week-plan.component.scss',
@@ -33,6 +35,7 @@ export class WeekPlanComponent implements OnInit {
   currentWeek: Week | null = null;
   nextWeekExists = false;
   nextWeekStartDate = '';
+  noWeekFound = false;
 
   @ViewChild('picker') picker!: MatDatepicker<Date>;
 
@@ -62,13 +65,17 @@ export class WeekPlanComponent implements OnInit {
   }
 
   loadWeek(date?: string) {
+    this.noWeekFound = false;
     this.api.getWeek(date).subscribe({
       next: (week) => {
         this.currentWeek = week;
         this.checkNextWeek();
       },
       error: (err) => {
-        if (err.status !== 401) {
+        if (err.status === 404) {
+          this.currentWeek = null;
+          this.noWeekFound = true;
+        } else if (err.status !== 401) {
           this.snackBar.open('Keine Woche für dieses Datum gefunden', 'OK', { duration: 3000 });
         }
       },
@@ -130,6 +137,7 @@ export class WeekPlanComponent implements OnInit {
       this.api.createNextWeek().subscribe({
         next: (week) => {
           this.currentWeek = week;
+          this.noWeekFound = false;
           this.checkNextWeek();
           this.snackBar.open('Nächste Woche erstellt', 'OK', { duration: 2000 });
         },

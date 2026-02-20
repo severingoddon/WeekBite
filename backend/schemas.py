@@ -43,13 +43,44 @@ class NextWeekStatus(BaseModel):
     start_date: str
 
 
+class FamilyCreate(BaseModel):
+    name: str
+
+
+class FamilyMemberResponse(BaseModel):
+    user_id: int
+    email: str
+    name: str | None
+    picture: str | None
+
+    model_config = {"from_attributes": True}
+
+
+class FamilyResponse(BaseModel):
+    id: int
+    name: str
+    created_by: int
+    members: list[FamilyMemberResponse]
+
+    model_config = {"from_attributes": True}
+
+
+class FamilyInviteCreate(BaseModel):
+    email: str
+
+
+class ContextSwitch(BaseModel):
+    family_id: int | None = None
+
+
 class UserResponse(BaseModel):
     email: str
     name: str | None
     avatar_letter: str
     picture: str | None
     is_admin: bool = False
-    is_allowed: bool = False
+    active_family_id: int | None = None
+    families: list[FamilyResponse] = []
 
 
 class AllowedEmailCreate(BaseModel):

@@ -16,9 +16,15 @@
       <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()">
         {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche erstellen' }}
       </button>
-      <button mat-icon-button color="warn" class="reset-btn" (click)="resetWeek()" aria-label="Woche leeren">
-        <mat-icon>delete_sweep</mat-icon>
+      <button mat-icon-button [matMenuTriggerFor]="weekMenu" class="more-btn" aria-label="Weitere Optionen">
+        <mat-icon>more_vert</mat-icon>
       </button>
+      <mat-menu #weekMenu="matMenu">
+        <button mat-menu-item (click)="resetWeek()">
+          <mat-icon>delete_sweep</mat-icon>
+          <span>Woche zurücksetzen</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 
@@ -26,26 +32,34 @@
   <input matInput [matDatepicker]="picker" hidden (dateChange)="onDateSelected($event.value)">
   <mat-datepicker #picker></mat-datepicker>
 
-  @for (weekDay of currentWeek?.days; track weekDay.id) {
-    <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" (click)="openMenuPopup(weekDay)">
-      <mat-card-content class="day-content">
-        <div class="day-info">
-          <span class="day-name">{{ weekDay.day }}</span>
-          @if (weekDay.menu) {
-            <span class="menu-title">{{ weekDay.menu.title }}</span>
-          } @else {
-            <span class="menu-empty">Kein Menu gewählt</span>
-          }
-        </div>
-        <div class="day-actions">
-          @if (weekDay.menu) {
-            <button mat-icon-button color="warn" (click)="removeMenu(weekDay, $event)" aria-label="Menu entfernen">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-          <mat-icon class="chevron">chevron_right</mat-icon>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  @if (noWeekFound) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">event_busy</mat-icon>
+      <p class="empty-title">Noch kein Wochenplan vorhanden</p>
+      <p class="empty-hint">Wechsle zur aktuellen Woche, um automatisch einen Plan zu erstellen.</p>
+    </div>
+  } @else {
+    @for (weekDay of currentWeek?.days; track weekDay.id) {
+      <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" (click)="openMenuPopup(weekDay)">
+        <mat-card-content class="day-content">
+          <div class="day-info">
+            <span class="day-name">{{ weekDay.day }}</span>
+            @if (weekDay.menu) {
+              <span class="menu-title">{{ weekDay.menu.title }}</span>
+            } @else {
+              <span class="menu-empty">Kein Menu gewählt</span>
+            }
+          </div>
+          <div class="day-actions">
+            @if (weekDay.menu) {
+              <button mat-icon-button color="warn" (click)="removeMenu(weekDay, $event)" aria-label="Menu entfernen">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+            <mat-icon class="chevron">chevron_right</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
   }
 </div>

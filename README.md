@@ -1,22 +1,25 @@
 # WeekBite
 
-A weekly meal planning application. Assign menus to weekdays, archive past weeks and plan ahead.
+A weekly meal planning application. Assign menus to weekdays, archive past weeks and plan ahead. Share weekly plans and shopping lists with your family.
 
 ## Features
 
 - **Weekly planner** — 7 weekdays displayed vertically; tap a day to open a fullscreen menu picker and assign a meal
 - **Menu picker** — scrollable fullscreen popup showing all available menus; tap to assign, detail button to view ingredients
-- **Menu management** — create, edit and delete menus with title and ingredients via a form
+- **Menu management** — create, edit and delete menus with title and ingredients via a form (personal per user)
+- **Shopping list** — add items manually or from recipe ingredients; toggle bought status; clear list
+- **Families** — create groups ("Familien"), invite members by email, share weekly plans and shopping lists within a family
+- **Context switcher** — toolbar chip to switch between "Privat" (personal) and family contexts; all data (weeks, shopping) follows the active context
+- **Auto-join on invite** — invited users are automatically added to the family on their next login
 - **Week archiving** — browse past and future weeks via a datepicker; date range displayed in the header
 - **Auto-creation** — the current week is created automatically on first visit each Monday
 - **Next week** — create next week in advance or navigate to it if it already exists
-- **Week reset** — clear all assigned menus of the displayed week (confirmation dialog)
+- **Week reset** — clear all assigned menus of the displayed week via three-dot menu (confirmation dialog)
 - **CSV export** — download all menus as a semicolon-separated CSV file (desktop only)
 - **CSV import** — import menus from a CSV file with structure validation and user-friendly error messages (desktop only)
 - **Google OAuth** — login via Google account, avatar with email display and logout
-- **Access control** — only admin-invited emails can access the app; uninvited users see an access-denied page
-- **Admin invite UI** — admin can add/remove allowed emails via "Teilnehmer einladen" in the sidenav
-- **Persistence** — all data (menus, weeks, assignments) stored in SQLite and survives page reloads
+- **Open registration** — anyone with a Google account can sign up (no invite required)
+- **Persistence** — all data (menus, weeks, assignments, shopping lists) stored in SQLite and survives page reloads
 - **Mobile first** — touch-optimized, responsive layout that scales up on desktop
 - **Dark mode** — Angular Material dark theme throughout
 
@@ -91,34 +94,43 @@ This will pull the latest code on the Raspi, rebuild all Docker images from scra
 
 ## API Endpoints
 
-### Menus
-
-| Method | Endpoint          | Description    |
-|--------|-------------------|----------------|
-| GET    | `/api/menus`      | List all menus |
-| POST   | `/api/menus`      | Create a menu  |
-| PUT    | `/api/menus/{id}` | Update a menu  |
-| DELETE | `/api/menus/{id}` | Delete a menu  |
-
 ### Auth
 
 | Method | Endpoint                     | Description                                      |
 |--------|------------------------------|--------------------------------------------------|
 | GET    | `/api/auth/google/login`     | Redirect to Google OAuth consent screen          |
 | GET    | `/api/auth/google/callback`  | OAuth callback, creates session, redirects with token |
-| GET    | `/api/auth/me`               | Get current user info (email, name, avatar, is_admin, is_allowed) |
+| GET    | `/api/auth/me`               | Get current user info (email, name, avatar, families, active context) |
 
 All other endpoints require `Authorization: Bearer <token>` header.
 
-### Admin (requires admin role)
+### Families
 
-| Method | Endpoint                  | Description              |
-|--------|---------------------------|--------------------------|
-| GET    | `/api/admin/members`      | List allowed emails      |
-| POST   | `/api/admin/members`      | Add an allowed email     |
-| DELETE | `/api/admin/members/{id}` | Remove an allowed email  |
+| Method | Endpoint                                | Description                              |
+|--------|-----------------------------------------|------------------------------------------|
+| GET    | `/api/families`                         | List families the user belongs to        |
+| POST   | `/api/families`                         | Create a new family (creator = member)   |
+| PUT    | `/api/families/{id}`                    | Rename a family (creator only)           |
+| DELETE | `/api/families/{id}`                    | Delete a family (creator only)           |
+| POST   | `/api/families/{id}/invite`             | Invite a member by email                 |
+| DELETE | `/api/families/{id}/members/{user_id}`  | Remove a member or leave the family      |
 
-### Weeks
+### Context
+
+| Method | Endpoint       | Description                                          |
+|--------|----------------|------------------------------------------------------|
+| PUT    | `/api/context`  | Switch active context (`family_id: null` = private)  |
+
+### Menus (personal per user)
+
+| Method | Endpoint          | Description           |
+|--------|-------------------|-----------------------|
+| GET    | `/api/menus`      | List user's menus     |
+| POST   | `/api/menus`      | Create a menu         |
+| PUT    | `/api/menus/{id}` | Update a menu         |
+| DELETE | `/api/menus/{id}` | Delete a menu         |
+
+### Weeks (scoped by active context)
 
 | Method | Endpoint                          | Description                               |
 |--------|-----------------------------------|-------------------------------------------|
@@ -127,5 +139,16 @@ All other endpoints require `Authorization: Bearer <token>` header.
 | POST   | `/api/week/next`                  | Create next week                          |
 | PUT    | `/api/week/{week_id}/{day}`       | Assign menu to a day in a week            |
 | DELETE | `/api/week/{week_id}`             | Reset (clear) a specific week             |
+
+### Shopping List (scoped by active context)
+
+| Method | Endpoint                          | Description                     |
+|--------|-----------------------------------|---------------------------------|
+| GET    | `/api/shopping`                   | List shopping items             |
+| POST   | `/api/shopping`                   | Add a shopping item             |
+| PUT    | `/api/shopping/{id}`              | Update a shopping item          |
+| PATCH  | `/api/shopping/{id}/toggle`       | Toggle bought status            |
+| DELETE | `/api/shopping/{id}`              | Delete a shopping item          |
+| DELETE | `/api/shopping`                   | Clear all shopping items        |
 
 @Author Severin Goddon, 2026

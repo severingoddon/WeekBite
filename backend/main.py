@@ -11,7 +11,11 @@ from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy.orm import Session as DBSession
 
 from database import Base, engine, get_db
-from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, User, AllowedEmail, ShoppingItem, menu_ingredients, week_users, migrate_sessions_table
+from models import (
+    Menu, Ingredient, Week, WeekDay, Session as SessionModel, User,
+    AllowedEmail, ShoppingItem, menu_ingredients, Family, FamilyInvite,
+    family_members, migrate_sessions_table,
+)
 from schemas import (
     MenuBase,
     MenuResponse,
@@ -24,6 +28,11 @@ from schemas import (
     AllowedEmailResponse,
     ShoppingItemCreate,
     ShoppingItemResponse,
+    FamilyCreate,
+    FamilyResponse,
+    FamilyMemberResponse,
+    FamilyInviteCreate,
+    ContextSwitch,
 )
 
 load_dotenv()
@@ -75,6 +84,17 @@ def require_admin(session: SessionModel = Depends(get_current_session)):
     return session
 
 
+def get_context(session: SessionModel):
+    """Returns (user_id, family_id) based on user's active_family_id."""
+    user = session.user
+    if user.active_family_id:
+        # Verify user is member of the family
+        is_member = any(f.id == user.active_family_id for f in user.families)
+        if is_member:
+            return (None, user.active_family_id)
+    return (user.id, None)
+
+
 @app.get("/api/auth/google/login")
 async def google_login(request: Request):
     redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback")
@@ -91,7 +111,6 @@ async def google_callback(request: Request, db: DBSession = Depends(get_db)):
     google_id = userinfo["sub"]
     email = userinfo["email"]
     name = userinfo.get("name", "")
-
     picture = userinfo.get("picture", "")
 
     user = db.query(User).filter(User.google_id == google_id).first()
@@ -108,17 +127,19 @@ async def google_callback(request: Request, db: DBSession = Depends(get_db)):
     db.add(SessionModel(token=session_token, user_id=user.id))
     db.flush()
 
-    # Auto-link allowed users to the current week
-    is_allowed = email == ADMIN_EMAIL or db.query(AllowedEmail).filter(AllowedEmail.email == email).first() is not None
-    if is_allowed:
-        monday = get_monday(date.today())
-        week = db.query(Week).filter(Week.start_date == monday.isoformat()).first()
-        if week:
-            already_linked = db.execute(
-                week_users.select().where(week_users.c.week_id == week.id, week_users.c.user_id == user.id)
-            ).first()
-            if not already_linked:
-                db.execute(week_users.insert().values(week_id=week.id, user_id=user.id))
+    # Resolve pending family invites for this email (invites are stored lowercased)
+    pending_invites = db.query(FamilyInvite).filter(FamilyInvite.email == email.lower()).all()
+    for invite in pending_invites:
+        # Check if already a member
+        already_member = db.execute(
+            family_members.select().where(
+                family_members.c.family_id == invite.family_id,
+                family_members.c.user_id == user.id,
+            )
+        ).first()
+        if not already_member:
+            db.execute(family_members.insert().values(family_id=invite.family_id, user_id=user.id))
+        db.delete(invite)
 
     db.commit()
 
@@ -130,10 +151,23 @@ def get_me(session: SessionModel = Depends(get_current_session), db: DBSession =
     user = session.user
     letter = user.email[0].upper() if user.email else "?"
     is_admin = user.email == ADMIN_EMAIL
-    is_allowed = is_admin or db.query(AllowedEmail).filter(AllowedEmail.email == user.email).first() is not None
+
+    families_response = []
+    for family in user.families:
+        members = [
+            FamilyMemberResponse(
+                user_id=m.id, email=m.email, name=m.name, picture=m.picture
+            )
+            for m in family.members
+        ]
+        families_response.append(FamilyResponse(
+            id=family.id, name=family.name, created_by=family.created_by, members=members,
+        ))
+
     return UserResponse(
         email=user.email, name=user.name, avatar_letter=letter, picture=user.picture,
-        is_admin=is_admin, is_allowed=is_allowed,
+        is_admin=is_admin, active_family_id=user.active_family_id,
+        families=families_response,
     )
 
 
@@ -144,8 +178,8 @@ def get_monday(d: date) -> date:
     return d - timedelta(days=d.weekday())
 
 
-def create_week(db: DBSession, start_date: date) -> Week:
-    week = Week(start_date=start_date.isoformat())
+def create_week(db: DBSession, start_date: date, user_id: int | None = None, family_id: int | None = None) -> Week:
+    week = Week(start_date=start_date.isoformat(), user_id=user_id, family_id=family_id)
     db.add(week)
     db.flush()
     for day_name in WEEKDAYS:
@@ -160,12 +194,8 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     db = next(get_db())
     try:
-        week_count = db.query(Week).count()
-        if week_count == 0:
-            monday = get_monday(date.today())
-            create_week(db, monday)
-        # Seed admin email into allowed_emails
-        if not db.query(AllowedEmail).filter(AllowedEmail.email == ADMIN_EMAIL).first():
+        # Seed admin email into allowed_emails (dormant)
+        if ADMIN_EMAIL and not db.query(AllowedEmail).filter(AllowedEmail.email == ADMIN_EMAIL).first():
             db.add(AllowedEmail(email=ADMIN_EMAIL))
             db.commit()
     finally:
@@ -203,31 +233,202 @@ def week_to_response(week: Week) -> WeekResponse:
     )
 
 
+def check_week_access(week: Week, session: SessionModel):
+    """Verify user has access to a week (owns it or is member of the family)."""
+    user = session.user
+    if week.user_id and week.user_id == user.id:
+        return
+    if week.family_id:
+        is_member = any(f.id == week.family_id for f in user.families)
+        if is_member:
+            return
+    raise HTTPException(status_code=403, detail="Access denied")
+
+
+def check_shopping_access(item: ShoppingItem, session: SessionModel):
+    """Verify user has access to a shopping item."""
+    user = session.user
+    if item.user_id and item.user_id == user.id:
+        return
+    if item.family_id:
+        is_member = any(f.id == item.family_id for f in user.families)
+        if is_member:
+            return
+    raise HTTPException(status_code=403, detail="Access denied")
+
+
+# --- Family Endpoints ---
+
+
+@app.get("/api/families", response_model=list[FamilyResponse])
+def get_families(session: SessionModel = Depends(get_current_session)):
+    user = session.user
+    result = []
+    for family in user.families:
+        members = [
+            FamilyMemberResponse(user_id=m.id, email=m.email, name=m.name, picture=m.picture)
+            for m in family.members
+        ]
+        result.append(FamilyResponse(
+            id=family.id, name=family.name, created_by=family.created_by, members=members,
+        ))
+    return result
+
+
+@app.post("/api/families", response_model=FamilyResponse)
+def create_family(data: FamilyCreate, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user = session.user
+    family = Family(name=data.name, created_by=user.id)
+    db.add(family)
+    db.flush()
+    # Auto-add creator as member
+    db.execute(family_members.insert().values(family_id=family.id, user_id=user.id))
+    db.commit()
+    db.refresh(family)
+    members = [FamilyMemberResponse(user_id=user.id, email=user.email, name=user.name, picture=user.picture)]
+    return FamilyResponse(id=family.id, name=family.name, created_by=family.created_by, members=members)
+
+
+@app.put("/api/families/{family_id}", response_model=FamilyResponse)
+def update_family(family_id: int, data: FamilyCreate, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    family = db.query(Family).filter(Family.id == family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="Family not found")
+    if family.created_by != session.user.id:
+        raise HTTPException(status_code=403, detail="Only the creator can rename the family")
+    family.name = data.name
+    db.commit()
+    db.refresh(family)
+    members = [
+        FamilyMemberResponse(user_id=m.id, email=m.email, name=m.name, picture=m.picture)
+        for m in family.members
+    ]
+    return FamilyResponse(id=family.id, name=family.name, created_by=family.created_by, members=members)
+
+
+@app.delete("/api/families/{family_id}")
+def delete_family(family_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    family = db.query(Family).filter(Family.id == family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="Family not found")
+    if family.created_by != session.user.id:
+        raise HTTPException(status_code=403, detail="Only the creator can delete the family")
+    # Reset active_family_id for all members
+    db.query(User).filter(User.active_family_id == family_id).update({"active_family_id": None})
+    db.delete(family)
+    db.commit()
+    return {"detail": "Family deleted"}
+
+
+@app.post("/api/families/{family_id}/invite")
+def invite_to_family(family_id: int, data: FamilyInviteCreate, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    family = db.query(Family).filter(Family.id == family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="Family not found")
+    # Only members can invite
+    is_member = any(f.id == family_id for f in session.user.families)
+    if not is_member:
+        raise HTTPException(status_code=403, detail="Not a member of this family")
+
+    email = data.email.strip().lower()
+
+    # Check if user already exists and is already a member
+    existing_user = db.query(User).filter(User.email == email).first()
+    if existing_user:
+        already_member = db.execute(
+            family_members.select().where(
+                family_members.c.family_id == family_id,
+                family_members.c.user_id == existing_user.id,
+            )
+        ).first()
+        if already_member:
+            raise HTTPException(status_code=400, detail="User is already a member")
+        # Add directly
+        db.execute(family_members.insert().values(family_id=family_id, user_id=existing_user.id))
+        db.commit()
+        return {"detail": "User added to family"}
+
+    # Check if invite already exists
+    existing_invite = db.query(FamilyInvite).filter(
+        FamilyInvite.family_id == family_id, FamilyInvite.email == email
+    ).first()
+    if existing_invite:
+        raise HTTPException(status_code=400, detail="Invite already pending")
+
+    db.add(FamilyInvite(family_id=family_id, email=email))
+    db.commit()
+    return {"detail": "Invite created"}
+
+
+@app.delete("/api/families/{family_id}/members/{user_id}")
+def remove_family_member(family_id: int, user_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    family = db.query(Family).filter(Family.id == family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="Family not found")
+
+    current_user = session.user
+    # Can remove yourself (leave) or creator can remove others
+    if user_id != current_user.id and family.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the creator can remove members")
+
+    # Creator cannot remove themselves (must delete the family instead)
+    if user_id == family.created_by and user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Creator cannot leave. Delete the family instead.")
+
+    db.execute(
+        family_members.delete().where(
+            family_members.c.family_id == family_id,
+            family_members.c.user_id == user_id,
+        )
+    )
+    # Reset active_family_id if the removed user had this family active
+    removed_user = db.query(User).filter(User.id == user_id).first()
+    if removed_user and removed_user.active_family_id == family_id:
+        removed_user.active_family_id = None
+    db.commit()
+    return {"detail": "Member removed"}
+
+
+# --- Context Switch ---
+
+
+@app.put("/api/context")
+def switch_context(data: ContextSwitch, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user = session.user
+    if data.family_id is not None:
+        is_member = any(f.id == data.family_id for f in user.families)
+        if not is_member:
+            raise HTTPException(status_code=403, detail="Not a member of this family")
+    user.active_family_id = data.family_id
+    db.commit()
+    return {"detail": "Context switched"}
+
+
 # --- Menu Endpoints ---
 
 
 @app.get("/api/menus", response_model=list[MenuResponse])
-def get_menus(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    menus = db.query(Menu).order_by(Menu.title).all()
+def get_menus(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    menus = db.query(Menu).filter(Menu.user_id == session.user.id).order_by(Menu.title).all()
     return [menu_to_response(m) for m in menus]
 
 
 @app.get("/api/menus/{menu_id}", response_model=MenuResponse)
-def get_menu(menu_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    menu = db.query(Menu).filter(Menu.id == menu_id).first()
+def get_menu(menu_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    menu = db.query(Menu).filter(Menu.id == menu_id, Menu.user_id == session.user.id).first()
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found")
     return menu_to_response(menu)
 
 
 @app.post("/api/menus", response_model=MenuResponse)
-def create_menu(menu_data: MenuBase, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    existing = db.query(Menu).filter(Menu.title == menu_data.title).first()
+def create_menu(menu_data: MenuBase, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    existing = db.query(Menu).filter(Menu.title == menu_data.title, Menu.user_id == session.user.id).first()
     if existing:
         raise HTTPException(status_code=400, detail="Menu with this title already exists")
 
     ingredients = [Ingredient(name=name) for name in menu_data.ingredients]
-    menu = Menu(title=menu_data.title, note=menu_data.note, effort_min=menu_data.effort_min, ingredients=ingredients)
+    menu = Menu(title=menu_data.title, note=menu_data.note, effort_min=menu_data.effort_min, user_id=session.user.id, ingredients=ingredients)
     db.add(menu)
     db.commit()
     db.refresh(menu)
@@ -235,8 +436,8 @@ def create_menu(menu_data: MenuBase, _=Depends(get_current_session), db: DBSessi
 
 
 @app.put("/api/menus/{menu_id}", response_model=MenuResponse)
-def update_menu(menu_id: int, menu_data: MenuBase, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    menu = db.query(Menu).filter(Menu.id == menu_id).first()
+def update_menu(menu_id: int, menu_data: MenuBase, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    menu = db.query(Menu).filter(Menu.id == menu_id, Menu.user_id == session.user.id).first()
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found")
 
@@ -259,8 +460,8 @@ def update_menu(menu_id: int, menu_data: MenuBase, _=Depends(get_current_session
 
 
 @app.delete("/api/menus/{menu_id}")
-def delete_menu(menu_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    menu = db.query(Menu).filter(Menu.id == menu_id).first()
+def delete_menu(menu_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    menu = db.query(Menu).filter(Menu.id == menu_id, Menu.user_id == session.user.id).first()
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found")
     db.delete(menu)
@@ -272,14 +473,22 @@ def delete_menu(menu_id: int, _=Depends(get_current_session), db: DBSession = De
 
 
 @app.get("/api/week/next-exists", response_model=NextWeekStatus)
-def check_next_week(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def check_next_week(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user_id, family_id = get_context(session)
     next_monday = get_monday(date.today()) + timedelta(weeks=1)
-    week = db.query(Week).filter(Week.start_date == next_monday.isoformat()).first()
+    query = db.query(Week).filter(Week.start_date == next_monday.isoformat())
+    if user_id:
+        query = query.filter(Week.user_id == user_id)
+    else:
+        query = query.filter(Week.family_id == family_id)
+    week = query.first()
     return NextWeekStatus(exists=week is not None, start_date=next_monday.isoformat())
 
 
 @app.get("/api/week", response_model=WeekResponse)
-def get_week(date_param: str | None = None, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def get_week(date_param: str | None = None, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user_id, family_id = get_context(session)
+
     if date_param:
         try:
             target = date.fromisoformat(date_param)
@@ -289,11 +498,16 @@ def get_week(date_param: str | None = None, _=Depends(get_current_session), db: 
         target = date.today()
 
     monday = get_monday(target)
-    week = db.query(Week).filter(Week.start_date == monday.isoformat()).first()
+    query = db.query(Week).filter(Week.start_date == monday.isoformat())
+    if user_id:
+        query = query.filter(Week.user_id == user_id)
+    else:
+        query = query.filter(Week.family_id == family_id)
+    week = query.first()
 
     # Auto-create only for the current week
     if not week and monday == get_monday(date.today()):
-        week = create_week(db, monday)
+        week = create_week(db, monday, user_id=user_id, family_id=family_id)
 
     if not week:
         raise HTTPException(status_code=404, detail="No week found for this date")
@@ -302,17 +516,30 @@ def get_week(date_param: str | None = None, _=Depends(get_current_session), db: 
 
 
 @app.post("/api/week/next", response_model=WeekResponse)
-def create_next_week(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def create_next_week(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user_id, family_id = get_context(session)
     next_monday = get_monday(date.today()) + timedelta(weeks=1)
-    existing = db.query(Week).filter(Week.start_date == next_monday.isoformat()).first()
+
+    query = db.query(Week).filter(Week.start_date == next_monday.isoformat())
+    if user_id:
+        query = query.filter(Week.user_id == user_id)
+    else:
+        query = query.filter(Week.family_id == family_id)
+    existing = query.first()
+
     if existing:
         raise HTTPException(status_code=409, detail="Next week already exists")
-    week = create_week(db, next_monday)
+    week = create_week(db, next_monday, user_id=user_id, family_id=family_id)
     return week_to_response(week)
 
 
 @app.put("/api/week/{week_id}/{day}", response_model=WeekDayResponse)
-def update_weekday(week_id: int, day: str, update: WeekDayUpdate, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def update_weekday(week_id: int, day: str, update: WeekDayUpdate, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    week = db.query(Week).filter(Week.id == week_id).first()
+    if not week:
+        raise HTTPException(status_code=404, detail="Week not found")
+    check_week_access(week, session)
+
     weekday = (
         db.query(WeekDay)
         .filter(WeekDay.week_id == week_id, WeekDay.day == day)
@@ -333,10 +560,11 @@ def update_weekday(week_id: int, day: str, update: WeekDayUpdate, _=Depends(get_
 
 
 @app.delete("/api/week/{week_id}")
-def reset_week(week_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def reset_week(week_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
     week = db.query(Week).filter(Week.id == week_id).first()
     if not week:
         raise HTTPException(status_code=404, detail="Week not found")
+    check_week_access(week, session)
     for day in week.days:
         day.menu_id = None
     db.commit()
@@ -358,20 +586,6 @@ def add_member(data: AllowedEmailCreate, _=Depends(require_admin), db: DBSession
         raise HTTPException(status_code=400, detail="Email already allowed")
     allowed = AllowedEmail(email=data.email)
     db.add(allowed)
-    db.flush()
-
-    # Auto-link user to current week if they already have an account
-    user = db.query(User).filter(User.email == data.email).first()
-    if user:
-        monday = get_monday(date.today())
-        week = db.query(Week).filter(Week.start_date == monday.isoformat()).first()
-        if week:
-            already_linked = db.execute(
-                week_users.select().where(week_users.c.week_id == week.id, week_users.c.user_id == user.id)
-            ).first()
-            if not already_linked:
-                db.execute(week_users.insert().values(week_id=week.id, user_id=user.id))
-
     db.commit()
     db.refresh(allowed)
     return allowed
@@ -391,17 +605,31 @@ def remove_member(member_id: int, _=Depends(require_admin), db: DBSession = Depe
 
 
 @app.get("/api/shopping", response_model=list[ShoppingItemResponse])
-def get_shopping_items(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    return db.query(ShoppingItem).order_by(ShoppingItem.id).all()
+def get_shopping_items(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user_id, family_id = get_context(session)
+    query = db.query(ShoppingItem)
+    if user_id:
+        query = query.filter(ShoppingItem.user_id == user_id)
+    else:
+        query = query.filter(ShoppingItem.family_id == family_id)
+    return query.order_by(ShoppingItem.id).all()
 
 
 @app.post("/api/shopping", response_model=ShoppingItemResponse)
-def add_shopping_item(item: ShoppingItemCreate, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def add_shopping_item(item: ShoppingItemCreate, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
     from sqlalchemy import func
-    existing = db.query(ShoppingItem).filter(func.lower(ShoppingItem.name) == item.name.strip().lower()).first()
+    user_id, family_id = get_context(session)
+
+    query = db.query(ShoppingItem).filter(func.lower(ShoppingItem.name) == item.name.strip().lower())
+    if user_id:
+        query = query.filter(ShoppingItem.user_id == user_id)
+    else:
+        query = query.filter(ShoppingItem.family_id == family_id)
+    existing = query.first()
+
     if existing:
         return ShoppingItemResponse(id=existing.id, name=existing.name, quantity=existing.quantity, created=False)
-    shopping_item = ShoppingItem(name=item.name.strip(), quantity=item.quantity)
+    shopping_item = ShoppingItem(name=item.name.strip(), quantity=item.quantity, user_id=user_id, family_id=family_id)
     db.add(shopping_item)
     db.commit()
     db.refresh(shopping_item)
@@ -409,10 +637,11 @@ def add_shopping_item(item: ShoppingItemCreate, _=Depends(get_current_session), 
 
 
 @app.put("/api/shopping/{item_id}", response_model=ShoppingItemResponse)
-def update_shopping_item(item_id: int, item: ShoppingItemCreate, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def update_shopping_item(item_id: int, item: ShoppingItemCreate, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
     shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
     if not shopping_item:
         raise HTTPException(status_code=404, detail="Shopping item not found")
+    check_shopping_access(shopping_item, session)
     shopping_item.name = item.name
     shopping_item.quantity = item.quantity
     db.commit()
@@ -421,10 +650,11 @@ def update_shopping_item(item_id: int, item: ShoppingItemCreate, _=Depends(get_c
 
 
 @app.patch("/api/shopping/{item_id}/toggle", response_model=ShoppingItemResponse)
-def toggle_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def toggle_shopping_item(item_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
     shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
     if not shopping_item:
         raise HTTPException(status_code=404, detail="Shopping item not found")
+    check_shopping_access(shopping_item, session)
     shopping_item.checked = not shopping_item.checked
     db.commit()
     db.refresh(shopping_item)
@@ -432,17 +662,24 @@ def toggle_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSes
 
 
 @app.delete("/api/shopping/{item_id}")
-def delete_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+def delete_shopping_item(item_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
     shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
     if not shopping_item:
         raise HTTPException(status_code=404, detail="Shopping item not found")
+    check_shopping_access(shopping_item, session)
     db.delete(shopping_item)
     db.commit()
     return {"detail": "Shopping item deleted"}
 
 
 @app.delete("/api/shopping")
-def clear_shopping_list(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
-    db.query(ShoppingItem).delete()
+def clear_shopping_list(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    user_id, family_id = get_context(session)
+    query = db.query(ShoppingItem)
+    if user_id:
+        query = query.filter(ShoppingItem.user_id == user_id)
+    else:
+        query = query.filter(ShoppingItem.family_id == family_id)
+    query.delete()
     db.commit()
     return {"detail": "Shopping list cleared"}

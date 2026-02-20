@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Menu, MenuCreate, Week, WeekDay, NextWeekStatus, ShoppingItem, ShoppingItemCreate } from '../models/menu.model';
+import { Menu, MenuCreate, Week, WeekDay, NextWeekStatus, ShoppingItem, ShoppingItemCreate, Family, FamilyCreate } from '../models/menu.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -48,19 +48,6 @@ export class ApiService {
     return this.http.post<Week>(`${this.baseUrl}/week/next`, {});
   }
 
-  // Admin members
-  getMembers(): Observable<{ id: number; email: string }[]> {
-    return this.http.get<{ id: number; email: string }[]>(`${this.baseUrl}/admin/members`);
-  }
-
-  addMember(email: string): Observable<{ id: number; email: string }> {
-    return this.http.post<{ id: number; email: string }>(`${this.baseUrl}/admin/members`, { email });
-  }
-
-  removeMember(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/admin/members/${id}`);
-  }
-
   // Shopping list
   getShoppingItems(): Observable<ShoppingItem[]> {
     return this.http.get<ShoppingItem[]>(`${this.baseUrl}/shopping`);
@@ -84,5 +71,35 @@ export class ApiService {
 
   clearShoppingList(): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/shopping`);
+  }
+
+  // Families
+  getFamilies(): Observable<Family[]> {
+    return this.http.get<Family[]>(`${this.baseUrl}/families`);
+  }
+
+  createFamily(data: FamilyCreate): Observable<Family> {
+    return this.http.post<Family>(`${this.baseUrl}/families`, data);
+  }
+
+  updateFamily(id: number, data: FamilyCreate): Observable<Family> {
+    return this.http.put<Family>(`${this.baseUrl}/families/${id}`, data);
+  }
+
+  deleteFamily(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/families/${id}`);
+  }
+
+  inviteToFamily(familyId: number, email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/families/${familyId}/invite`, { email });
+  }
+
+  removeFamilyMember(familyId: number, userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/families/${familyId}/members/${userId}`);
+  }
+
+  // Context
+  switchContext(familyId: number | null): Observable<any> {
+    return this.http.put(`${this.baseUrl}/context`, { family_id: familyId });
   }
 }

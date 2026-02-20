@@ -1,0 +1,118 @@
+<div class="family-page">
+  <h2 class="gradient-text">Meine Familien</h2>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <div class="add-row">
+        <mat-form-field class="name-field" appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Familienname</mat-label>
+          <input matInput [(ngModel)]="newFamilyName" (keyup.enter)="createFamily()" placeholder="z.B. Familie Müller">
+        </mat-form-field>
+        <button mat-flat-button class="add-btn" (click)="createFamily()" [disabled]="!newFamilyName.trim()">
+          Erstellen
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @for (family of families; track family.id) {
+    <mat-card class="form-card family-card" [class.active-family]="isActive(family)">
+      <mat-card-content>
+        <div class="family-header">
+          @if (editingFamilyId === family.id) {
+            <div class="rename-row">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-field">
+                <input matInput [(ngModel)]="editFamilyName" (keyup.enter)="saveRename(family)">
+              </mat-form-field>
+              <button mat-icon-button (click)="saveRename(family)">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button mat-icon-button (click)="cancelRename()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          } @else {
+            <h3>{{ family.name }}</h3>
+            @if (isActive(family)) {
+              <span class="active-badge">Aktiv</span>
+            }
+          }
+          <span class="spacer"></span>
+          @if (editingFamilyId !== family.id) {
+            @if (!isActive(family)) {
+              <button mat-stroked-button class="activate-btn" (click)="setActive(family)">
+                Aktivieren
+              </button>
+            } @else {
+              <button mat-stroked-button class="activate-btn" (click)="setPrivate()">
+                Privat
+              </button>
+            }
+            <button mat-icon-button [matMenuTriggerFor]="familyMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #familyMenu="matMenu">
+              @if (isCreator(family)) {
+                <button mat-menu-item (click)="startRename(family)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Umbenennen</span>
+                </button>
+                <button mat-menu-item (click)="deleteFamily(family)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Löschen</span>
+                </button>
+              } @else {
+                <button mat-menu-item (click)="leaveFamily(family)">
+                  <mat-icon>logout</mat-icon>
+                  <span>Verlassen</span>
+                </button>
+              }
+            </mat-menu>
+          }
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="members-section">
+          <h4>Mitglieder</h4>
+          <mat-list>
+            @for (member of family.members; track member.user_id) {
+              <mat-list-item>
+                @if (member.picture) {
+                  <img matListItemAvatar [src]="member.picture" referrerpolicy="no-referrer" alt="avatar">
+                } @else {
+                  <mat-icon matListItemIcon>person</mat-icon>
+                }
+                <span matListItemTitle>{{ member.name || member.email }}</span>
+                <span matListItemLine class="member-email">{{ member.email }}</span>
+                @if (isCreator(family) && member.user_id !== family.created_by) {
+                  <button mat-icon-button matListItemMeta (click)="removeMember(family, member.user_id)">
+                    <mat-icon>person_remove</mat-icon>
+                  </button>
+                }
+              </mat-list-item>
+            }
+          </mat-list>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="invite-section">
+          <div class="add-row">
+            <mat-form-field class="name-field" appearance="outline" subscriptSizing="dynamic">
+              <mat-label>E-Mail einladen</mat-label>
+              <input matInput [(ngModel)]="inviteEmails[family.id]" (keyup.enter)="inviteMember(family)" placeholder="name@example.com">
+            </mat-form-field>
+            <button mat-flat-button class="add-btn" (click)="inviteMember(family)" [disabled]="!(inviteEmails[family.id] || '').trim()">
+              Einladen
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (families.length === 0) {
+    <p class="empty-hint">Noch keine Familien erstellt. Erstelle eine Familie, um Wochenpläne und Einkaufslisten zu teilen.</p>
+  }
+</div>

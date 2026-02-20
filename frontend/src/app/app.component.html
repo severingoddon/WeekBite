@@ -13,12 +13,10 @@
         <mat-icon matListItemIcon>shopping_cart</mat-icon>
         <span matListItemTitle>Einkaufsliste</span>
       </a>
-      @if (user?.is_admin) {
-        <a mat-list-item (click)="navigateTo('invite')" [class.active-link]="currentPath === '/invite'">
-          <mat-icon matListItemIcon>person_add</mat-icon>
-          <span matListItemTitle>Teilnehmer einladen</span>
-        </a>
-      }
+      <a mat-list-item (click)="navigateTo('families')" [class.active-link]="currentPath === '/families'">
+        <mat-icon matListItemIcon>groups</mat-icon>
+        <span matListItemTitle>Meine Familien</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -27,7 +25,26 @@
       <button mat-icon-button (click)="sidenavOpen = !sidenavOpen">
         <mat-icon>menu</mat-icon>
       </button>
-      <span class="application-title gradient-text" (click)="navigateTo('')" style="cursor: pointer;">WeekBite 🐀</span>
+      <span class="application-title gradient-text" (click)="navigateTo('')" style="cursor: pointer;">WeekBite</span>
+      @if (user && user.families.length > 0) {
+        <button class="context-chip" [matMenuTriggerFor]="contextMenu">
+          {{ activeContextName }}
+          <mat-icon class="context-arrow">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #contextMenu="matMenu">
+          <button mat-menu-item (click)="switchContext(null)">
+            <mat-icon>person</mat-icon>
+            <span>Privat</span>
+          </button>
+          <mat-divider></mat-divider>
+          @for (family of user.families; track family.id) {
+            <button mat-menu-item (click)="switchContext(family.id)">
+              <mat-icon>groups</mat-icon>
+              <span>{{ family.name }}</span>
+            </button>
+          }
+        </mat-menu>
+      }
       <span class="spacer"></span>
       @if (user) {
         <button class="avatar-btn" [matMenuTriggerFor]="userMenu">
