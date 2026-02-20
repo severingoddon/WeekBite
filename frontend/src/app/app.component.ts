@@ -28,6 +28,7 @@ import { AuthService, UserInfo } from './services/auth.service';
 export class AppComponent {
   sidenavOpen = false;
   user: UserInfo | null = null;
+  currentPath = '';
 
   constructor(
     private router: Router,
@@ -35,7 +36,8 @@ export class AppComponent {
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((e) => {
+        this.currentPath = (e as NavigationEnd).urlAfterRedirects || (e as NavigationEnd).url;
         if (this.auth.isLoggedIn() && !this.user) {
           this.auth.getMe().subscribe({
             next: (u) => {

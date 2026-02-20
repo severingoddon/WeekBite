@@ -4,7 +4,7 @@
   <mat-card class="form-card">
     <mat-card-content>
       <div class="add-row">
-        <mat-form-field class="email-field" appearance="outline">
+        <mat-form-field class="email-field" appearance="outline" subscriptSizing="dynamic">
           <mat-label>E-Mail-Adresse</mat-label>
           <input matInput [(ngModel)]="newEmail" (keyup.enter)="addMember()" placeholder="name@example.com">
         </mat-form-field>
@@ -26,9 +26,11 @@
           <mat-list-item>
             <mat-icon matListItemIcon>person</mat-icon>
             <span matListItemTitle>{{ member.email }}</span>
-            <button mat-icon-button matListItemMeta (click)="removeMember(member.id)">
-              <mat-icon>delete</mat-icon>
-            </button>
+            @if (!isAdmin(member.email)) {
+              <button mat-icon-button matListItemMeta (click)="removeMember(member.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
           </mat-list-item>
           <mat-divider></mat-divider>
         }

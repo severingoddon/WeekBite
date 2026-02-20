@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-invite',
@@ -27,10 +28,12 @@ import { ApiService } from '../../services/api.service';
 export class InviteComponent implements OnInit {
   members: { id: number; email: string }[] = [];
   newEmail = '';
+  private adminEmail = '';
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private auth: AuthService) {}
 
   ngOnInit() {
+    this.auth.getMe().subscribe((u) => (this.adminEmail = u.is_admin ? u.email : ''));
     this.loadMembers();
   }
 
@@ -51,5 +54,9 @@ export class InviteComponent implements OnInit {
 
   removeMember(id: number) {
     this.api.removeMember(id).subscribe(() => this.loadMembers());
+  }
+
+  isAdmin(email: string): boolean {
+    return email === this.adminEmail;
   }
 }
