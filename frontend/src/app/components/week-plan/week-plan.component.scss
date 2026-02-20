@@ -47,6 +47,12 @@
   border-color: var(--border-subtle) !important;
   color: var(--text-secondary) !important;
   transition: border-color var(--transition-fast), color var(--transition-fast);
+  --mdc-outlined-button-label-text-color: var(--text-secondary);
+  --mdc-outlined-button-focus-label-text-color: var(--text-primary);
+  --mdc-outlined-button-hover-label-text-color: var(--text-primary);
+  --mdc-outlined-button-pressed-label-text-color: var(--text-primary);
+  --mat-outlined-button-state-layer-color: var(--text-secondary);
+  --mat-outlined-button-ripple-color: rgba(255, 255, 255, 0.08);
 
   &:hover {
     border-color: var(--accent-cyan) !important;
