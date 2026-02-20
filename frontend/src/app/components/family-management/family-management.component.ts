@@ -12,7 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
 import { AuthService, UserInfo } from '../../services/auth.service';
-import { Family } from '../../models/menu.model';
+import { Family, PendingInvite } from '../../models/menu.model';
 
 @Component({
   selector: 'app-family-management',
@@ -34,6 +34,7 @@ import { Family } from '../../models/menu.model';
 })
 export class FamilyManagementComponent implements OnInit {
   families: Family[] = [];
+  pendingInvites: PendingInvite[] = [];
   newFamilyName = '';
   inviteEmails: { [familyId: number]: string } = {};
   editingFamilyId: number | null = null;
@@ -54,6 +55,7 @@ export class FamilyManagementComponent implements OnInit {
     this.auth.getMe().subscribe((u) => {
       this.user = u;
       this.families = u.families;
+      this.pendingInvites = u.pending_invites || [];
     });
   }
 
@@ -163,6 +165,26 @@ export class FamilyManagementComponent implements OnInit {
     this.api.switchContext(null).subscribe(() => {
       this.loadData();
       this.snackBar.open('Kontext: Privat', 'OK', { duration: 2000 });
+    });
+  }
+
+  acceptInvite(invite: PendingInvite) {
+    this.api.acceptInvite(invite.id).subscribe({
+      next: () => {
+        this.snackBar.open(`Einladung zu "${invite.family_name}" angenommen`, 'OK', { duration: 2000 });
+        this.loadData();
+      },
+      error: (err) => this.snackBar.open(err.error?.detail || 'Fehler', 'OK', { duration: 3000 }),
+    });
+  }
+
+  declineInvite(invite: PendingInvite) {
+    this.api.declineInvite(invite.id).subscribe({
+      next: () => {
+        this.snackBar.open('Einladung abgelehnt', 'OK', { duration: 2000 });
+        this.loadData();
+      },
+      error: (err) => this.snackBar.open(err.error?.detail || 'Fehler', 'OK', { duration: 3000 }),
     });
   }
 }

@@ -120,6 +120,62 @@
   margin-top: 12px;
 }
 
+.invites-section {
+  h3 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}
+
+.invite-card {
+  border-color: var(--accent-violet) !important;
+}
+
+.invite-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.invite-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.invite-family-name {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.invite-from {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.invite-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.accept-btn {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet)) !important;
+  color: #fff !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.decline-btn {
+  border-color: var(--border-subtle) !important;
+  color: var(--text-secondary) !important;
+
+  &:hover {
+    border-color: var(--text-secondary) !important;
+  }
+}
+
 .empty-hint {
   color: var(--text-muted);
   font-style: italic;

@@ -71,6 +71,15 @@ class FamilyInviteCreate(BaseModel):
     email: str
 
 
+class PendingInviteResponse(BaseModel):
+    id: int
+    family_id: int
+    family_name: str
+    invited_by: str | None = None
+
+    model_config = {"from_attributes": True}
+
+
 class ContextSwitch(BaseModel):
     family_id: int | None = None
 
@@ -83,6 +92,7 @@ class UserResponse(BaseModel):
     is_admin: bool = False
     active_family_id: int | None = None
     families: list[FamilyResponse] = []
+    pending_invites: list[PendingInviteResponse] = []
 
 
 class AllowedEmailCreate(BaseModel):

@@ -65,9 +65,10 @@ export class AppComponent {
   switchContext(familyId: number | null) {
     this.api.switchContext(familyId).subscribe(() => {
       this.loadUser();
-      // Reload current route data
+      // Force component re-creation by navigating to a different route first
       const currentUrl = this.router.url;
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      const tempUrl = currentUrl === '/' ? '/menus' : '/';
+      this.router.navigateByUrl(tempUrl, { skipLocationChange: true }).then(() => {
         this.router.navigateByUrl(currentUrl);
       });
     });

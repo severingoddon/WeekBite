@@ -1,6 +1,32 @@
 <div class="family-page">
   <h2 class="gradient-text">Meine Familien</h2>
 
+  @if (pendingInvites.length > 0) {
+    <div class="invites-section">
+      <h3>Offene Einladungen</h3>
+      @for (invite of pendingInvites; track invite.id) {
+        <mat-card class="form-card invite-card">
+          <mat-card-content class="invite-content">
+            <div class="invite-info">
+              <span class="invite-family-name">{{ invite.family_name }}</span>
+              @if (invite.invited_by) {
+                <span class="invite-from">Eingeladen von {{ invite.invited_by }}</span>
+              }
+            </div>
+            <div class="invite-actions">
+              <button mat-flat-button class="accept-btn" (click)="acceptInvite(invite)">
+                Annehmen
+              </button>
+              <button mat-stroked-button class="decline-btn" (click)="declineInvite(invite)">
+                Ablehnen
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+
   <mat-card class="form-card">
     <mat-card-content>
       <div class="add-row">

@@ -32,6 +32,7 @@ from schemas import (
     FamilyResponse,
     FamilyMemberResponse,
     FamilyInviteCreate,
+    PendingInviteResponse,
     ContextSwitch,
 )
 
@@ -125,21 +126,6 @@ async def google_callback(request: Request, db: DBSession = Depends(get_db)):
 
     session_token = secrets.token_urlsafe(32)
     db.add(SessionModel(token=session_token, user_id=user.id))
-    db.flush()
-
-    # Resolve pending family invites for this email (invites are stored lowercased)
-    pending_invites = db.query(FamilyInvite).filter(FamilyInvite.email == email.lower()).all()
-    for invite in pending_invites:
-        # Check if already a member
-        already_member = db.execute(
-            family_members.select().where(
-                family_members.c.family_id == invite.family_id,
-                family_members.c.user_id == user.id,
-            )
-        ).first()
-        if not already_member:
-            db.execute(family_members.insert().values(family_id=invite.family_id, user_id=user.id))
-        db.delete(invite)
 
     db.commit()
 
@@ -164,10 +150,22 @@ def get_me(session: SessionModel = Depends(get_current_session), db: DBSession =
             id=family.id, name=family.name, created_by=family.created_by, members=members,
         ))
 
+    # Pending invites for this user
+    pending = db.query(FamilyInvite).filter(FamilyInvite.email == user.email.lower()).all()
+    pending_response = []
+    for inv in pending:
+        family = db.query(Family).filter(Family.id == inv.family_id).first()
+        if family:
+            creator = db.query(User).filter(User.id == family.created_by).first()
+            pending_response.append(PendingInviteResponse(
+                id=inv.id, family_id=family.id, family_name=family.name,
+                invited_by=creator.name or creator.email if creator else None,
+            ))
+
     return UserResponse(
         email=user.email, name=user.name, avatar_letter=letter, picture=user.picture,
         is_admin=is_admin, active_family_id=user.active_family_id,
-        families=families_response,
+        families=families_response, pending_invites=pending_response,
     )
 
 
@@ -335,7 +333,7 @@ def invite_to_family(family_id: int, data: FamilyInviteCreate, session: SessionM
 
     email = data.email.strip().lower()
 
-    # Check if user already exists and is already a member
+    # Check if user is already a member
     existing_user = db.query(User).filter(User.email == email).first()
     if existing_user:
         already_member = db.execute(
@@ -346,10 +344,6 @@ def invite_to_family(family_id: int, data: FamilyInviteCreate, session: SessionM
         ).first()
         if already_member:
             raise HTTPException(status_code=400, detail="User is already a member")
-        # Add directly
-        db.execute(family_members.insert().values(family_id=family_id, user_id=existing_user.id))
-        db.commit()
-        return {"detail": "User added to family"}
 
     # Check if invite already exists
     existing_invite = db.query(FamilyInvite).filter(
@@ -360,7 +354,42 @@ def invite_to_family(family_id: int, data: FamilyInviteCreate, session: SessionM
 
     db.add(FamilyInvite(family_id=family_id, email=email))
     db.commit()
-    return {"detail": "Invite created"}
+    return {"detail": "Einladung gesendet"}
+
+
+@app.post("/api/families/invites/{invite_id}/accept")
+def accept_invite(invite_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    invite = db.query(FamilyInvite).filter(FamilyInvite.id == invite_id).first()
+    if not invite:
+        raise HTTPException(status_code=404, detail="Invite not found")
+    user = session.user
+    if invite.email != user.email.lower():
+        raise HTTPException(status_code=403, detail="This invite is not for you")
+    # Add user to family
+    already_member = db.execute(
+        family_members.select().where(
+            family_members.c.family_id == invite.family_id,
+            family_members.c.user_id == user.id,
+        )
+    ).first()
+    if not already_member:
+        db.execute(family_members.insert().values(family_id=invite.family_id, user_id=user.id))
+    db.delete(invite)
+    db.commit()
+    return {"detail": "Einladung angenommen"}
+
+
+@app.post("/api/families/invites/{invite_id}/decline")
+def decline_invite(invite_id: int, session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
+    invite = db.query(FamilyInvite).filter(FamilyInvite.id == invite_id).first()
+    if not invite:
+        raise HTTPException(status_code=404, detail="Invite not found")
+    user = session.user
+    if invite.email != user.email.lower():
+        raise HTTPException(status_code=403, detail="This invite is not for you")
+    db.delete(invite)
+    db.commit()
+    return {"detail": "Einladung abgelehnt"}
 
 
 @app.delete("/api/families/{family_id}/members/{user_id}")

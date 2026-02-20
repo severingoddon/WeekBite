@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Family } from '../models/menu.model';
+import { Family, PendingInvite } from '../models/menu.model';
 
 export interface UserInfo {
   email: string;
@@ -12,6 +12,7 @@ export interface UserInfo {
   is_admin: boolean;
   active_family_id: number | null;
   families: Family[];
+  pending_invites: PendingInvite[];
 }
 
 @Injectable({ providedIn: 'root' })

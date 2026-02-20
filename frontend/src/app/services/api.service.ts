@@ -98,6 +98,14 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}/families/${familyId}/members/${userId}`);
   }
 
+  acceptInvite(inviteId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/families/invites/${inviteId}/accept`, {});
+  }
+
+  declineInvite(inviteId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/families/invites/${inviteId}/decline`, {});
+  }
+
   // Context
   switchContext(familyId: number | null): Observable<any> {
     return this.http.put(`${this.baseUrl}/context`, { family_id: familyId });

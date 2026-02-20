@@ -62,3 +62,10 @@ export interface Family {
 export interface FamilyCreate {
   name: string;
 }
+
+export interface PendingInvite {
+  id: number;
+  family_id: number;
+  family_name: string;
+  invited_by: string | null;
+}
