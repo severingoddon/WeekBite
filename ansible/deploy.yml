@@ -6,11 +6,9 @@
 
   tasks:
     - name: Pull latest code
-      ansible.builtin.git:
-        repo: "{{ lookup('pipe', 'cd ' ~ project_dir ~ ' && git remote get-url origin') }}"
-        dest: "{{ project_dir }}"
-        version: main
-        update: true
+      ansible.builtin.command: git pull
+      args:
+        chdir: "{{ project_dir }}"
 
     - name: Stop containers
       community.docker.docker_compose_v2:
