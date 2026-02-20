@@ -47,11 +47,11 @@
               <mat-icon>timer</mat-icon>
               <span>{{ menu.effort_min }} Minuten</span>
             </div>
-            <mat-chip-set>
+            <mat-chip-set class="ingredient-chips">
               @for (ingredient of menu.ingredients; track ingredient) {
-                <mat-chip (click)="addToShoppingList(ingredient, $event)">
+                <mat-chip class="ingredient-chip" (click)="addToShoppingList(ingredient, $event)">
                   {{ ingredient }}
-                  <mat-icon matChipTrailingIcon>add_shopping_cart</mat-icon>
+                  <mat-icon matChipTrailingIcon class="chip-add-icon">add</mat-icon>
                 </mat-chip>
               }
             </mat-chip-set>

@@ -149,3 +149,27 @@
 .menu-popup-header {
   margin-left: 10px;
 }
+
+.ingredient-chips {
+  .ingredient-chip {
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+
+    .chip-add-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      opacity: 0.3;
+      transition: opacity var(--transition-fast), color var(--transition-fast);
+    }
+
+    &:hover {
+      border-color: var(--accent-cyan) !important;
+
+      .chip-add-icon {
+        opacity: 1;
+        color: var(--accent-cyan);
+      }
+    }
+  }
+}
