@@ -61,3 +61,17 @@ class AllowedEmailResponse(BaseModel):
     email: str
 
     model_config = {"from_attributes": True}
+
+
+class ShoppingItemCreate(BaseModel):
+    name: str
+    quantity: str = ""
+
+
+class ShoppingItemResponse(BaseModel):
+    id: int
+    name: str
+    quantity: str
+    created: bool = True
+
+    model_config = {"from_attributes": True}

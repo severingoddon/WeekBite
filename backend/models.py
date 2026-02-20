@@ -82,6 +82,13 @@ class Session(Base):
     user = relationship("User")
 
 
+class ShoppingItem(Base):
+    __tablename__ = "shopping_items"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    quantity = Column(String, nullable=False, default="")
+
+
 def migrate_sessions_table():
     """Drop old sessions table if it lacks user_id column, so it gets recreated."""
     insp = inspect(engine)

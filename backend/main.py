@@ -11,7 +11,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy.orm import Session as DBSession
 
 from database import Base, engine, get_db
-from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, User, AllowedEmail, menu_ingredients, week_users, migrate_sessions_table
+from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, User, AllowedEmail, ShoppingItem, menu_ingredients, week_users, migrate_sessions_table
 from schemas import (
     MenuBase,
     MenuResponse,
@@ -22,6 +22,8 @@ from schemas import (
     UserResponse,
     AllowedEmailCreate,
     AllowedEmailResponse,
+    ShoppingItemCreate,
+    ShoppingItemResponse,
 )
 
 load_dotenv()
@@ -383,3 +385,46 @@ def remove_member(member_id: int, _=Depends(require_admin), db: DBSession = Depe
     db.delete(allowed)
     db.commit()
     return {"detail": "Email removed"}
+
+
+# --- Shopping List Endpoints ---
+
+
+@app.get("/api/shopping", response_model=list[ShoppingItemResponse])
+def get_shopping_items(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
+    return db.query(ShoppingItem).order_by(ShoppingItem.id).all()
+
+
+@app.post("/api/shopping", response_model=ShoppingItemResponse)
+def add_shopping_item(item: ShoppingItemCreate, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+    from sqlalchemy import func
+    existing = db.query(ShoppingItem).filter(func.lower(ShoppingItem.name) == item.name.strip().lower()).first()
+    if existing:
+        return ShoppingItemResponse(id=existing.id, name=existing.name, quantity=existing.quantity, created=False)
+    shopping_item = ShoppingItem(name=item.name.strip(), quantity=item.quantity)
+    db.add(shopping_item)
+    db.commit()
+    db.refresh(shopping_item)
+    return shopping_item
+
+
+@app.put("/api/shopping/{item_id}", response_model=ShoppingItemResponse)
+def update_shopping_item(item_id: int, item: ShoppingItemCreate, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+    shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not shopping_item:
+        raise HTTPException(status_code=404, detail="Shopping item not found")
+    shopping_item.name = item.name
+    shopping_item.quantity = item.quantity
+    db.commit()
+    db.refresh(shopping_item)
+    return shopping_item
+
+
+@app.delete("/api/shopping/{item_id}")
+def delete_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+    shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not shopping_item:
+        raise HTTPException(status_code=404, detail="Shopping item not found")
+    db.delete(shopping_item)
+    db.commit()
+    return {"detail": "Shopping item deleted"}

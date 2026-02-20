@@ -29,3 +29,15 @@ export interface NextWeekStatus {
   exists: boolean;
   start_date: string;
 }
+
+export interface ShoppingItem {
+  id: number;
+  name: string;
+  quantity: string;
+  created?: boolean;
+}
+
+export interface ShoppingItemCreate {
+  name: string;
+  quantity: string;
+}

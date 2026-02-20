@@ -9,6 +9,10 @@
         <mat-icon matListItemIcon>restaurant_menu</mat-icon>
         <span matListItemTitle>Menus verwalten</span>
       </a>
+      <a mat-list-item (click)="navigateTo('shopping')" [class.active-link]="currentPath === '/shopping'">
+        <mat-icon matListItemIcon>shopping_cart</mat-icon>
+        <span matListItemTitle>Einkaufsliste</span>
+      </a>
       @if (user?.is_admin) {
         <a mat-list-item (click)="navigateTo('invite')" [class.active-link]="currentPath === '/invite'">
           <mat-icon matListItemIcon>person_add</mat-icon>

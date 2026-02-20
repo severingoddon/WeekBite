@@ -49,7 +49,10 @@
             </div>
             <mat-chip-set>
               @for (ingredient of menu.ingredients; track ingredient) {
-                <mat-chip>{{ ingredient }}</mat-chip>
+                <mat-chip (click)="addToShoppingList(ingredient, $event)">
+                  {{ ingredient }}
+                  <mat-icon matChipTrailingIcon>add_shopping_cart</mat-icon>
+                </mat-chip>
               }
             </mat-chip-set>
           </div>

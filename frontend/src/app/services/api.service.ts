@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Menu, MenuCreate, Week, WeekDay, NextWeekStatus } from '../models/menu.model';
+import { Menu, MenuCreate, Week, WeekDay, NextWeekStatus, ShoppingItem, ShoppingItemCreate } from '../models/menu.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -59,5 +59,22 @@ export class ApiService {
 
   removeMember(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/admin/members/${id}`);
+  }
+
+  // Shopping list
+  getShoppingItems(): Observable<ShoppingItem[]> {
+    return this.http.get<ShoppingItem[]>(`${this.baseUrl}/shopping`);
+  }
+
+  addShoppingItem(item: ShoppingItemCreate): Observable<ShoppingItem> {
+    return this.http.post<ShoppingItem>(`${this.baseUrl}/shopping`, item);
+  }
+
+  updateShoppingItem(id: number, item: ShoppingItemCreate): Observable<ShoppingItem> {
+    return this.http.put<ShoppingItem>(`${this.baseUrl}/shopping/${id}`, item);
+  }
+
+  deleteShoppingItem(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/shopping/${id}`);
   }
 }
