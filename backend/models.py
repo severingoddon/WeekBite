@@ -28,12 +28,21 @@ class Menu(Base):
     ingredients = relationship("Ingredient", secondary=menu_ingredients, cascade="all, delete", lazy="joined")
 
 
+week_users = Table(
+    "week_users",
+    Base.metadata,
+    Column("week_id", Integer, ForeignKey("weeks.id", ondelete="CASCADE"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
 class Week(Base):
     __tablename__ = "weeks"
 
     id = Column(Integer, primary_key=True, index=True)
     start_date = Column(String, nullable=False, unique=True)
     days = relationship("WeekDay", back_populates="week", cascade="all, delete-orphan", lazy="joined")
+    users = relationship("User", secondary=week_users)
 
 
 class WeekDay(Base):
@@ -45,6 +54,13 @@ class WeekDay(Base):
     menu_id = Column(Integer, ForeignKey("menus.id", ondelete="SET NULL"), nullable=True)
     menu = relationship("Menu", lazy="joined")
     week = relationship("Week", back_populates="days")
+
+
+class AllowedEmail(Base):
+    __tablename__ = "allowed_emails"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, nullable=False, unique=True)
 
 
 class User(Base):

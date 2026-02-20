@@ -47,4 +47,17 @@ export class ApiService {
   createNextWeek(): Observable<Week> {
     return this.http.post<Week>(`${this.baseUrl}/week/next`, {});
   }
+
+  // Admin members
+  getMembers(): Observable<{ id: number; email: string }[]> {
+    return this.http.get<{ id: number; email: string }[]>(`${this.baseUrl}/admin/members`);
+  }
+
+  addMember(email: string): Observable<{ id: number; email: string }> {
+    return this.http.post<{ id: number; email: string }>(`${this.baseUrl}/admin/members`, { email });
+  }
+
+  removeMember(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/members/${id}`);
+  }
 }

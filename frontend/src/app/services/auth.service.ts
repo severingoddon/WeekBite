@@ -8,6 +8,8 @@ export interface UserInfo {
   name: string | null;
   avatar_letter: string;
   picture: string | null;
+  is_admin: boolean;
+  is_allowed: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -11,7 +11,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy.orm import Session as DBSession
 
 from database import Base, engine, get_db
-from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, User, menu_ingredients, migrate_sessions_table
+from models import Menu, Ingredient, Week, WeekDay, Session as SessionModel, User, AllowedEmail, menu_ingredients, week_users, migrate_sessions_table
 from schemas import (
     MenuBase,
     MenuResponse,
@@ -20,6 +20,8 @@ from schemas import (
     WeekResponse,
     NextWeekStatus,
     UserResponse,
+    AllowedEmailCreate,
+    AllowedEmailResponse,
 )
 
 load_dotenv()
@@ -47,6 +49,7 @@ oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
 
@@ -61,6 +64,12 @@ def get_current_session(request: Request, db: DBSession = Depends(get_db)):
     session = db.query(SessionModel).filter(SessionModel.token == token).first()
     if not session:
         raise HTTPException(status_code=401, detail="Invalid session")
+    return session
+
+
+def require_admin(session: SessionModel = Depends(get_current_session)):
+    if session.user.email != ADMIN_EMAIL:
+        raise HTTPException(status_code=403, detail="Admin access required")
     return session
 
 
@@ -95,16 +104,35 @@ async def google_callback(request: Request, db: DBSession = Depends(get_db)):
 
     session_token = secrets.token_urlsafe(32)
     db.add(SessionModel(token=session_token, user_id=user.id))
+    db.flush()
+
+    # Auto-link allowed users to the current week
+    is_allowed = email == ADMIN_EMAIL or db.query(AllowedEmail).filter(AllowedEmail.email == email).first() is not None
+    if is_allowed:
+        monday = get_monday(date.today())
+        week = db.query(Week).filter(Week.start_date == monday.isoformat()).first()
+        if week:
+            already_linked = db.execute(
+                week_users.select().where(week_users.c.week_id == week.id, week_users.c.user_id == user.id)
+            ).first()
+            if not already_linked:
+                db.execute(week_users.insert().values(week_id=week.id, user_id=user.id))
+
     db.commit()
 
     return RedirectResponse(url=f"{FRONTEND_URL}/login?token={session_token}")
 
 
 @app.get("/api/auth/me", response_model=UserResponse)
-def get_me(session: SessionModel = Depends(get_current_session)):
+def get_me(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
     user = session.user
     letter = user.email[0].upper() if user.email else "?"
-    return UserResponse(email=user.email, name=user.name, avatar_letter=letter, picture=user.picture)
+    is_admin = user.email == ADMIN_EMAIL
+    is_allowed = is_admin or db.query(AllowedEmail).filter(AllowedEmail.email == user.email).first() is not None
+    return UserResponse(
+        email=user.email, name=user.name, avatar_letter=letter, picture=user.picture,
+        is_admin=is_admin, is_allowed=is_allowed,
+    )
 
 
 # --- Helpers ---
@@ -134,6 +162,10 @@ def init_db():
         if week_count == 0:
             monday = get_monday(date.today())
             create_week(db, monday)
+        # Seed admin email into allowed_emails
+        if not db.query(AllowedEmail).filter(AllowedEmail.email == ADMIN_EMAIL).first():
+            db.add(AllowedEmail(email=ADMIN_EMAIL))
+            db.commit()
     finally:
         db.close()
 
@@ -307,3 +339,47 @@ def reset_week(week_id: int, _=Depends(get_current_session), db: DBSession = Dep
         day.menu_id = None
     db.commit()
     return {"detail": "Week reset"}
+
+
+# --- Admin Endpoints ---
+
+
+@app.get("/api/admin/members", response_model=list[AllowedEmailResponse])
+def list_members(_=Depends(require_admin), db: DBSession = Depends(get_db)):
+    return db.query(AllowedEmail).order_by(AllowedEmail.email).all()
+
+
+@app.post("/api/admin/members", response_model=AllowedEmailResponse)
+def add_member(data: AllowedEmailCreate, _=Depends(require_admin), db: DBSession = Depends(get_db)):
+    existing = db.query(AllowedEmail).filter(AllowedEmail.email == data.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already allowed")
+    allowed = AllowedEmail(email=data.email)
+    db.add(allowed)
+    db.flush()
+
+    # Auto-link user to current week if they already have an account
+    user = db.query(User).filter(User.email == data.email).first()
+    if user:
+        monday = get_monday(date.today())
+        week = db.query(Week).filter(Week.start_date == monday.isoformat()).first()
+        if week:
+            already_linked = db.execute(
+                week_users.select().where(week_users.c.week_id == week.id, week_users.c.user_id == user.id)
+            ).first()
+            if not already_linked:
+                db.execute(week_users.insert().values(week_id=week.id, user_id=user.id))
+
+    db.commit()
+    db.refresh(allowed)
+    return allowed
+
+
+@app.delete("/api/admin/members/{member_id}")
+def remove_member(member_id: int, _=Depends(require_admin), db: DBSession = Depends(get_db)):
+    allowed = db.query(AllowedEmail).filter(AllowedEmail.id == member_id).first()
+    if not allowed:
+        raise HTTPException(status_code=404, detail="Allowed email not found")
+    db.delete(allowed)
+    db.commit()
+    return {"detail": "Email removed"}

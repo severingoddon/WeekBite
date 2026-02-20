@@ -38,7 +38,12 @@ export class AppComponent {
       .subscribe(() => {
         if (this.auth.isLoggedIn() && !this.user) {
           this.auth.getMe().subscribe({
-            next: (u) => (this.user = u),
+            next: (u) => {
+              this.user = u;
+              if (!u.is_allowed) {
+                this.router.navigate(['/access-denied']);
+              }
+            },
             error: () => (this.user = null),
           });
         }

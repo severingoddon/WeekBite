@@ -48,3 +48,16 @@ class UserResponse(BaseModel):
     name: str | None
     avatar_letter: str
     picture: str | None
+    is_admin: bool = False
+    is_allowed: bool = False
+
+
+class AllowedEmailCreate(BaseModel):
+    email: str
+
+
+class AllowedEmailResponse(BaseModel):
+    id: int
+    email: str
+
+    model_config = {"from_attributes": True}

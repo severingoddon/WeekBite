@@ -9,6 +9,12 @@
         <mat-icon matListItemIcon>restaurant_menu</mat-icon>
         <span matListItemTitle>Menus verwalten</span>
       </a>
+      @if (user?.is_admin) {
+        <a mat-list-item (click)="navigateTo('invite')">
+          <mat-icon matListItemIcon>person_add</mat-icon>
+          <span matListItemTitle>Teilnehmer einladen</span>
+        </a>
+      }
     </mat-nav-list>
   </mat-sidenav>
 

@@ -1,0 +1,38 @@
+<div class="invite-page">
+  <h2 class="gradient-text">Teilnehmer einladen</h2>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <div class="add-row">
+        <mat-form-field class="email-field" appearance="outline">
+          <mat-label>E-Mail-Adresse</mat-label>
+          <input matInput [(ngModel)]="newEmail" (keyup.enter)="addMember()" placeholder="name@example.com">
+        </mat-form-field>
+        <button mat-flat-button class="add-btn" (click)="addMember()" [disabled]="!newEmail.trim()">
+          Hinzufügen
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="form-card members-card">
+    <mat-card-content>
+      <h3>Freigeschaltete E-Mails</h3>
+      @if (members.length === 0) {
+        <p class="empty-hint">Noch keine Teilnehmer hinzugefügt.</p>
+      }
+      <mat-list>
+        @for (member of members; track member.id) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>person</mat-icon>
+            <span matListItemTitle>{{ member.email }}</span>
+            <button mat-icon-button matListItemMeta (click)="removeMember(member.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>
