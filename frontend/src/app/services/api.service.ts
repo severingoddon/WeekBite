@@ -74,7 +74,15 @@ export class ApiService {
     return this.http.put<ShoppingItem>(`${this.baseUrl}/shopping/${id}`, item);
   }
 
+  toggleShoppingItem(id: number): Observable<ShoppingItem> {
+    return this.http.patch<ShoppingItem>(`${this.baseUrl}/shopping/${id}/toggle`, {});
+  }
+
   deleteShoppingItem(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/shopping/${id}`);
+  }
+
+  clearShoppingList(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/shopping`);
   }
 }

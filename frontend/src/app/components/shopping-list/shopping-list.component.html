@@ -1,5 +1,12 @@
 <div class="shopping-page">
-  <h2 class="gradient-text">Einkaufsliste</h2>
+  <div class="title-row">
+    <h2 class="gradient-text">Einkaufsliste</h2>
+    @if (items.length > 0) {
+      <button mat-icon-button color="warn" class="clear-btn" (click)="clearList()" aria-label="Liste leeren">
+        <mat-icon>delete_sweep</mat-icon>
+      </button>
+    }
+  </div>
 
   <mat-card class="form-card">
     <mat-card-content>
@@ -44,18 +51,21 @@
               </div>
             </mat-list-item>
           } @else {
-            <mat-list-item>
-              <span matListItemTitle class="item-text">
+            <mat-list-item [class.item-checked]="item.checked" (click)="toggleItem(item)" class="clickable-item">
+              <mat-icon matListItemIcon class="check-icon" [class.checked]="item.checked">
+                {{ item.checked ? 'check_circle' : 'radio_button_unchecked' }}
+              </mat-icon>
+              <span matListItemTitle class="item-text" [class.text-checked]="item.checked">
                 @if (item.quantity) {
                   <span class="item-quantity">{{ item.quantity }}</span>
                 }
                 {{ item.name }}
               </span>
               <div matListItemMeta class="item-actions">
-                <button mat-icon-button (click)="startEdit(item)">
+                <button mat-icon-button (click)="startEdit(item); $event.stopPropagation()">
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button (click)="deleteItem(item.id)">
+                <button mat-icon-button (click)="deleteItem(item.id); $event.stopPropagation()">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>

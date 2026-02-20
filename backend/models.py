@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, inspect
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, inspect
 from sqlalchemy.orm import relationship
 from database import Base, engine
 
@@ -87,11 +87,16 @@ class ShoppingItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     quantity = Column(String, nullable=False, default="")
+    checked = Column(Boolean, nullable=False, default=False)
 
 
 def migrate_sessions_table():
-    """Drop old sessions table if it lacks user_id column, so it gets recreated."""
+    """Drop old tables if they lack required columns, so they get recreated."""
     insp = inspect(engine)
+    if insp.has_table("shopping_items"):
+        columns = [col["name"] for col in insp.get_columns("shopping_items")]
+        if "checked" not in columns:
+            ShoppingItem.__table__.drop(engine)
     if insp.has_table("sessions"):
         columns = [col["name"] for col in insp.get_columns("sessions")]
         if "user_id" not in columns:

@@ -7,8 +7,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
 import { ShoppingItem } from '../../models/menu.model';
+import { ConfirmClearDialogComponent } from './confirm-clear-dialog.component';
 
 @Component({
   selector: 'app-shopping-list',
@@ -33,7 +36,7 @@ export class ShoppingListComponent implements OnInit {
   editName = '';
   editQuantity = '';
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.loadItems();
@@ -73,7 +76,25 @@ export class ShoppingListComponent implements OnInit {
     });
   }
 
+  toggleItem(item: ShoppingItem) {
+    this.api.toggleShoppingItem(item.id).subscribe((updated) => {
+      item.checked = updated.checked;
+    });
+  }
+
   deleteItem(id: number) {
     this.api.deleteShoppingItem(id).subscribe(() => this.loadItems());
+  }
+
+  clearList() {
+    const dialogRef = this.dialog.open(ConfirmClearDialogComponent, { width: '320px' });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.api.clearShoppingList().subscribe(() => {
+          this.loadItems();
+          this.snackBar.open('Einkaufsliste geleert', 'OK', { duration: 2000 });
+        });
+      }
+    });
   }
 }

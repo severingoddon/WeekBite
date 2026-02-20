@@ -72,6 +72,7 @@ class ShoppingItemResponse(BaseModel):
     id: int
     name: str
     quantity: str
+    checked: bool = False
     created: bool = True
 
     model_config = {"from_attributes": True}

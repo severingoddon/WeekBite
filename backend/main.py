@@ -420,6 +420,17 @@ def update_shopping_item(item_id: int, item: ShoppingItemCreate, _=Depends(get_c
     return shopping_item
 
 
+@app.patch("/api/shopping/{item_id}/toggle", response_model=ShoppingItemResponse)
+def toggle_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
+    shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not shopping_item:
+        raise HTTPException(status_code=404, detail="Shopping item not found")
+    shopping_item.checked = not shopping_item.checked
+    db.commit()
+    db.refresh(shopping_item)
+    return shopping_item
+
+
 @app.delete("/api/shopping/{item_id}")
 def delete_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSession = Depends(get_db)):
     shopping_item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
@@ -428,3 +439,10 @@ def delete_shopping_item(item_id: int, _=Depends(get_current_session), db: DBSes
     db.delete(shopping_item)
     db.commit()
     return {"detail": "Shopping item deleted"}
+
+
+@app.delete("/api/shopping")
+def clear_shopping_list(_=Depends(get_current_session), db: DBSession = Depends(get_db)):
+    db.query(ShoppingItem).delete()
+    db.commit()
+    return {"detail": "Shopping list cleared"}

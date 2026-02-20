@@ -4,11 +4,17 @@
   gap: 16px;
 
   h2 {
-    margin: 0 0 4px;
+    margin: 0;
     font-size: 1.4rem;
     font-weight: 600;
     letter-spacing: -0.02em;
   }
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .form-card {
@@ -64,6 +70,28 @@
 .item-actions {
   display: flex;
   gap: 0;
+}
+
+.clickable-item {
+  cursor: pointer;
+}
+
+.check-icon {
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.2s;
+
+  &.checked {
+    color: #34d399;
+  }
+}
+
+.item-checked {
+  background: rgba(52, 211, 153, 0.08) !important;
+}
+
+.text-checked {
+  text-decoration: line-through;
+  opacity: 0.5;
 }
 
 .empty-hint {
