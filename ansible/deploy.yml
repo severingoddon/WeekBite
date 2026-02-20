@@ -1,0 +1,48 @@
+---
+- name: Deploy WeekBite to Raspi
+  hosts: raspi
+  vars:
+    project_dir: ~/WeekBite/WeekBite
+
+  tasks:
+    - name: Pull latest code
+      ansible.builtin.git:
+        repo: "{{ lookup('pipe', 'cd ' ~ project_dir ~ ' && git remote get-url origin') }}"
+        dest: "{{ project_dir }}"
+        version: main
+        update: true
+
+    - name: Stop containers
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_dir }}"
+        state: absent
+
+    - name: Remove all Docker images
+      ansible.builtin.shell: docker rmi $(docker images -q) 2>/dev/null || true
+      changed_when: false
+
+    - name: Remove all Docker volumes
+      ansible.builtin.shell: docker volume rm $(docker volume ls -q) 2>/dev/null || true
+      changed_when: false
+
+    - name: Build from scratch
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_dir }}"
+        build: always
+        state: present
+      environment:
+        COMPOSE_DOCKER_CLI_BUILD: "1"
+        DOCKER_BUILDKIT: "1"
+
+    - name: Wait for startup
+      ansible.builtin.pause:
+        seconds: 5
+
+    - name: Show backend logs
+      ansible.builtin.command: docker logs weekbite-backend --tail 20
+      register: backend_logs
+      changed_when: false
+
+    - name: Print backend logs
+      ansible.builtin.debug:
+        var: backend_logs.stdout_lines
