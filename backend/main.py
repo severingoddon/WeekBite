@@ -205,13 +205,16 @@ def init_db():
 init_db()
 
 
-def menu_to_response(menu: Menu) -> MenuResponse:
+def menu_to_response(menu: Menu, current_user_id: int | None = None, owner_name: str | None = None) -> MenuResponse:
+    is_own = current_user_id is None or menu.user_id == current_user_id
     return MenuResponse(
         id=menu.id,
         title=menu.title,
         ingredients=[ing.name for ing in menu.ingredients],
         note=menu.note,
         effort_min=menu.effort_min,
+        is_own=is_own,
+        owner_name=None if is_own else owner_name,
     )
 
 
@@ -409,8 +412,25 @@ def switch_context(data: ContextSwitch, session: SessionModel = Depends(get_curr
 
 @app.get("/api/menus", response_model=list[MenuResponse])
 def get_menus(session: SessionModel = Depends(get_current_session), db: DBSession = Depends(get_db)):
-    menus = db.query(Menu).filter(Menu.user_id == session.user.id).order_by(Menu.title).all()
-    return [menu_to_response(m) for m in menus]
+    user_id, family_id = get_context(session)
+    current_user_id = session.user.id
+    if family_id:
+        # In family context: show menus from all family members
+        member_rows = db.execute(
+            family_members.select().where(family_members.c.family_id == family_id)
+        ).fetchall()
+        member_ids = [row[1] for row in member_rows]
+        menus = db.query(Menu).filter(Menu.user_id.in_(member_ids)).order_by(Menu.title).all()
+        # Build owner name lookup for foreign menus
+        other_ids = [mid for mid in member_ids if mid != current_user_id]
+        owner_map: dict[int, str] = {}
+        if other_ids:
+            users = db.query(User).filter(User.id.in_(other_ids)).all()
+            owner_map = {u.id: u.name or u.email for u in users}
+        return [menu_to_response(m, current_user_id, owner_map.get(m.user_id)) for m in menus]
+    else:
+        menus = db.query(Menu).filter(Menu.user_id == current_user_id).order_by(Menu.title).all()
+        return [menu_to_response(m) for m in menus]
 
 
 @app.get("/api/menus/{menu_id}", response_model=MenuResponse)

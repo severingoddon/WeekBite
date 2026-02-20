@@ -79,18 +79,25 @@
   }
 
   @for (menu of menus; track menu.id) {
-    <mat-card class="menu-item-card">
+    <mat-card class="menu-item-card" [class.foreign-menu]="menu.is_own === false">
       <mat-card-content>
         <div class="menu-item-header">
-          <span class="menu-item-title">{{ menu.title }}</span>
-          <div class="menu-item-actions">
-            <button mat-icon-button (click)="editMenu(menu)" aria-label="Bearbeiten">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteMenu(menu)" aria-label="Löschen">
-              <mat-icon>delete</mat-icon>
-            </button>
+          <div class="menu-title-group">
+            <span class="menu-item-title">{{ menu.title }}</span>
+            @if (menu.owner_name) {
+              <span class="owner-label">von {{ menu.owner_name }}</span>
+            }
           </div>
+          @if (menu.is_own !== false) {
+            <div class="menu-item-actions">
+              <button mat-icon-button (click)="editMenu(menu)" aria-label="Bearbeiten">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteMenu(menu)" aria-label="Löschen">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
         </div>
         <div class="menu-meta">
           @if (menu.note) {

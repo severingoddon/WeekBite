@@ -102,6 +102,12 @@
     &:hover {
       background: rgba(255, 255, 255, 0.03);
     }
+
+    [matListItemMeta] {
+      // Fix hover state-layer being offset on mat-icon-button inside list meta
+      --mdc-icon-button-state-layer-size: 40px;
+      overflow: visible;
+    }
   }
 }
 

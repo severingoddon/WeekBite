@@ -4,6 +4,8 @@ export interface Menu {
   ingredients: string[];
   note: string;
   effort_min: number;
+  is_own?: boolean;
+  owner_name?: string | null;
 }
 
 export interface MenuCreate {

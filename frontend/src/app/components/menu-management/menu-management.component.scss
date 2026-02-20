@@ -78,15 +78,31 @@
   }
 }
 
+.menu-item-card.foreign-menu {
+  opacity: 0.75;
+}
+
 .menu-item-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.menu-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .menu-item-title {
   font-size: 1rem;
   font-weight: 500;
+}
+
+.owner-label {
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  font-style: italic;
 }
 
 .menu-item-actions {

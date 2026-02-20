@@ -14,6 +14,8 @@ class MenuResponse(BaseModel):
     ingredients: list[str]
     note: str
     effort_min: int
+    is_own: bool = True
+    owner_name: str | None = None
 
     model_config = {"from_attributes": True}
 
