@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { ApiService } from '../../services/api.service';
+import { TourService } from '../../services/tour.service';
 import { Week, WeekDay } from '../../models/menu.model';
 import { MenuPopupComponent } from '../menu-popup/menu-popup.component';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
@@ -43,10 +44,43 @@ export class WeekPlanComponent implements OnInit {
     private api: ApiService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private tour: TourService,
   ) {}
 
   ngOnInit() {
     this.loadWeek();
+  }
+
+  private tryStartTour() {
+    if (this.tour.hasSeenTour('week-plan')) return;
+    setTimeout(() => {
+      this.tour.startTour('week-plan', [
+        {
+          selector: '[data-tour="day-card"]',
+          title: 'Tage belegen',
+          text: 'Tippe auf einen Tag, um ein Menu zuzuweisen. So planst du deine Woche.',
+          position: 'bottom',
+        },
+        {
+          selector: '[data-tour="next-week-btn"]',
+          title: 'Woche wechseln',
+          text: 'Erstelle die nächste Woche oder wechsle zwischen bestehenden Wochen.',
+          position: 'bottom',
+        },
+        {
+          selector: '[data-tour="date-picker-btn"]',
+          title: 'Datum wählen',
+          text: 'Springe direkt zu einer bestimmten Woche über den Kalender.',
+          position: 'bottom',
+        },
+        {
+          selector: '[data-tour="context-switcher"]',
+          title: 'Kontext wechseln',
+          text: 'Wechsle hier zwischen deinem privaten Bereich und deinen Familien. Wochenpläne und Einkaufslisten werden pro Kontext getrennt.',
+          position: 'bottom',
+        },
+      ]);
+    }, 300);
   }
 
   get weekLabel(): string {
@@ -70,6 +104,7 @@ export class WeekPlanComponent implements OnInit {
       next: (week) => {
         this.currentWeek = week;
         this.checkNextWeek();
+        this.tryStartTour();
       },
       error: (err) => {
         if (err.status === 404) {

@@ -27,7 +27,7 @@
       </button>
       <span class="application-title gradient-text" (click)="navigateTo('')" style="cursor: pointer;">WeekBite</span>
       @if (user && user.families.length > 0) {
-        <button class="context-chip" [matMenuTriggerFor]="contextMenu">
+        <button class="context-chip" [matMenuTriggerFor]="contextMenu" data-tour="context-switcher">
           {{ activeContextName }}
           <mat-icon class="context-arrow">arrow_drop_down</mat-icon>
         </button>
@@ -57,6 +57,10 @@
         <mat-menu #userMenu="matMenu">
           <div class="user-menu-header">{{ user.email }}</div>
           <mat-divider></mat-divider>
+          <button mat-menu-item (click)="resetTour()">
+            <mat-icon>help_outline</mat-icon>
+            <span>Einführung erneut zeigen</span>
+          </button>
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span>Abmelden</span>
@@ -69,3 +73,4 @@
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<app-tour-overlay></app-tour-overlay>

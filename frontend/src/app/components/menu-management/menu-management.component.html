@@ -2,7 +2,7 @@
   <h2 class="gradient-text">Menus verwalten</h2>
 
   <!-- Form -->
-  <mat-card class="form-card" #formCard>
+  <mat-card class="form-card" #formCard data-tour="menu-form">
     <mat-card-content>
       <h3>{{ editingMenu ? 'Menu bearbeiten' : 'Neues Menu erstellen' }}</h3>
 
@@ -59,7 +59,7 @@
   <mat-divider class="divider"></mat-divider>
 
   <!-- Existing menus list -->
-  <div class="list-header">
+  <div class="list-header" data-tour="csv-actions">
     <h3>Bestehende Menus ({{ menus.length }})</h3>
     @if (menus.length > 0) {
       <button mat-stroked-button class="csv-export" (click)="exportCsv()">

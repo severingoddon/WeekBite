@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ApiService } from '../../services/api.service';
+import { TourService } from '../../services/tour.service';
 import { Menu, MenuCreate } from '../../models/menu.model';
 
 @Component({
@@ -29,7 +30,7 @@ import { Menu, MenuCreate } from '../../models/menu.model';
   templateUrl: './menu-management.component.html',
   styleUrl: './menu-management.component.scss',
 })
-export class MenuManagementComponent implements OnInit {
+export class MenuManagementComponent implements OnInit, AfterViewInit {
   @ViewChild('formCard', { read: ElementRef }) formCard!: ElementRef;
 
   menus: Menu[] = [];
@@ -44,10 +45,30 @@ export class MenuManagementComponent implements OnInit {
   constructor(
     private api: ApiService,
     private snackBar: MatSnackBar,
+    private tour: TourService,
   ) {}
 
   ngOnInit() {
     this.loadMenus();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.tour.startTour('menu-management', [
+        {
+          selector: '[data-tour="menu-form"]',
+          title: 'Menu erstellen',
+          text: 'Hier erstellst du neue Menus mit Titel, Zutaten, Notiz und Aufwand.',
+          position: 'bottom',
+        },
+        {
+          selector: '[data-tour="csv-actions"]',
+          title: 'Import & Export',
+          text: 'Importiere Menus aus einer CSV-Datei oder exportiere deine bestehenden Menus.',
+          position: 'bottom',
+        },
+      ]);
+    }, 800);
   }
 
   loadMenus() {

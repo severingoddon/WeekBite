@@ -1,0 +1,40 @@
+@if (active && step) {
+  <!-- Spotlight: transparent box with massive box-shadow to dim everything else -->
+  <div class="tour-spotlight" (click)="skip()"
+       [style.top.px]="spotRect.top"
+       [style.left.px]="spotRect.left"
+       [style.width.px]="spotRect.width"
+       [style.height.px]="spotRect.height">
+  </div>
+
+  <!-- Hand-drawn arrow SVG -->
+  <svg class="tour-arrow"
+       [attr.viewBox]="arrowViewBox"
+       [style.left]="arrowStyle['left']"
+       [style.top]="arrowStyle['top']"
+       [style.width]="arrowStyle['width']"
+       [style.height]="arrowStyle['height']"
+       preserveAspectRatio="none">
+    <path [attr.d]="arrowPath"
+          fill="none"
+          stroke="var(--accent-cyan)"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+  </svg>
+
+  <!-- Tooltip -->
+  <div class="tour-tooltip" [ngStyle]="tooltipStyle">
+    <div class="tour-tooltip-title">{{ step.title }}</div>
+    <div class="tour-tooltip-text">{{ step.text }}</div>
+    <div class="tour-tooltip-footer">
+      <span class="tour-step-indicator">{{ stepIndex + 1 }} / {{ totalSteps }}</span>
+      <div class="tour-tooltip-actions">
+        <button class="tour-skip-btn" (click)="skip()">Überspringen</button>
+        <button class="tour-next-btn" (click)="next()">
+          {{ stepIndex === totalSteps - 1 ? 'Fertig' : 'Weiter' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

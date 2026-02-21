@@ -28,7 +28,7 @@
     }
 
     @for (menu of filteredMenus; track menu.id) {
-      <mat-card class="menu-card" (click)="selectMenu(menu)">
+      <mat-card class="menu-card" (click)="selectMenu(menu)" [attr.data-tour]="$first ? 'menu-select' : null">
         <mat-card-content class="menu-card-content">
           <div class="menu-info">
             <span class="menu-title">{{ menu.title }}</span>
@@ -49,7 +49,7 @@
             </div>
             <mat-chip-set class="ingredient-chips">
               @for (ingredient of menu.ingredients; track ingredient) {
-                <mat-chip class="ingredient-chip" (click)="addToShoppingList(ingredient, $event)">
+                <mat-chip class="ingredient-chip" (click)="addToShoppingList(ingredient, $event)" [attr.data-tour]="$first ? 'ingredient-chip' : null">
                   {{ ingredient }}
                   <mat-icon matChipTrailingIcon class="chip-add-icon">add</mat-icon>
                 </mat-chip>

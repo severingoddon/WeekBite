@@ -5,10 +5,10 @@
       <span class="week-label">{{ weekLabel }}</span>
     </div>
     <div class="header-actions">
-      <button mat-icon-button (click)="openDatePicker()" aria-label="Datum wählen">
+      <button mat-icon-button (click)="openDatePicker()" aria-label="Datum wählen" data-tour="date-picker-btn">
         <mat-icon>calendar_month</mat-icon>
       </button>
-      <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()">
+      <button mat-stroked-button class="action-btn" (click)="createOrShowNextWeek()" data-tour="next-week-btn">
         {{ nextWeekExists ? 'Nächste Woche' : '+ Nächste Woche erstellen' }}
       </button>
       @if (!isCurrentWeek) {
@@ -40,7 +40,7 @@
     </div>
   } @else {
     @for (weekDay of currentWeek?.days; track weekDay.id) {
-      <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" (click)="openMenuPopup(weekDay)">
+      <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" (click)="openMenuPopup(weekDay)" [attr.data-tour]="$first ? 'day-card' : null">
         <mat-card-content class="day-content">
           <div class="day-info">
             <span class="day-name">{{ weekDay.day }}</span>

@@ -10,6 +10,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { filter } from 'rxjs';
 import { AuthService, UserInfo } from './services/auth.service';
 import { ApiService } from './services/api.service';
+import { TourService } from './services/tour.service';
+import { TourOverlayComponent } from './components/tour-overlay/tour-overlay.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +25,8 @@ import { ApiService } from './services/api.service';
     MatListModule,
     MatMenuModule,
     MatDividerModule,
+    MatSnackBarModule,
+    TourOverlayComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -35,6 +40,8 @@ export class AppComponent {
     private router: Router,
     private auth: AuthService,
     private api: ApiService,
+    private tour: TourService,
+    private snackBar: MatSnackBar,
   ) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -77,6 +84,11 @@ export class AppComponent {
   navigateTo(path: string) {
     this.router.navigate([path]);
     this.sidenavOpen = false;
+  }
+
+  resetTour() {
+    this.tour.resetAllTours();
+    this.snackBar.open('Einführung wird beim nächsten Seitenbesuch erneut angezeigt', 'OK', { duration: 3000 });
   }
 
   logout() {
