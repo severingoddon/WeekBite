@@ -35,6 +35,7 @@ export class AppComponent {
   sidenavOpen = false;
   user: UserInfo | null = null;
   currentPath = '';
+  private welcomeChecked = false;
 
   constructor(
     private router: Router,
@@ -64,7 +65,13 @@ export class AppComponent {
 
   loadUser() {
     this.auth.getMe().subscribe({
-      next: (u) => (this.user = u),
+      next: (u) => {
+        this.user = u;
+        if (!this.welcomeChecked) {
+          this.welcomeChecked = true;
+          this.tour.tryShowWelcome();
+        }
+      },
       error: () => (this.user = null),
     });
   }

@@ -12,6 +12,7 @@ import { TourService, TourStep } from '../../services/tour.service';
 })
 export class TourOverlayComponent implements OnInit, OnDestroy {
   active = false;
+  showWelcome = false;
   step: TourStep | null = null;
   stepIndex = 0;
   totalSteps = 0;
@@ -26,10 +27,15 @@ export class TourOverlayComponent implements OnInit, OnDestroy {
   arrowStyle: Record<string, string> = {};
 
   private sub!: Subscription;
+  private welcomeSub!: Subscription;
 
   constructor(private tour: TourService) {}
 
   ngOnInit() {
+    this.welcomeSub = this.tour.welcome$.subscribe((show) => {
+      this.showWelcome = show;
+    });
+
     this.sub = combineLatest([
       this.tour.active$,
       this.tour.currentIndex$,
@@ -50,6 +56,11 @@ export class TourOverlayComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
+    this.welcomeSub?.unsubscribe();
+  }
+
+  dismissWelcome() {
+    this.tour.dismissWelcome();
   }
 
   next() {

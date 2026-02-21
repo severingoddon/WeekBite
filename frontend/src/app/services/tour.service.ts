@@ -15,14 +15,17 @@ export interface TourStep {
 @Injectable({ providedIn: 'root' })
 export class TourService {
   private readonly STORAGE_PREFIX = 'weekbite_tour_seen_';
+  private readonly WELCOME_KEY = 'weekbite_welcome_seen';
 
   private stepsSubject = new BehaviorSubject<TourStep[]>([]);
   private currentIndexSubject = new BehaviorSubject<number>(-1);
   private activeSubject = new BehaviorSubject<boolean>(false);
+  private welcomeSubject = new BehaviorSubject<boolean>(false);
 
   steps$ = this.stepsSubject.asObservable();
   currentIndex$ = this.currentIndexSubject.asObservable();
   active$ = this.activeSubject.asObservable();
+  welcome$ = this.welcomeSubject.asObservable();
 
   get currentStep(): TourStep | null {
     const idx = this.currentIndexSubject.value;
@@ -32,6 +35,18 @@ export class TourService {
 
   get isActive(): boolean {
     return this.activeSubject.value;
+  }
+
+  /** Show welcome screen if never seen before (not resettable) */
+  tryShowWelcome(): void {
+    if (localStorage.getItem(this.WELCOME_KEY) === 'true') return;
+    this.welcomeSubject.next(true);
+  }
+
+  /** Dismiss welcome and mark as permanently seen */
+  dismissWelcome(): void {
+    localStorage.setItem(this.WELCOME_KEY, 'true');
+    this.welcomeSubject.next(false);
   }
 
   /** Check if a tour has already been completed */

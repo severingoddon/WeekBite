@@ -1,3 +1,90 @@
+// --- Welcome overlay ---
+
+.welcome-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: welcomeFadeIn 0.4s ease;
+}
+
+@keyframes welcomeFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.welcome-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 40px rgba(6, 182, 212, 0.1);
+  animation: welcomeCardIn 0.5s ease;
+}
+
+@keyframes welcomeCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.welcome-icon {
+  margin-bottom: 16px;
+}
+
+.welcome-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcome-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+
+.welcome-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 24px;
+}
+
+.welcome-btn {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 32px;
+  border-radius: 8px;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+// --- Tour step overlay ---
+
 .tour-spotlight {
   position: fixed;
   z-index: 9998;
