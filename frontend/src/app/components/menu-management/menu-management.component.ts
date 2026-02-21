@@ -58,13 +58,7 @@ export class MenuManagementComponent implements OnInit, AfterViewInit {
         {
           selector: '[data-tour="menu-form"]',
           title: 'Menu erstellen',
-          text: 'Hier erstellst du neue Menus mit Titel, Zutaten, Notiz und Aufwand.',
-          position: 'bottom',
-        },
-        {
-          selector: '[data-tour="csv-actions"]',
-          title: 'Import & Export',
-          text: 'Importiere Menus aus einer CSV-Datei oder exportiere deine bestehenden Menus.',
+          text: 'Hier erstellst du neue Menus mit Titel, Zutaten, Notiz und Aufwand. Danach kannst du sie im Wochenplan einem Tag zuweisen.',
           position: 'bottom',
         },
       ]);

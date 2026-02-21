@@ -150,6 +150,111 @@
   margin-left: 10px;
 }
 
+// --- No-menus hint overlay ---
+
+.hint-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: hintFadeIn 0.3s ease;
+}
+
+@keyframes hintFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hint-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.15);
+  animation: hintCardIn 0.4s ease;
+}
+
+@keyframes hintCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hint-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  color: var(--accent-cyan);
+  opacity: 0.8;
+}
+
+.hint-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hint-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.hint-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.hint-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+.hint-action {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+  border: none;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 6px;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
 .ingredient-chips {
   .ingredient-chip {
     cursor: pointer;

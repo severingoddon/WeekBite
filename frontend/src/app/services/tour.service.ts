@@ -49,9 +49,14 @@ export class TourService {
     this.welcomeSubject.next(false);
   }
 
-  /** Check if a tour has already been completed */
+  /** Check if a tour/hint has already been completed */
   hasSeenTour(tourId: string): boolean {
     return localStorage.getItem(this.STORAGE_PREFIX + tourId) === 'true';
+  }
+
+  /** Mark a tour/hint as seen without starting it */
+  markSeen(tourId: string): void {
+    localStorage.setItem(this.STORAGE_PREFIX + tourId, 'true');
   }
 
   /** Start a tour if not already seen */

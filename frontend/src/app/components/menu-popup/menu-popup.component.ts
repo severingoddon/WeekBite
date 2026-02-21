@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,12 +39,14 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
   searchQuery = '';
   expandedMenuId: number | null = null;
   sortByEffort = false;
+  showNoMenusHint = false;
 
   constructor(
     private api: ApiService,
     private dialogRef: MatDialogRef<MenuPopupComponent>,
     private snackBar: MatSnackBar,
     private tour: TourService,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: { day: string },
   ) {}
 
@@ -51,7 +54,22 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
     this.api.getMenus().subscribe((menus) => {
       this.menus = menus;
       this.filteredMenus = menus;
+      if (menus.length === 0 && !this.tour.hasSeenTour('no-menus-hint')) {
+        this.showNoMenusHint = true;
+      }
     });
+  }
+
+  goToMenus() {
+    this.showNoMenusHint = false;
+    this.tour.markSeen('no-menus-hint');
+    this.dialogRef.close();
+    this.router.navigate(['/menus']);
+  }
+
+  dismissHint() {
+    this.showNoMenusHint = false;
+    this.tour.markSeen('no-menus-hint');
   }
 
   filterMenus() {

@@ -18,6 +18,20 @@
     </div>
   </div>
 
+  @if (showNoMenusHint) {
+    <div class="hint-backdrop">
+      <div class="hint-card">
+        <mat-icon class="hint-icon">restaurant_menu</mat-icon>
+        <div class="hint-title">Keine Menus vorhanden</div>
+        <div class="hint-text">Erstelle zuerst ein paar Menus, damit du sie deinen Wochentagen zuweisen kannst.</div>
+        <div class="hint-actions">
+          <button class="hint-dismiss" (click)="dismissHint()">Später</button>
+          <button class="hint-action" (click)="goToMenus()">Menus erstellen</button>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="menu-list">
     @if (menus.length === 0) {
       <div class="empty-state">
