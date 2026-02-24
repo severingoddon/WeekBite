@@ -1,0 +1,87 @@
+import SwiftUI
+
+struct MainTabView: View {
+    @Environment(AuthManager.self) private var authManager
+    @Environment(APIClient.self) private var api
+    @Environment(TourManager.self) private var tourManager
+
+    @State private var userContext: UserContextViewModel
+    @State private var selectedTab = 0
+    @State private var welcomeChecked = false
+
+    init() {
+        _userContext = State(initialValue: UserContextViewModel(api: APIClient()))
+    }
+
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            NavigationStack {
+                WeekPlanView()
+                    .toolbar { toolbarContent }
+            }
+            .tabItem {
+                Label("Wochenplan", systemImage: "calendar")
+            }
+            .tag(0)
+
+            NavigationStack {
+                MenuManagementView()
+                    .toolbar { toolbarContent }
+            }
+            .tabItem {
+                Label("Menus", systemImage: "menucard")
+            }
+            .tag(1)
+
+            NavigationStack {
+                ShoppingListView()
+                    .toolbar { toolbarContent }
+            }
+            .tabItem {
+                Label("Einkaufen", systemImage: "cart")
+            }
+            .tag(2)
+
+            NavigationStack {
+                FamilyManagementView()
+                    .toolbar { toolbarContent }
+            }
+            .tabItem {
+                Label("Familien", systemImage: "person.3")
+            }
+            .tag(3)
+        }
+        .tint(WBColor.accentCyan)
+        .environment(userContext)
+        .onAppear {
+            userContext = UserContextViewModel(api: api)
+            Task { await userContext.loadUser() }
+            configureTabBarAppearance()
+            if !welcomeChecked {
+                welcomeChecked = true
+                tourManager.tryShowWelcome()
+            }
+        }
+        .onChange(of: userContext.contextVersion) {
+            selectedTab = selectedTab
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            ContextSwitcherMenu()
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            UserAvatarMenu()
+        }
+    }
+
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(WBColor.bgCard)
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+}

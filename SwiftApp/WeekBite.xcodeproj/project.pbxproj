@@ -1,0 +1,630 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		070E76DDA32EF0E887EB4237 /* Week.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB28AF46755473C32B56822 /* Week.swift */; };
+		0729A8356D6CCF8676D846BF /* FamilyCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B91047A9EC609CF20C35C4 /* FamilyCardView.swift */; };
+		0A75C8F00A8D995DFB59CD89 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A3F192DFF16A9959039C4E /* APIClient.swift */; };
+		0C4B1D39FCF6E7633EDE36B8 /* MenuFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE53376F62C8D5B3B7616EF /* MenuFormView.swift */; };
+		32E270923217B2C89899E567 /* MenuManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F519C1C695D42BFDEBFF51C9 /* MenuManagementView.swift */; };
+		371C7B1FEDB74F596DF4781E /* TourDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8C67E79B87D8EFB471ECA1 /* TourDefinitions.swift */; };
+		37E4970E124FE92C1648DD71 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88250D2FE8E94894DCDBFF15 /* ShoppingItem.swift */; };
+		3FC6BB21875BFA30A1A16408 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E993853E38DEC89090BD519 /* ShoppingListView.swift */; };
+		498B5463BA5DDAA9001091D9 /* DayCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F397D016AD2188BF095A42 /* DayCardView.swift */; };
+		4A3EE30F28C5BD49FBA7F425 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F041E37712C554271F74D594 /* APIEndpoints.swift */; };
+		57E8D65521BCF68F288963E1 /* ShoppingListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23907C3EDCC0E792F3EB4368 /* ShoppingListViewModel.swift */; };
+		59B4D810E40D73E8C6278835 /* PendingInviteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C763F6B4EC459F3D0C8C46A /* PendingInviteCardView.swift */; };
+		6229B3FB93EF3FE3D0CA461F /* WelcomeOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA656F6F9628EF8E1999133 /* WelcomeOverlayView.swift */; };
+		66B27D85CF20FCE2215C7791 /* ContextSwitcherMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE0224CF0D75EAF1388265 /* ContextSwitcherMenu.swift */; };
+		6BD8B0717787388F66CDC105 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8774FF2D3CDB8E8215B7988C /* KeychainHelper.swift */; };
+		8164B5779053D4335527EA9C /* TourStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395F010057813DE777B3BCFD /* TourStep.swift */; };
+		825F4EE7791942C5FF0947D5 /* WeekEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DED02E15468E42F4CA0CA68 /* WeekEmptyStateView.swift */; };
+		8A4AFE99C3C068047CB6EE27 /* TourManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52ACBDEC466FC888A430A9DB /* TourManager.swift */; };
+		9315F45484D84310E6153F2B /* UserAvatarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C06A0ECDBD495729A197C2 /* UserAvatarMenu.swift */; };
+		9447D228FDDA47E133FA97F3 /* Color+WeekBite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBF48CE454C6ABEBBF11AC8 /* Color+WeekBite.swift */; };
+		9A0C8530E9FE97913FFA7F0E /* MenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD0A09DA48E1470347A2FD7 /* MenuPopupView.swift */; };
+		9CCBF30A8182971C832EC0F4 /* WeekPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8B8B31FF32B589E8B3E282 /* WeekPlanViewModel.swift */; };
+		A1BA8A6AA6B3F9CBA32E9748 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7452114AA6DD970633E1786 /* RootView.swift */; };
+		A806918231192A698D10334A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C123612075A1954C998A1985 /* Assets.xcassets */; };
+		AA8BD029D7C59D7F55196631 /* GlassBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B980C0BBDE3792B5CBC70F6D /* GlassBackground.swift */; };
+		B36DAC4AFB8AA155A241473D /* Date+WeekBite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D91374B8E03B0B74669EB6 /* Date+WeekBite.swift */; };
+		B5719EEC7578127B3282DCF7 /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBAE2D9E25BEE2674717699 /* CardStyle.swift */; };
+		B69D7C724D577DAA3D97EF92 /* GradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70B46201B5C6F6750BCDA68 /* GradientButton.swift */; };
+		B7037D8574E6CB5E1B3BE06D /* Family.swift in Sources */ = {isa = PBXBuildFile; fileRef = A857653F0368EB070EA878E2 /* Family.swift */; };
+		B7339F1CFC8D294B2DA33AD1 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B779B043990F726331A2DB16 /* AuthManager.swift */; };
+		BB25F0C9A1B8B5FA482FDAA1 /* MenuCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FA9DCDB5250CF511A27421 /* MenuCardView.swift */; };
+		C0452052756800EB320E3C82 /* MenuPopupCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9609340D4A7248FD12BDF0DE /* MenuPopupCardView.swift */; };
+		C10C4A1F82CA50BCBB71274D /* WeekPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF2576312E65EEFFB21DC62 /* WeekPlanView.swift */; };
+		C25876CA7873C7C025102A0B /* WeekBiteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20127E6B66CF8A98C8F6B9C /* WeekBiteTheme.swift */; };
+		C3B2A2C906EC875E2B3DC968 /* TourOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2EC273F3F0C71A025FAC7 /* TourOverlayView.swift */; };
+		C47D94977FEC929965FFC64D /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1781D70135FF92F776DC8AE9 /* Menu.swift */; };
+		C81E280B1D60F5207E0B8728 /* View+Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4495581E959B80B230BFA834 /* View+Toast.swift */; };
+		C8497173F4EFA1166B1C9DFC /* FamilyManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BED851C50F45BB6518C3EE6 /* FamilyManagementViewModel.swift */; };
+		C939460F9CE9D202134B3D17 /* MenuPopupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0E830AC82C398E74856371 /* MenuPopupViewModel.swift */; };
+		D1C8FC6FA995B2EAFD0CDDC1 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B56B1C9327DB9C9A3D7BA4 /* LoginView.swift */; };
+		D2D54AFD0258EB091C4DB3BB /* WeekBiteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E954F5BAE2A8DAE92C9DF9 /* WeekBiteApp.swift */; };
+		DB29314DCC482052332ED4A9 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D527C2A05376BF060E9FA28D /* UserInfo.swift */; };
+		DE4D2189788DB15745F35125 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1FA4DCBAE89409AED66B3 /* APIError.swift */; };
+		E3F46CD3B9BDF3C934CD150E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5625E6720E77EB3C7CAA2B3D /* MainTabView.swift */; };
+		E8152FFF3FDEF9CB9C7747AF /* MenuManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2AA407A771832E2881CDB4 /* MenuManagementViewModel.swift */; };
+		EAB393920B95930A377EFFA0 /* UserContextViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187F8A58FC63C8A6F58CB4A8 /* UserContextViewModel.swift */; };
+		F0A8703E573AD394EAE4323D /* FamilyManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83647B763C942B73693F93F /* FamilyManagementView.swift */; };
+		F16902813BE3B0E2A53E321D /* ShoppingItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6977874F7D4006274688EB4 /* ShoppingItemRowView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		16FA9DCDB5250CF511A27421 /* MenuCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCardView.swift; sourceTree = "<group>"; };
+		1781D70135FF92F776DC8AE9 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		187F8A58FC63C8A6F58CB4A8 /* UserContextViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContextViewModel.swift; sourceTree = "<group>"; };
+		1C3A12DECE0C6ACDB23FAB91 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1EBAE2D9E25BEE2674717699 /* CardStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardStyle.swift; sourceTree = "<group>"; };
+		1F2AA407A771832E2881CDB4 /* MenuManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuManagementViewModel.swift; sourceTree = "<group>"; };
+		20BCEC1CBE960B983422C4DA /* WeekBite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeekBite.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		23907C3EDCC0E792F3EB4368 /* ShoppingListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListViewModel.swift; sourceTree = "<group>"; };
+		2C763F6B4EC459F3D0C8C46A /* PendingInviteCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingInviteCardView.swift; sourceTree = "<group>"; };
+		2CD0A09DA48E1470347A2FD7 /* MenuPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPopupView.swift; sourceTree = "<group>"; };
+		2D8B8B31FF32B589E8B3E282 /* WeekPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanViewModel.swift; sourceTree = "<group>"; };
+		37F397D016AD2188BF095A42 /* DayCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCardView.swift; sourceTree = "<group>"; };
+		395F010057813DE777B3BCFD /* TourStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourStep.swift; sourceTree = "<group>"; };
+		4495581E959B80B230BFA834 /* View+Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Toast.swift"; sourceTree = "<group>"; };
+		4ACE0224CF0D75EAF1388265 /* ContextSwitcherMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextSwitcherMenu.swift; sourceTree = "<group>"; };
+		52ACBDEC466FC888A430A9DB /* TourManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourManager.swift; sourceTree = "<group>"; };
+		5625E6720E77EB3C7CAA2B3D /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		5DED02E15468E42F4CA0CA68 /* WeekEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekEmptyStateView.swift; sourceTree = "<group>"; };
+		5FB28AF46755473C32B56822 /* Week.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Week.swift; sourceTree = "<group>"; };
+		64C06A0ECDBD495729A197C2 /* UserAvatarMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAvatarMenu.swift; sourceTree = "<group>"; };
+		6BED851C50F45BB6518C3EE6 /* FamilyManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyManagementViewModel.swift; sourceTree = "<group>"; };
+		78E954F5BAE2A8DAE92C9DF9 /* WeekBiteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekBiteApp.swift; sourceTree = "<group>"; };
+		7FE53376F62C8D5B3B7616EF /* MenuFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuFormView.swift; sourceTree = "<group>"; };
+		8774FF2D3CDB8E8215B7988C /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		88250D2FE8E94894DCDBFF15 /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
+		8BBF48CE454C6ABEBBF11AC8 /* Color+WeekBite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+WeekBite.swift"; sourceTree = "<group>"; };
+		8E993853E38DEC89090BD519 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
+		94B91047A9EC609CF20C35C4 /* FamilyCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyCardView.swift; sourceTree = "<group>"; };
+		9609340D4A7248FD12BDF0DE /* MenuPopupCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPopupCardView.swift; sourceTree = "<group>"; };
+		A857653F0368EB070EA878E2 /* Family.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Family.swift; sourceTree = "<group>"; };
+		AAF2576312E65EEFFB21DC62 /* WeekPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanView.swift; sourceTree = "<group>"; };
+		B20127E6B66CF8A98C8F6B9C /* WeekBiteTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekBiteTheme.swift; sourceTree = "<group>"; };
+		B6977874F7D4006274688EB4 /* ShoppingItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItemRowView.swift; sourceTree = "<group>"; };
+		B779B043990F726331A2DB16 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		B980C0BBDE3792B5CBC70F6D /* GlassBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassBackground.swift; sourceTree = "<group>"; };
+		BC8C67E79B87D8EFB471ECA1 /* TourDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourDefinitions.swift; sourceTree = "<group>"; };
+		BE0E830AC82C398E74856371 /* MenuPopupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPopupViewModel.swift; sourceTree = "<group>"; };
+		C123612075A1954C998A1985 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C1A3F192DFF16A9959039C4E /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		C3B56B1C9327DB9C9A3D7BA4 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		C3D91374B8E03B0B74669EB6 /* Date+WeekBite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+WeekBite.swift"; sourceTree = "<group>"; };
+		C70B46201B5C6F6750BCDA68 /* GradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
+		CEC1FA4DCBAE89409AED66B3 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		CFA656F6F9628EF8E1999133 /* WelcomeOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOverlayView.swift; sourceTree = "<group>"; };
+		D527C2A05376BF060E9FA28D /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		D83647B763C942B73693F93F /* FamilyManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyManagementView.swift; sourceTree = "<group>"; };
+		D8E2EC273F3F0C71A025FAC7 /* TourOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourOverlayView.swift; sourceTree = "<group>"; };
+		F041E37712C554271F74D594 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
+		F519C1C695D42BFDEBFF51C9 /* MenuManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuManagementView.swift; sourceTree = "<group>"; };
+		F7452114AA6DD970633E1786 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		12216DC5E2EF06A78B333380 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				20BCEC1CBE960B983422C4DA /* WeekBite.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		28301AE0E9799E88584AB014 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A857653F0368EB070EA878E2 /* Family.swift */,
+				1781D70135FF92F776DC8AE9 /* Menu.swift */,
+				88250D2FE8E94894DCDBFF15 /* ShoppingItem.swift */,
+				D527C2A05376BF060E9FA28D /* UserInfo.swift */,
+				5FB28AF46755473C32B56822 /* Week.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4005AE7BECAC050E3193BF11 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				1EBAE2D9E25BEE2674717699 /* CardStyle.swift */,
+				B980C0BBDE3792B5CBC70F6D /* GlassBackground.swift */,
+				C70B46201B5C6F6750BCDA68 /* GradientButton.swift */,
+				B20127E6B66CF8A98C8F6B9C /* WeekBiteTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		40D32451AFC4F6EB09156D38 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6BED851C50F45BB6518C3EE6 /* FamilyManagementViewModel.swift */,
+				1F2AA407A771832E2881CDB4 /* MenuManagementViewModel.swift */,
+				BE0E830AC82C398E74856371 /* MenuPopupViewModel.swift */,
+				23907C3EDCC0E792F3EB4368 /* ShoppingListViewModel.swift */,
+				187F8A58FC63C8A6F58CB4A8 /* UserContextViewModel.swift */,
+				2D8B8B31FF32B589E8B3E282 /* WeekPlanViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4384072A407F3008F4F196F2 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				C1A3F192DFF16A9959039C4E /* APIClient.swift */,
+				F041E37712C554271F74D594 /* APIEndpoints.swift */,
+				CEC1FA4DCBAE89409AED66B3 /* APIError.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		5D1916EC82D7B3EDF6A3D5B1 /* WeekPlan */ = {
+			isa = PBXGroup;
+			children = (
+				37F397D016AD2188BF095A42 /* DayCardView.swift */,
+				5DED02E15468E42F4CA0CA68 /* WeekEmptyStateView.swift */,
+				AAF2576312E65EEFFB21DC62 /* WeekPlanView.swift */,
+			);
+			path = WeekPlan;
+			sourceTree = "<group>";
+		};
+		7B33507093601D1898B0B002 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8BBF48CE454C6ABEBBF11AC8 /* Color+WeekBite.swift */,
+				C3D91374B8E03B0B74669EB6 /* Date+WeekBite.swift */,
+				4495581E959B80B230BFA834 /* View+Toast.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		86B01AD710321ED856ECBE0C /* MenuManagement */ = {
+			isa = PBXGroup;
+			children = (
+				16FA9DCDB5250CF511A27421 /* MenuCardView.swift */,
+				7FE53376F62C8D5B3B7616EF /* MenuFormView.swift */,
+				F519C1C695D42BFDEBFF51C9 /* MenuManagementView.swift */,
+			);
+			path = MenuManagement;
+			sourceTree = "<group>";
+		};
+		94314102A96B01DADB410A0D /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				4ACE0224CF0D75EAF1388265 /* ContextSwitcherMenu.swift */,
+				5625E6720E77EB3C7CAA2B3D /* MainTabView.swift */,
+				64C06A0ECDBD495729A197C2 /* UserAvatarMenu.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		9CC446628294ECCFAC949B3A /* WeekBite */ = {
+			isa = PBXGroup;
+			children = (
+				C123612075A1954C998A1985 /* Assets.xcassets */,
+				1C3A12DECE0C6ACDB23FAB91 /* Info.plist */,
+				78E954F5BAE2A8DAE92C9DF9 /* WeekBiteApp.swift */,
+				DC64F1274A651ECA39FD28D7 /* Auth */,
+				7B33507093601D1898B0B002 /* Extensions */,
+				28301AE0E9799E88584AB014 /* Models */,
+				4384072A407F3008F4F196F2 /* Network */,
+				4005AE7BECAC050E3193BF11 /* Theme */,
+				F42EC3BBA205C48B87509870 /* Tour */,
+				40D32451AFC4F6EB09156D38 /* ViewModels */,
+				D79852952920A1CC103DF3C9 /* Views */,
+			);
+			path = WeekBite;
+			sourceTree = "<group>";
+		};
+		D628D964F25013279F57CD3F /* MenuPopup */ = {
+			isa = PBXGroup;
+			children = (
+				9609340D4A7248FD12BDF0DE /* MenuPopupCardView.swift */,
+				2CD0A09DA48E1470347A2FD7 /* MenuPopupView.swift */,
+			);
+			path = MenuPopup;
+			sourceTree = "<group>";
+		};
+		D6E4AC26AC249D35897563B5 /* ShoppingList */ = {
+			isa = PBXGroup;
+			children = (
+				B6977874F7D4006274688EB4 /* ShoppingItemRowView.swift */,
+				8E993853E38DEC89090BD519 /* ShoppingListView.swift */,
+			);
+			path = ShoppingList;
+			sourceTree = "<group>";
+		};
+		D79852952920A1CC103DF3C9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F7452114AA6DD970633E1786 /* RootView.swift */,
+				F4DEC4F6B1A19AFDFADEC089 /* Family */,
+				EFD9793D27E51F0FC6E398ED /* Login */,
+				94314102A96B01DADB410A0D /* Main */,
+				86B01AD710321ED856ECBE0C /* MenuManagement */,
+				D628D964F25013279F57CD3F /* MenuPopup */,
+				D6E4AC26AC249D35897563B5 /* ShoppingList */,
+				E8F1AD9EA936BE32ED35BF31 /* Tour */,
+				5D1916EC82D7B3EDF6A3D5B1 /* WeekPlan */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		DC64F1274A651ECA39FD28D7 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				B779B043990F726331A2DB16 /* AuthManager.swift */,
+				8774FF2D3CDB8E8215B7988C /* KeychainHelper.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		E8F1AD9EA936BE32ED35BF31 /* Tour */ = {
+			isa = PBXGroup;
+			children = (
+				D8E2EC273F3F0C71A025FAC7 /* TourOverlayView.swift */,
+				CFA656F6F9628EF8E1999133 /* WelcomeOverlayView.swift */,
+			);
+			path = Tour;
+			sourceTree = "<group>";
+		};
+		EFD9793D27E51F0FC6E398ED /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				C3B56B1C9327DB9C9A3D7BA4 /* LoginView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		F42EC3BBA205C48B87509870 /* Tour */ = {
+			isa = PBXGroup;
+			children = (
+				BC8C67E79B87D8EFB471ECA1 /* TourDefinitions.swift */,
+				52ACBDEC466FC888A430A9DB /* TourManager.swift */,
+				395F010057813DE777B3BCFD /* TourStep.swift */,
+			);
+			path = Tour;
+			sourceTree = "<group>";
+		};
+		F4DEC4F6B1A19AFDFADEC089 /* Family */ = {
+			isa = PBXGroup;
+			children = (
+				94B91047A9EC609CF20C35C4 /* FamilyCardView.swift */,
+				D83647B763C942B73693F93F /* FamilyManagementView.swift */,
+				2C763F6B4EC459F3D0C8C46A /* PendingInviteCardView.swift */,
+			);
+			path = Family;
+			sourceTree = "<group>";
+		};
+		F8DDC01CEA45D6E1317AE1BD = {
+			isa = PBXGroup;
+			children = (
+				9CC446628294ECCFAC949B3A /* WeekBite */,
+				12216DC5E2EF06A78B333380 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C65B8D8C009181F1B5D28B63 /* WeekBite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 594C6A50FEB8CE5F5D82DFDE /* Build configuration list for PBXNativeTarget "WeekBite" */;
+			buildPhases = (
+				DEAA57219D3FD4EEFEF6AD53 /* Sources */,
+				72F1ACF050D16FAAD98399A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WeekBite;
+			packageProductDependencies = (
+			);
+			productName = WeekBite;
+			productReference = 20BCEC1CBE960B983422C4DA /* WeekBite.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7444D8808FF886077B882869 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 79F33D93B1A4754ADE9859B8 /* Build configuration list for PBXProject "WeekBite" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F8DDC01CEA45D6E1317AE1BD;
+			minimizedProjectReferenceProxies = 1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C65B8D8C009181F1B5D28B63 /* WeekBite */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		72F1ACF050D16FAAD98399A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A806918231192A698D10334A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DEAA57219D3FD4EEFEF6AD53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A75C8F00A8D995DFB59CD89 /* APIClient.swift in Sources */,
+				4A3EE30F28C5BD49FBA7F425 /* APIEndpoints.swift in Sources */,
+				DE4D2189788DB15745F35125 /* APIError.swift in Sources */,
+				B7339F1CFC8D294B2DA33AD1 /* AuthManager.swift in Sources */,
+				B5719EEC7578127B3282DCF7 /* CardStyle.swift in Sources */,
+				9447D228FDDA47E133FA97F3 /* Color+WeekBite.swift in Sources */,
+				66B27D85CF20FCE2215C7791 /* ContextSwitcherMenu.swift in Sources */,
+				B36DAC4AFB8AA155A241473D /* Date+WeekBite.swift in Sources */,
+				498B5463BA5DDAA9001091D9 /* DayCardView.swift in Sources */,
+				B7037D8574E6CB5E1B3BE06D /* Family.swift in Sources */,
+				0729A8356D6CCF8676D846BF /* FamilyCardView.swift in Sources */,
+				F0A8703E573AD394EAE4323D /* FamilyManagementView.swift in Sources */,
+				C8497173F4EFA1166B1C9DFC /* FamilyManagementViewModel.swift in Sources */,
+				AA8BD029D7C59D7F55196631 /* GlassBackground.swift in Sources */,
+				B69D7C724D577DAA3D97EF92 /* GradientButton.swift in Sources */,
+				6BD8B0717787388F66CDC105 /* KeychainHelper.swift in Sources */,
+				D1C8FC6FA995B2EAFD0CDDC1 /* LoginView.swift in Sources */,
+				E3F46CD3B9BDF3C934CD150E /* MainTabView.swift in Sources */,
+				C47D94977FEC929965FFC64D /* Menu.swift in Sources */,
+				BB25F0C9A1B8B5FA482FDAA1 /* MenuCardView.swift in Sources */,
+				0C4B1D39FCF6E7633EDE36B8 /* MenuFormView.swift in Sources */,
+				32E270923217B2C89899E567 /* MenuManagementView.swift in Sources */,
+				E8152FFF3FDEF9CB9C7747AF /* MenuManagementViewModel.swift in Sources */,
+				C0452052756800EB320E3C82 /* MenuPopupCardView.swift in Sources */,
+				9A0C8530E9FE97913FFA7F0E /* MenuPopupView.swift in Sources */,
+				C939460F9CE9D202134B3D17 /* MenuPopupViewModel.swift in Sources */,
+				59B4D810E40D73E8C6278835 /* PendingInviteCardView.swift in Sources */,
+				A1BA8A6AA6B3F9CBA32E9748 /* RootView.swift in Sources */,
+				37E4970E124FE92C1648DD71 /* ShoppingItem.swift in Sources */,
+				F16902813BE3B0E2A53E321D /* ShoppingItemRowView.swift in Sources */,
+				3FC6BB21875BFA30A1A16408 /* ShoppingListView.swift in Sources */,
+				57E8D65521BCF68F288963E1 /* ShoppingListViewModel.swift in Sources */,
+				371C7B1FEDB74F596DF4781E /* TourDefinitions.swift in Sources */,
+				8A4AFE99C3C068047CB6EE27 /* TourManager.swift in Sources */,
+				C3B2A2C906EC875E2B3DC968 /* TourOverlayView.swift in Sources */,
+				8164B5779053D4335527EA9C /* TourStep.swift in Sources */,
+				9315F45484D84310E6153F2B /* UserAvatarMenu.swift in Sources */,
+				EAB393920B95930A377EFFA0 /* UserContextViewModel.swift in Sources */,
+				DB29314DCC482052332ED4A9 /* UserInfo.swift in Sources */,
+				C81E280B1D60F5207E0B8728 /* View+Toast.swift in Sources */,
+				070E76DDA32EF0E887EB4237 /* Week.swift in Sources */,
+				D2D54AFD0258EB091C4DB3BB /* WeekBiteApp.swift in Sources */,
+				C25876CA7873C7C025102A0B /* WeekBiteTheme.swift in Sources */,
+				825F4EE7791942C5FF0947D5 /* WeekEmptyStateView.swift in Sources */,
+				C10C4A1F82CA50BCBB71274D /* WeekPlanView.swift in Sources */,
+				9CCBF30A8182971C832EC0F4 /* WeekPlanViewModel.swift in Sources */,
+				6229B3FB93EF3FE3D0CA461F /* WelcomeOverlayView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		049AC40410161598F6B7F235 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		156B9B27040A1FC459920E6B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PFRJZF92Y7;
+				INFOPLIST_FILE = WeekBite/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WeekBite;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weekbite.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7F9AD332CF417D9EC8F7F44F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PFRJZF92Y7;
+				INFOPLIST_FILE = WeekBite/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WeekBite;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weekbite.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CAA8352046BF65B00781994C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		594C6A50FEB8CE5F5D82DFDE /* Build configuration list for PBXNativeTarget "WeekBite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				156B9B27040A1FC459920E6B /* Debug */,
+				7F9AD332CF417D9EC8F7F44F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		79F33D93B1A4754ADE9859B8 /* Build configuration list for PBXProject "WeekBite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				049AC40410161598F6B7F235 /* Debug */,
+				CAA8352046BF65B00781994C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7444D8808FF886077B882869 /* Project object */;
+}

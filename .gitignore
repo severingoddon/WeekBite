@@ -29,3 +29,22 @@ Thumbs.db
 .env
 *.env.local
 /.claude/
+
+# Xcode
+xcuserdata/
+*.xcworkspace/
+!*.xcodeproj/project.xcworkspace/
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.hmap
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
