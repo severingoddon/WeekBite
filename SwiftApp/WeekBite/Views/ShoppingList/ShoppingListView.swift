@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ShoppingListView: View {
     @Environment(APIClient.self) private var api
-    @Environment(TourManager.self) private var tourManager
     @Environment(UserContextViewModel.self) private var userContext
 
     @State private var viewModel: ShoppingListViewModel?
@@ -54,7 +53,6 @@ struct ShoppingListView: View {
                     }
                     .padding(14)
                     .cardStyle()
-                    .tourAnchor("shopping-form")
 
                     // Items list
                     VStack(spacing: 0) {
@@ -85,7 +83,6 @@ struct ShoppingListView: View {
                     }
                     .padding(.vertical, 8)
                     .cardStyle()
-                    .tourAnchor("shopping-items")
                 }
             }
             .padding()
@@ -134,25 +131,9 @@ struct ShoppingListView: View {
         .padding(.vertical, 8)
     }
 
-    private func ensureVM() {
-        if viewModel == nil {
-            resetVM()
-        }
-    }
-
     private func resetVM() {
         let vm = ShoppingListViewModel(api: api)
         viewModel = vm
-        Task {
-            await vm.loadItems()
-            tryStartTour()
-        }
-    }
-
-    private func tryStartTour() {
-        guard !tourManager.hasSeenTour("shopping-list") else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            tourManager.startTour("shopping-list", steps: TourDefinitions.shoppingList)
-        }
+        Task { await vm.loadItems() }
     }
 }

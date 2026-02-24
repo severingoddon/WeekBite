@@ -34,6 +34,5 @@ struct ContextSwitcherMenu: View {
                     .foregroundStyle(WBColor.textMuted)
             }
         }
-        .tourAnchor("context-switcher")
     }
 }

@@ -18,14 +18,9 @@ struct WeekBiteApp: App {
                 .onOpenURL { url in
                     handleCallback(url)
                 }
-                .overlayPreferenceValue(TourAnchorKey.self) { anchors in
-                    GeometryReader { proxy in
-                        ZStack {
-                            WelcomeOverlayView()
-                            TourOverlayView(anchors: anchors, proxy: proxy)
-                        }
+                .overlay {
+                    WelcomeOverlayView()
                         .environment(tourManager)
-                    }
                 }
                 .preferredColorScheme(.dark)
         }

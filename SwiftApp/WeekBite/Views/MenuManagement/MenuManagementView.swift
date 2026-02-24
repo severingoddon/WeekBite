@@ -3,7 +3,6 @@ import UniformTypeIdentifiers
 
 struct MenuManagementView: View {
     @Environment(APIClient.self) private var api
-    @Environment(TourManager.self) private var tourManager
     @Environment(UserContextViewModel.self) private var userContext
 
     @State private var viewModel: MenuManagementViewModel?
@@ -19,7 +18,6 @@ struct MenuManagementView: View {
 
                     if let vm = viewModel {
                         MenuFormView(viewModel: vm, toast: $toast)
-                            .tourAnchor("menu-form")
 
                         Divider().background(WBColor.borderSubtle)
 
@@ -95,25 +93,9 @@ struct MenuManagementView: View {
         }
     }
 
-    private func ensureVM() {
-        if viewModel == nil {
-            resetVM()
-        }
-    }
-
     private func resetVM() {
         let vm = MenuManagementViewModel(api: api)
         viewModel = vm
-        Task {
-            await vm.loadMenus()
-            tryStartTour()
-        }
-    }
-
-    private func tryStartTour() {
-        guard !tourManager.hasSeenTour("menu-management") else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            tourManager.startTour("menu-management", steps: TourDefinitions.menuManagement)
-        }
+        Task { await vm.loadMenus() }
     }
 }

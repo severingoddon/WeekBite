@@ -2,7 +2,6 @@ import SwiftUI
 
 struct MenuPopupView: View {
     @Environment(APIClient.self) private var api
-    @Environment(TourManager.self) private var tourManager
     @Environment(\.dismiss) private var dismiss
 
     let dayName: String
@@ -54,7 +53,7 @@ struct MenuPopupView: View {
                                 emptyState
                             }
 
-                            ForEach(Array(vm.filteredMenus.enumerated()), id: \.element.id) { index, menu in
+                            ForEach(vm.filteredMenus) { menu in
                                 MenuPopupCardView(
                                     menu: menu,
                                     isExpanded: vm.expandedMenuId == menu.id,
@@ -81,7 +80,6 @@ struct MenuPopupView: View {
                                         }
                                     }
                                 )
-                                .tourAnchor(index == 0 ? "menu-select" : "")
                             }
                             .padding(.horizontal)
                         }
@@ -107,12 +105,9 @@ struct MenuPopupView: View {
         }
         .preferredColorScheme(.dark)
         .onAppear {
-            let vm = MenuPopupViewModel(api: api, tourManager: tourManager)
+            let vm = MenuPopupViewModel(api: api)
             viewModel = vm
             Task { await vm.loadMenus() }
-        }
-        .onDisappear {
-            if tourManager.isActive { tourManager.endTour() }
         }
     }
 

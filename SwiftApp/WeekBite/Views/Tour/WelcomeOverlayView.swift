@@ -27,10 +27,6 @@ struct WelcomeOverlayView: View {
                         .foregroundStyle(WBColor.textSecondary)
                         .multilineTextAlignment(.center)
 
-                    Text("Wir zeigen dir jetzt kurz die wichtigsten Funktionen.")
-                        .font(.system(size: 13))
-                        .foregroundStyle(WBColor.textMuted)
-
                     GradientButton(title: "Los geht's") {
                         tourManager.dismissWelcome()
                     }

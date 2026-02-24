@@ -12,18 +12,17 @@ final class MenuPopupViewModel {
     var showNoMenusHint: Bool = false
 
     private let api: APIClient
-    private let tourManager: TourManager
+    private let hintKey = "weekbite_no_menus_hint_seen"
 
-    init(api: APIClient, tourManager: TourManager) {
+    init(api: APIClient) {
         self.api = api
-        self.tourManager = tourManager
     }
 
     func loadMenus() async {
         do {
             menus = try await api.getMenus()
             filteredMenus = menus
-            if menus.isEmpty && !tourManager.hasSeenTour("no-menus-hint") {
+            if menus.isEmpty && !UserDefaults.standard.bool(forKey: hintKey) {
                 showNoMenusHint = true
             }
         } catch {}
@@ -65,6 +64,6 @@ final class MenuPopupViewModel {
 
     func dismissHint() {
         showNoMenusHint = false
-        tourManager.markSeen("no-menus-hint")
+        UserDefaults.standard.set(true, forKey: hintKey)
     }
 }

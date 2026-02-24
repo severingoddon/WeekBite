@@ -8,7 +8,6 @@ struct MainTabView: View {
     @State private var userContext: UserContextViewModel
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab = 0
-    @State private var welcomeChecked = false
 
     init() {
         _userContext = State(initialValue: UserContextViewModel(api: APIClient()))
@@ -59,10 +58,7 @@ struct MainTabView: View {
             userContext = UserContextViewModel(api: api)
             Task { await userContext.loadUser() }
             configureTabBarAppearance()
-            if !welcomeChecked {
-                welcomeChecked = true
-                tourManager.tryShowWelcome()
-            }
+            tourManager.tryShowWelcome()
         }
         .onChange(of: userContext.contextVersion) {
             selectedTab = selectedTab

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct FamilyManagementView: View {
     @Environment(APIClient.self) private var api
-    @Environment(TourManager.self) private var tourManager
     @Environment(UserContextViewModel.self) private var userContext
 
     @State private var viewModel: FamilyManagementViewModel?
@@ -12,7 +11,6 @@ struct FamilyManagementView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 GradientText(text: "Meine Familien")
-                    .tourAnchor("context-info")
 
                 if let vm = viewModel {
                     // Pending invites
@@ -56,7 +54,6 @@ struct FamilyManagementView: View {
                     }
                     .padding(14)
                     .cardStyle()
-                    .tourAnchor("family-create")
 
                     // Families
                     ForEach(vm.families) { family in
@@ -97,25 +94,9 @@ struct FamilyManagementView: View {
         Task { await userContext.loadUser() }
     }
 
-    private func ensureVM() {
-        if viewModel == nil {
-            resetVM()
-        }
-    }
-
     private func resetVM() {
         let vm = FamilyManagementViewModel(api: api)
         viewModel = vm
-        Task {
-            await vm.loadData()
-            tryStartTour()
-        }
-    }
-
-    private func tryStartTour() {
-        guard !tourManager.hasSeenTour("family-management") else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            tourManager.startTour("family-management", steps: TourDefinitions.familyManagement)
-        }
+        Task { await vm.loadData() }
     }
 }

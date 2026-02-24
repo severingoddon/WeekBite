@@ -66,7 +66,6 @@ struct MenuPopupCardView: View {
                                 .background(WBColor.bgActive)
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                             }
-                            .tourAnchor(index == 0 ? "ingredient-chip" : "")
                         }
                     }
                 }

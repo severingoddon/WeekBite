@@ -3,8 +3,6 @@ import SwiftUI
 struct UserAvatarMenu: View {
     @Environment(UserContextViewModel.self) private var userContext
     @Environment(AuthManager.self) private var authManager
-    @Environment(TourManager.self) private var tourManager
-    @State private var toast: ToastMessage?
 
     var body: some View {
         Menu {
@@ -12,12 +10,6 @@ struct UserAvatarMenu: View {
                 Text(user.email)
                     .font(.system(size: 13))
                 Divider()
-            }
-            Button {
-                tourManager.resetAllTours()
-                toast = ToastMessage(text: "Einführung wird beim nächsten Seitenbesuch erneut angezeigt", actionLabel: nil, action: nil)
-            } label: {
-                Label("Einführung erneut zeigen", systemImage: "questionmark.circle")
             }
             Button(role: .destructive) {
                 authManager.logout()

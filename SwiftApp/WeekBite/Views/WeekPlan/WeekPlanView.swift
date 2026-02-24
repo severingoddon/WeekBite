@@ -3,7 +3,6 @@ import SwiftUI
 struct WeekPlanView: View {
     @Environment(APIClient.self) private var api
     @Environment(UserContextViewModel.self) private var userContext
-    @Environment(TourManager.self) private var tourManager
 
     @State private var viewModel: WeekPlanViewModel?
     @State private var selectedDay: WeekDay?
@@ -30,7 +29,6 @@ struct WeekPlanView: View {
                             }, onUndoShopping: { itemId in
                                 await vm.undoShoppingAdd(itemId)
                             })
-                            .tourAnchor(index == 0 ? "day-card" : "")
                         }
                     }
                 }
@@ -81,7 +79,6 @@ struct WeekPlanView: View {
                     Image(systemName: "calendar")
                         .foregroundStyle(WBColor.textSecondary)
                 }
-                .tourAnchor("date-picker-btn")
 
                 if let vm = viewModel {
                     OutlineButton(
@@ -92,7 +89,6 @@ struct WeekPlanView: View {
                             }
                         }
                     )
-                    .tourAnchor("next-week-btn")
 
                     if !vm.isCurrentWeek {
                         OutlineButton(title: "Aktuell") {
@@ -141,25 +137,9 @@ struct WeekPlanView: View {
         .preferredColorScheme(.dark)
     }
 
-    private func ensureVM() {
-        if viewModel == nil {
-            resetVM()
-        }
-    }
-
     private func resetVM() {
         let vm = WeekPlanViewModel(api: api)
         viewModel = vm
-        Task {
-            await vm.loadWeek()
-            tryStartTour()
-        }
-    }
-
-    private func tryStartTour() {
-        guard !tourManager.hasSeenTour("week-plan") else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            tourManager.startTour("week-plan", steps: TourDefinitions.weekPlan)
-        }
+        Task { await vm.loadWeek() }
     }
 }
