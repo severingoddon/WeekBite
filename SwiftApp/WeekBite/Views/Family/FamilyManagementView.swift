@@ -25,18 +25,14 @@ struct FamilyManagementView: View {
                             PendingInviteCardView(
                                 invite: invite,
                                 onAccept: {
-                                    Task {
-                                        if let msg = await vm.acceptInvite(invite) {
-                                            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                                        }
-                                        await userContext.loadUser()
+                                    if let msg = vm.acceptInvite(invite) {
+                                        toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                                     }
+                                    Task { await userContext.loadUser() }
                                 },
                                 onDecline: {
-                                    Task {
-                                        if let msg = await vm.declineInvite(invite) {
-                                            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                                        }
+                                    if let msg = vm.declineInvite(invite) {
+                                        toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                                     }
                                 }
                             )
@@ -95,12 +91,10 @@ struct FamilyManagementView: View {
     }
 
     private func createFamily(_ vm: FamilyManagementViewModel) {
-        Task {
-            if let msg = await vm.createFamily() {
-                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-            }
-            await userContext.loadUser()
+        if let msg = vm.createFamily() {
+            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
         }
+        Task { await userContext.loadUser() }
     }
 
     private func ensureVM() {

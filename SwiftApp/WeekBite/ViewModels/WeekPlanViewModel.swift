@@ -49,42 +49,62 @@ final class WeekPlanViewModel {
         }
     }
 
-    func updateWeekDay(_ day: WeekDay, menuId: Int?) async {
+    func updateWeekDay(_ day: WeekDay, menuId: Int?) {
         guard let week = currentWeek else { return }
-        do {
-            _ = try await api.updateWeekDay(week.id, day.day, menuId: menuId)
-            await loadWeek(date: week.start_date)
-        } catch {}
-    }
 
-    func resetWeek() async {
-        guard let week = currentWeek else { return }
-        do {
-            try await api.resetWeek(week.id)
-            await loadWeek(date: week.start_date)
-        } catch {}
-    }
-
-    func createOrShowNextWeek() async -> String? {
-        if nextWeekExists {
-            await loadWeek(date: nextWeekStartDate)
-            return nil
-        } else {
-            do {
-                let week = try await api.createNextWeek()
-                currentWeek = week
-                noWeekFound = false
-                await checkNextWeek()
-                return "Nächste Woche erstellt"
-            } catch {
-                await checkNextWeek()
-                return "Nächste Woche existiert bereits"
+        // Optimistic: update locally
+        if let idx = week.days.firstIndex(where: { $0.day == day.day }) {
+            var updatedDays = week.days
+            if menuId == nil {
+                updatedDays[idx] = WeekDay(id: day.id, day: day.day, menu: nil)
             }
+            currentWeek = Week(id: week.id, start_date: week.start_date, days: updatedDays)
+        }
+
+        let startDate = week.start_date
+        Task {
+            do {
+                _ = try await api.updateWeekDay(week.id, day.day, menuId: menuId)
+            } catch {}
+            await loadWeek(date: startDate)
         }
     }
 
-    func goToCurrentWeek() async {
-        await loadWeek()
+    func resetWeek() {
+        guard let week = currentWeek else { return }
+
+        // Optimistic: clear all menus locally
+        let clearedDays = week.days.map { WeekDay(id: $0.id, day: $0.day, menu: nil) }
+        currentWeek = Week(id: week.id, start_date: week.start_date, days: clearedDays)
+
+        let startDate = week.start_date
+        Task {
+            try? await api.resetWeek(week.id)
+            await loadWeek(date: startDate)
+        }
+    }
+
+    func createOrShowNextWeek() -> String? {
+        if nextWeekExists {
+            Task { await loadWeek(date: nextWeekStartDate) }
+            return nil
+        } else {
+            Task {
+                do {
+                    let week = try await api.createNextWeek()
+                    currentWeek = week
+                    noWeekFound = false
+                    await checkNextWeek()
+                } catch {
+                    await checkNextWeek()
+                }
+            }
+            return "Nächste Woche erstellt"
+        }
+    }
+
+    func goToCurrentWeek() {
+        Task { await loadWeek() }
     }
 
     func addToShoppingList(_ ingredient: String) async -> (success: Bool, itemId: Int?) {

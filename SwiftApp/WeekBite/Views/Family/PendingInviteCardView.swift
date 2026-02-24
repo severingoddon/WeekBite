@@ -18,9 +18,28 @@ struct PendingInviteCardView: View {
                 }
             }
             Spacer()
-            HStack(spacing: 8) {
-                GradientButton(title: "Annehmen", action: onAccept)
-                OutlineButton(title: "Ablehnen", action: onDecline)
+            HStack(spacing: 16) {
+                Button(action: onDecline) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(WBColor.textMuted)
+                        .frame(width: 36, height: 36)
+                        .background(WBColor.bgElevated)
+                        .clipShape(Circle())
+                }
+                Button(action: onAccept) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(.white)
+                        .frame(width: 36, height: 36)
+                        .background(
+                            LinearGradient(
+                                colors: [WBColor.accentCyan, WBColor.accentViolet],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                        .clipShape(Circle())
+                }
             }
         }
         .padding(14)

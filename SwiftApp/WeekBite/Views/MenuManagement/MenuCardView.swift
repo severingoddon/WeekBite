@@ -21,31 +21,15 @@ struct MenuCardView: View {
                     }
                 }
                 Spacer()
-                if menu.is_own != false {
-                    HStack(spacing: 16) {
-                        Button(action: onEdit) {
-                            Image(systemName: "pencil")
-                                .foregroundStyle(WBColor.textSecondary)
-                                .frame(width: 32, height: 32)
-                        }
-                        Button { showDeleteConfirm = true } label: {
-                            Image(systemName: "trash")
-                                .foregroundStyle(.red.opacity(0.7))
-                                .frame(width: 32, height: 32)
-                        }
-                    }
-                }
-            }
-
-            HStack(spacing: 12) {
-                if !menu.note.isEmpty {
-                    Text(menu.note)
-                        .font(.system(size: 12))
-                        .foregroundStyle(WBColor.textSecondary)
-                }
                 Text("\(menu.effort_min) Min.")
                     .font(.system(size: 12))
                     .foregroundStyle(WBColor.textMuted)
+            }
+
+            if !menu.note.isEmpty {
+                Text(menu.note)
+                    .font(.system(size: 12))
+                    .foregroundStyle(WBColor.textSecondary)
             }
 
             if !menu.ingredients.isEmpty {
@@ -65,7 +49,22 @@ struct MenuCardView: View {
         .padding(14)
         .cardStyle()
         .opacity(menu.is_own == false ? 0.7 : 1)
-        .confirmationDialog("\(menu.title) löscletzhen?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+        .contentShape(Rectangle())
+        .contextMenu {
+            if menu.is_own != false {
+                Button {
+                    onEdit()
+                } label: {
+                    Label("Bearbeiten", systemImage: "pencil")
+                }
+                Button(role: .destructive) {
+                    showDeleteConfirm = true
+                } label: {
+                    Label("Löschen", systemImage: "trash")
+                }
+            }
+        }
+        .confirmationDialog("\(menu.title) löschen?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Löschen", role: .destructive) { onDelete() }
         } message: {
             Text("Das Menu wird unwiderruflich gelöscht.")

@@ -51,6 +51,7 @@ struct MainTabView: View {
                 Label("Familien", systemImage: "person.3")
             }
             .tag(3)
+            .badge(userContext.user?.pending_invites.count ?? 0)
         }
         .tint(WBColor.accentCyan)
         .environment(userContext)

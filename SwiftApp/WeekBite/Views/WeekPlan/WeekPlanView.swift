@@ -24,7 +24,7 @@ struct WeekPlanView: View {
                             DayCardView(day: day, onTap: {
                                 selectedDay = day
                             }, onRemove: {
-                                Task { await vm.updateWeekDay(day, menuId: nil) }
+                                vm.updateWeekDay(day, menuId: nil)
                             }, onAddToShopping: { ingredient in
                                 await vm.addToShoppingList(ingredient)
                             }, onUndoShopping: { itemId in
@@ -46,9 +46,7 @@ struct WeekPlanView: View {
         .onChange(of: userContext.refreshVersion) { Task { await viewModel?.loadWeek() } }
         .fullScreenCover(item: $selectedDay) { day in
             MenuPopupView(dayName: day.day) { menuId in
-                if let vm = viewModel {
-                    Task { await vm.updateWeekDay(day, menuId: menuId) }
-                }
+                viewModel?.updateWeekDay(day, menuId: menuId)
             }
         }
         .sheet(isPresented: $showDatePicker) {
@@ -56,10 +54,8 @@ struct WeekPlanView: View {
         }
         .confirmationDialog("Woche zurücksetzen?", isPresented: $showResetConfirm, titleVisibility: .visible) {
             Button("Zurücksetzen", role: .destructive) {
-                Task {
-                    await viewModel?.resetWeek()
-                    toast = ToastMessage(text: "Woche zurückgesetzt", actionLabel: nil, action: nil)
-                }
+                viewModel?.resetWeek()
+                toast = ToastMessage(text: "Woche zurückgesetzt", actionLabel: nil, action: nil)
             }
         } message: {
             Text("Alle Menu-Zuweisungen dieser Woche werden entfernt.")
@@ -91,10 +87,8 @@ struct WeekPlanView: View {
                     OutlineButton(
                         title: vm.nextWeekExists ? "Nächste Woche" : "+ Nächste Woche",
                         action: {
-                            Task {
-                                if let msg = await vm.createOrShowNextWeek() {
-                                    toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                                }
+                            if let msg = vm.createOrShowNextWeek() {
+                                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                             }
                         }
                     )
@@ -102,7 +96,7 @@ struct WeekPlanView: View {
 
                     if !vm.isCurrentWeek {
                         OutlineButton(title: "Aktuell") {
-                            Task { await vm.goToCurrentWeek() }
+                            vm.goToCurrentWeek()
                         }
                     }
                 }
@@ -135,7 +129,8 @@ struct WeekPlanView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Fertig") {
                             showDatePicker = false
-                            Task { await viewModel?.loadWeek(date: selectedDate.toISODateString()) }
+                            let dateStr = selectedDate.toISODateString()
+                            Task { await viewModel?.loadWeek(date: dateStr) }
                         }
                     }
                     ToolbarItem(placement: .cancellationAction) {

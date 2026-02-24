@@ -21,19 +21,24 @@ final class ShoppingListViewModel {
         } catch {}
     }
 
-    func addItem() async -> Bool {
+    func addItem() {
         let name = newName.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty else { return false }
-        guard !items.contains(where: { $0.name.lowercased() == name.lowercased() }) else { return false }
+        let quantity = newQuantity.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        guard !items.contains(where: { $0.name.lowercased() == name.lowercased() }) else { return }
 
-        do {
-            _ = try await api.addShoppingItem(ShoppingItemCreate(name: name, quantity: newQuantity.trimmingCharacters(in: .whitespaces)))
-            newName = ""
-            newQuantity = ""
+        // Optimistic: add locally with temp ID
+        let tempId = -(items.count + 1)
+        let tempItem = ShoppingItem(id: tempId, name: name, quantity: quantity, checked: false, created: true)
+        items.append(tempItem)
+        newName = ""
+        newQuantity = ""
+
+        Task {
+            do {
+                _ = try await api.addShoppingItem(ShoppingItemCreate(name: name, quantity: quantity))
+            } catch {}
             await loadItems()
-            return true
-        } catch {
-            return false
         }
     }
 
@@ -47,36 +52,51 @@ final class ShoppingListViewModel {
         editingId = nil
     }
 
-    func saveEdit(_ id: Int) async {
+    func saveEdit(_ id: Int) {
         let name = editName.trimmingCharacters(in: .whitespaces)
+        let quantity = editQuantity.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
-        do {
-            _ = try await api.updateShoppingItem(id, ShoppingItemCreate(name: name, quantity: editQuantity.trimmingCharacters(in: .whitespaces)))
-            editingId = nil
+
+        // Optimistic: update locally
+        if let idx = items.firstIndex(where: { $0.id == id }) {
+            items[idx] = ShoppingItem(id: id, name: name, quantity: quantity, checked: items[idx].checked, created: items[idx].created)
+        }
+        editingId = nil
+
+        Task {
+            do {
+                _ = try await api.updateShoppingItem(id, ShoppingItemCreate(name: name, quantity: quantity))
+            } catch {}
             await loadItems()
-        } catch {}
+        }
     }
 
-    func toggleItem(_ item: ShoppingItem) async {
-        do {
-            let updated = try await api.toggleShoppingItem(item.id)
-            if let idx = items.firstIndex(where: { $0.id == item.id }) {
-                items[idx] = updated
-            }
-        } catch {}
+    func toggleItem(_ item: ShoppingItem) {
+        // Optimistic: toggle locally
+        if let idx = items.firstIndex(where: { $0.id == item.id }) {
+            items[idx] = ShoppingItem(id: item.id, name: item.name, quantity: item.quantity, checked: !item.checked, created: item.created)
+        }
+
+        Task {
+            try? await api.toggleShoppingItem(item.id)
+        }
     }
 
-    func deleteItem(_ id: Int) async {
-        do {
-            try await api.deleteShoppingItem(id)
-            await loadItems()
-        } catch {}
+    func deleteItem(_ id: Int) {
+        // Optimistic: remove locally
+        items.removeAll { $0.id == id }
+
+        Task {
+            try? await api.deleteShoppingItem(id)
+        }
     }
 
-    func clearList() async {
-        do {
-            try await api.clearShoppingList()
-            await loadItems()
-        } catch {}
+    func clearList() {
+        // Optimistic: clear locally
+        items.removeAll()
+
+        Task {
+            try? await api.clearShoppingList()
+        }
     }
 }

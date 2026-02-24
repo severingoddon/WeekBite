@@ -32,22 +32,9 @@ struct DayCardView: View {
 
             Spacer()
 
-            HStack(spacing: 4) {
-                if day.menu != nil {
-                    Button {
-                        onRemove()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.red.opacity(0.8))
-                            .padding(6)
-                    }
-                    .buttonStyle(.plain)
-                }
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13))
-                    .foregroundStyle(WBColor.textMuted)
-            }
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13))
+                .foregroundStyle(WBColor.textMuted)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
@@ -56,11 +43,19 @@ struct DayCardView: View {
         .onTapGesture {
             onTap()
         }
-        .onLongPressGesture(minimumDuration: 0.4) {
-            guard day.menu != nil else { return }
-            let generator = UIImpactFeedbackGenerator(style: .medium)
-            generator.impactOccurred()
-            showIngredients = true
+        .contextMenu {
+            if day.menu != nil {
+                Button {
+                    showIngredients = true
+                } label: {
+                    Label("Zutaten anzeigen", systemImage: "list.bullet")
+                }
+                Button(role: .destructive) {
+                    onRemove()
+                } label: {
+                    Label("Menu entfernen", systemImage: "trash")
+                }
+            }
         }
         .sheet(isPresented: $showIngredients) {
             if let menu = day.menu {

@@ -42,17 +42,13 @@ struct FamilyCardView: View {
                     Spacer()
                     if !isActive {
                         OutlineButton(title: "Aktivieren") {
-                            Task {
-                                try? await viewModel.api_switchContext(family.id)
-                                onContextChange()
-                            }
+                            viewModel.api_switchContext(family.id)
+                            onContextChange()
                         }
                     } else {
                         OutlineButton(title: "Privat") {
-                            Task {
-                                try? await viewModel.api_switchContext(nil)
-                                onContextChange()
-                            }
+                            viewModel.api_switchContext(nil)
+                            onContextChange()
                         }
                     }
                     Menu {
@@ -112,10 +108,8 @@ struct FamilyCardView: View {
 
                     if isCreator && member.user_id != family.created_by {
                         Button {
-                            Task {
-                                if let msg = await viewModel.removeMember(family, userId: member.user_id) {
-                                    toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                                }
+                            if let msg = viewModel.removeMember(family, userId: member.user_id) {
+                                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                             }
                         } label: {
                             Image(systemName: "person.badge.minus")
@@ -154,36 +148,28 @@ struct FamilyCardView: View {
     }
 
     private func saveRename() {
-        Task {
-            if let msg = await viewModel.saveRename(family) {
-                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-            }
+        if let msg = viewModel.saveRename(family) {
+            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
         }
     }
 
     private func deleteFamily() {
-        Task {
-            if let msg = await viewModel.deleteFamily(family) {
-                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-            }
-            onContextChange()
+        if let msg = viewModel.deleteFamily(family) {
+            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
         }
+        onContextChange()
     }
 
     private func leaveFamily() {
-        Task {
-            if let msg = await viewModel.leaveFamily(family) {
-                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-            }
-            onContextChange()
+        if let msg = viewModel.leaveFamily(family) {
+            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
         }
+        onContextChange()
     }
 
     private func inviteMember() {
-        Task {
-            if let msg = await viewModel.inviteMember(family) {
-                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-            }
+        if let msg = viewModel.inviteMember(family) {
+            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
         }
     }
 }

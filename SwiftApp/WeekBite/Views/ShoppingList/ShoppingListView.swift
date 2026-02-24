@@ -42,12 +42,12 @@ struct ShoppingListView: View {
                             ))
                             .textFieldStyle(WBTextFieldStyle())
                             .onSubmit {
-                                Task { _ = await vm.addItem() }
+                                vm.addItem()
                             }
 
                             GradientButton(
                                 title: "Hinzufügen",
-                                action: { Task { _ = await vm.addItem() } },
+                                action: { vm.addItem() },
                                 disabled: vm.newName.trimmingCharacters(in: .whitespaces).isEmpty
                             )
                         }
@@ -72,9 +72,9 @@ struct ShoppingListView: View {
                             } else {
                                 ShoppingItemRowView(
                                     item: item,
-                                    onToggle: { Task { await vm.toggleItem(item) } },
+                                    onToggle: { vm.toggleItem(item) },
                                     onEdit: { vm.startEdit(item) },
-                                    onDelete: { Task { await vm.deleteItem(item.id) } }
+                                    onDelete: { vm.deleteItem(item.id) }
                                 )
                             }
 
@@ -99,10 +99,8 @@ struct ShoppingListView: View {
         .onChange(of: userContext.refreshVersion) { Task { await viewModel?.loadItems() } }
         .confirmationDialog("Liste leeren?", isPresented: $showClearConfirm, titleVisibility: .visible) {
             Button("Alle Artikel löschen", role: .destructive) {
-                Task {
-                    await viewModel?.clearList()
-                    toast = ToastMessage(text: "Einkaufsliste geleert", actionLabel: nil, action: nil)
-                }
+                viewModel?.clearList()
+                toast = ToastMessage(text: "Einkaufsliste geleert", actionLabel: nil, action: nil)
             }
         }
     }
@@ -121,9 +119,9 @@ struct ShoppingListView: View {
                 set: { vm.editName = $0 }
             ))
             .textFieldStyle(WBTextFieldStyle())
-            .onSubmit { Task { await vm.saveEdit(item.id) } }
+            .onSubmit { vm.saveEdit(item.id) }
 
-            Button { Task { await vm.saveEdit(item.id) } } label: {
+            Button { vm.saveEdit(item.id) } label: {
                 Image(systemName: "checkmark")
                     .foregroundStyle(WBColor.accentCyan)
             }

@@ -61,10 +61,8 @@ struct MenuFormView: View {
                 GradientButton(
                     title: viewModel.editingMenu != nil ? "Aktualisieren" : "Hinzufügen",
                     action: {
-                        Task {
-                            if let msg = await viewModel.saveMenu() {
-                                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                            }
+                        if let msg = viewModel.saveMenu() {
+                            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                         }
                     },
                     disabled: viewModel.menuTitle.trimmingCharacters(in: .whitespaces).isEmpty

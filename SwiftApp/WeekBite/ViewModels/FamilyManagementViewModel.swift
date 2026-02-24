@@ -25,19 +25,18 @@ final class FamilyManagementViewModel {
         } catch {}
     }
 
-    func createFamily() async -> String? {
+    func createFamily() -> String? {
         let name = newFamilyName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return nil }
-        do {
-            _ = try await api.createFamily(FamilyCreate(name: name))
-            newFamilyName = ""
+        newFamilyName = ""
+
+        Task {
+            do {
+                _ = try await api.createFamily(FamilyCreate(name: name))
+            } catch {}
             await loadData()
-            return "Familie erstellt"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
         }
+        return "Familie erstellt"
     }
 
     func startRename(_ family: Family) {
@@ -45,75 +44,82 @@ final class FamilyManagementViewModel {
         editFamilyName = family.name
     }
 
-    func saveRename(_ family: Family) async -> String? {
+    func saveRename(_ family: Family) -> String? {
         let name = editFamilyName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return nil }
-        do {
-            _ = try await api.updateFamily(family.id, FamilyCreate(name: name))
-            editingFamilyId = nil
-            await loadData()
-            return "Familie umbenannt"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
+
+        // Optimistic: update name locally
+        if let idx = families.firstIndex(where: { $0.id == family.id }) {
+            var updated = families[idx]
+            updated = Family(id: updated.id, name: name, created_by: updated.created_by, members: updated.members)
+            families[idx] = updated
         }
+        editingFamilyId = nil
+
+        Task {
+            do {
+                _ = try await api.updateFamily(family.id, FamilyCreate(name: name))
+            } catch {}
+            await loadData()
+        }
+        return "Familie umbenannt"
     }
 
     func cancelRename() {
         editingFamilyId = nil
     }
 
-    func deleteFamily(_ family: Family) async -> String? {
-        do {
-            try await api.deleteFamily(family.id)
+    func deleteFamily(_ family: Family) -> String? {
+        // Optimistic: remove locally
+        families.removeAll { $0.id == family.id }
+
+        Task {
+            try? await api.deleteFamily(family.id)
             await loadData()
-            return "Familie gelöscht"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
         }
+        return "Familie gelöscht"
     }
 
-    func leaveFamily(_ family: Family) async -> String? {
+    func leaveFamily(_ family: Family) -> String? {
         guard let userId = getUserId(family) else { return nil }
-        do {
-            try await api.removeFamilyMember(family.id, userId: userId)
+
+        // Optimistic: remove locally
+        families.removeAll { $0.id == family.id }
+
+        Task {
+            try? await api.removeFamilyMember(family.id, userId: userId)
             await loadData()
-            return "Familie verlassen"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
         }
+        return "Familie verlassen"
     }
 
-    func inviteMember(_ family: Family) async -> String? {
+    func inviteMember(_ family: Family) -> String? {
         let email = (inviteEmails[family.id] ?? "").trimmingCharacters(in: .whitespaces)
         guard !email.isEmpty else { return nil }
-        do {
-            let res = try await api.inviteToFamily(family.id, email: email)
-            inviteEmails[family.id] = ""
+        inviteEmails[family.id] = ""
+
+        Task {
+            do {
+                _ = try await api.inviteToFamily(family.id, email: email)
+            } catch {}
             await loadData()
-            return res.detail ?? "Einladung gesendet"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
         }
+        return "Einladung gesendet"
     }
 
-    func removeMember(_ family: Family, userId: Int) async -> String? {
-        do {
-            try await api.removeFamilyMember(family.id, userId: userId)
-            await loadData()
-            return "Mitglied entfernt"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
+    func removeMember(_ family: Family, userId: Int) -> String? {
+        // Optimistic: remove member locally
+        if let idx = families.firstIndex(where: { $0.id == family.id }) {
+            var updated = families[idx]
+            let newMembers = updated.members.filter { $0.user_id != userId }
+            families[idx] = Family(id: updated.id, name: updated.name, created_by: updated.created_by, members: newMembers)
         }
+
+        Task {
+            try? await api.removeFamilyMember(family.id, userId: userId)
+            await loadData()
+        }
+        return "Mitglied entfernt"
     }
 
     func isCreator(_ family: Family) -> Bool {
@@ -124,32 +130,32 @@ final class FamilyManagementViewModel {
         activeId == family.id
     }
 
-    func acceptInvite(_ invite: PendingInvite) async -> String? {
-        do {
-            try await api.acceptInvite(invite.id)
+    func acceptInvite(_ invite: PendingInvite) -> String? {
+        // Optimistic: remove from pending
+        pendingInvites.removeAll { $0.id == invite.id }
+
+        Task {
+            try? await api.acceptInvite(invite.id)
             await loadData()
-            return "Einladung zu \"\(invite.family_name)\" angenommen"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
         }
+        return "Einladung zu \"\(invite.family_name)\" angenommen"
     }
 
-    func declineInvite(_ invite: PendingInvite) async -> String? {
-        do {
-            try await api.declineInvite(invite.id)
+    func declineInvite(_ invite: PendingInvite) -> String? {
+        // Optimistic: remove from pending
+        pendingInvites.removeAll { $0.id == invite.id }
+
+        Task {
+            try? await api.declineInvite(invite.id)
             await loadData()
-            return "Einladung abgelehnt"
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
         }
+        return "Einladung abgelehnt"
     }
 
-    func api_switchContext(_ familyId: Int?) async throws {
-        try await api.switchContext(familyId: familyId)
+    func api_switchContext(_ familyId: Int?) {
+        Task {
+            try? await api.switchContext(familyId: familyId)
+        }
     }
 
     private func getUserId(_ family: Family) -> Int? {

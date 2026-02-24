@@ -59,10 +59,8 @@ struct MenuManagementView: View {
                                     scrollProxy.scrollTo("menu-form-top", anchor: .top)
                                 }
                             }, onDelete: {
-                                Task {
-                                    if let msg = await vm.deleteMenu(menu) {
-                                        toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                                    }
+                                if let msg = vm.deleteMenu(menu) {
+                                    toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                                 }
                             })
                         }

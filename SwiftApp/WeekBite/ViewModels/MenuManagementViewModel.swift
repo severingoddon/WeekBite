@@ -38,7 +38,7 @@ final class MenuManagementViewModel {
         ingredients.removeAll { $0 == ingredient }
     }
 
-    func saveMenu() async -> String? {
+    func saveMenu() -> String? {
         let title = menuTitle.trimmingCharacters(in: .whitespaces)
         guard !title.isEmpty else { return nil }
 
@@ -49,23 +49,26 @@ final class MenuManagementViewModel {
             effort_min: menuEffort
         )
 
-        do {
-            if let editing = editingMenu {
-                _ = try await api.updateMenu(editing.id, data)
-                resetForm()
-                await loadMenus()
-                return "Menu aktualisiert"
-            } else {
-                _ = try await api.createMenu(data)
-                resetForm()
-                await loadMenus()
-                return "Menu erstellt"
-            }
-        } catch let error as APIError {
-            return error.errorDescription
-        } catch {
-            return "Fehler"
+        let isEdit = editingMenu != nil
+        let editId = editingMenu?.id
+
+        // Optimistic: if editing, update locally
+        if let editId, let idx = menus.firstIndex(where: { $0.id == editId }) {
+            menus[idx] = MenuModel(id: editId, title: title, ingredients: ingredients, note: menuNote, effort_min: menuEffort, is_own: menus[idx].is_own, owner_name: menus[idx].owner_name)
         }
+        resetForm()
+
+        Task {
+            do {
+                if let editId {
+                    _ = try await api.updateMenu(editId, data)
+                } else {
+                    _ = try await api.createMenu(data)
+                }
+            } catch {}
+            await loadMenus()
+        }
+        return isEdit ? "Menu aktualisiert" : "Menu erstellt"
     }
 
     func editMenu(_ menu: MenuModel) {
@@ -76,17 +79,18 @@ final class MenuManagementViewModel {
         menuEffort = menu.effort_min
     }
 
-    func deleteMenu(_ menu: MenuModel) async -> String? {
-        do {
-            try await api.deleteMenu(menu.id)
-            if editingMenu?.id == menu.id {
-                resetForm()
-            }
-            await loadMenus()
-            return "Menu gelöscht"
-        } catch {
-            return "Fehler beim Löschen"
+    func deleteMenu(_ menu: MenuModel) -> String? {
+        // Optimistic: remove locally
+        menus.removeAll { $0.id == menu.id }
+        if editingMenu?.id == menu.id {
+            resetForm()
         }
+
+        Task {
+            try? await api.deleteMenu(menu.id)
+            await loadMenus()
+        }
+        return "Menu gelöscht"
     }
 
     func resetForm() {
