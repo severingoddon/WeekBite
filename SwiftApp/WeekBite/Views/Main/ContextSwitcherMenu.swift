@@ -23,21 +23,16 @@ struct ContextSwitcherMenu: View {
             }
         } label: {
             HStack(spacing: 4) {
+                Image(systemName: userContext.user?.active_family_id != nil ? "person.3" : "person")
+                    .font(.system(size: 12))
+                    .foregroundStyle(WBColor.accentCyan)
                 Text(userContext.activeContextName)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(WBColor.textPrimary)
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 10))
-                    .foregroundStyle(WBColor.textSecondary)
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(WBColor.textMuted)
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(WBColor.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(WBColor.borderSubtle, lineWidth: 1)
-            )
         }
         .tourAnchor("context-switcher")
     }

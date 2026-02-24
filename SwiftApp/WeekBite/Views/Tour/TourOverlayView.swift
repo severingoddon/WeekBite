@@ -7,27 +7,33 @@ struct TourOverlayView: View {
     let proxy: GeometryProxy
 
     var body: some View {
-        if tourManager.isActive, let step = tourManager.currentStep,
-           let anchor = anchors[step.anchorID] {
-            let frame = proxy[anchor]
+        if tourManager.isActive, let step = tourManager.currentStep {
+            if let anchor = anchors[step.anchorID] {
+                let frame = proxy[anchor]
 
-            ZStack {
-                // Dimming background with spotlight cutout
-                Color.black.opacity(0.6)
-                    .ignoresSafeArea()
-                    .reverseMask {
-                        RoundedRectangle(cornerRadius: 8)
-                            .frame(width: frame.width + 16, height: frame.height + 16)
-                            .position(x: frame.midX, y: frame.midY)
-                    }
-                    .onTapGesture {
-                        tourManager.endTour()
-                    }
+                ZStack {
+                    // Dimming background with spotlight cutout
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea()
+                        .reverseMask {
+                            RoundedRectangle(cornerRadius: 8)
+                                .frame(width: frame.width + 16, height: frame.height + 16)
+                                .position(x: frame.midX, y: frame.midY)
+                        }
+                        .onTapGesture {
+                            tourManager.endTour()
+                        }
 
-                // Tooltip
-                tooltipView(step: step, targetFrame: frame)
+                    // Tooltip
+                    tooltipView(step: step, targetFrame: frame)
+                }
+                .animation(.easeInOut(duration: 0.3), value: tourManager.currentIndex)
+            } else {
+                // Anchor not found (e.g. toolbar items) — auto-skip to next step
+                Color.clear.onAppear {
+                    tourManager.skipMissingStep(availableAnchors: Set(anchors.keys))
+                }
             }
-            .animation(.easeInOut(duration: 0.3), value: tourManager.currentIndex)
         }
     }
 

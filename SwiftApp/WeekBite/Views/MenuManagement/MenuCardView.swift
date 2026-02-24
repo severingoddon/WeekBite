@@ -5,6 +5,8 @@ struct MenuCardView: View {
     let onEdit: () -> Void
     let onDelete: () -> Void
 
+    @State private var showDeleteConfirm = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -20,13 +22,17 @@ struct MenuCardView: View {
                 }
                 Spacer()
                 if menu.is_own != false {
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil")
-                            .foregroundStyle(WBColor.textSecondary)
-                    }
-                    Button(action: onDelete) {
-                        Image(systemName: "trash")
-                            .foregroundStyle(.red.opacity(0.7))
+                    HStack(spacing: 16) {
+                        Button(action: onEdit) {
+                            Image(systemName: "pencil")
+                                .foregroundStyle(WBColor.textSecondary)
+                                .frame(width: 32, height: 32)
+                        }
+                        Button { showDeleteConfirm = true } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red.opacity(0.7))
+                                .frame(width: 32, height: 32)
+                        }
                     }
                 }
             }
@@ -59,5 +65,10 @@ struct MenuCardView: View {
         .padding(14)
         .cardStyle()
         .opacity(menu.is_own == false ? 0.7 : 1)
+        .confirmationDialog("\(menu.title) löscletzhen?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("Löschen", role: .destructive) { onDelete() }
+        } message: {
+            Text("Das Menu wird unwiderruflich gelöscht.")
+        }
     }
 }

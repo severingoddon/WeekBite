@@ -23,11 +23,21 @@ A weekly meal planning application. Assign menus to weekdays, archive past weeks
 - **Mobile first** — touch-optimized, responsive layout that scales up on desktop
 - **Dark mode** — Angular Material dark theme throughout
 
+## Clients
+
+The app has two frontends that share the same backend:
+
+- **Web App** (`frontend/`) — Angular 19 SPA, served via Nginx, runs in browser
+- **iOS App** (`SwiftApp/`) — Native SwiftUI app for iPhone (iOS 17+)
+
+Both clients are feature-equivalent: week plan, menu management, shopping list, families, context switching, tour/onboarding, Google OAuth.
+
 ## Tech Stack
 
 | Layer    | Technology                                        |
 |----------|---------------------------------------------------|
-| Frontend | Angular 19, Angular Material, Material Datepicker, SCSS |
+| Web      | Angular 19, Angular Material, Material Datepicker, SCSS |
+| iOS      | SwiftUI, Observation (`@Observable`), async/await, zero dependencies |
 | Backend  | Python 3.12, FastAPI, SQLAlchemy, Pydantic, Authlib |
 | Database | SQLite                                            |
 | Server   | Nginx (reverse proxy), Uvicorn                    |
@@ -69,6 +79,23 @@ Frontend runs at `http://localhost:4200`.
 
 > The Angular dev server proxies `/api` requests to the backend automatically (see `proxy.conf.json` if configured, otherwise set `ALLOWED_ORIGINS` accordingly).
 
+**iOS App:**
+
+Requires Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+
+```bash
+brew install xcodegen
+cd SwiftApp
+xcodegen generate
+open WeekBite.xcodeproj
+```
+
+In Xcode, select your development team under **Signing & Capabilities**, then build to a simulator or device.
+
+The API base URL is configured in `SwiftApp/WeekBite/Network/APIEndpoints.swift`. For local development, change it to `http://localhost:8000`. For production it points to `https://weekbite.goddoni.org:3003`.
+
+The iOS OAuth flow uses `ASWebAuthenticationSession` with the `weekbite://` URL scheme. The backend detects `?platform=ios` on the login endpoint and redirects the OAuth callback to `weekbite://auth?token=...` instead of the web frontend.
+
 ### Docker (local)
 
 ```bash
@@ -98,7 +125,7 @@ This will pull the latest code on the Raspi, rebuild all Docker images from scra
 
 | Method | Endpoint                     | Description                                      |
 |--------|------------------------------|--------------------------------------------------|
-| GET    | `/api/auth/google/login`     | Redirect to Google OAuth consent screen          |
+| GET    | `/api/auth/google/login`     | Redirect to Google OAuth consent screen (`?platform=ios` for native app) |
 | GET    | `/api/auth/google/callback`  | OAuth callback, creates session, redirects with token |
 | GET    | `/api/auth/me`               | Get current user info (email, name, avatar, families, active context) |
 

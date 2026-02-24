@@ -4,6 +4,7 @@ import Foundation
 final class UserContextViewModel {
     var user: UserInfo?
     var contextVersion: Int = 0
+    var refreshVersion: Int = 0
 
     private let api: APIClient
 

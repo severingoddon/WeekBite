@@ -87,6 +87,22 @@ final class WeekPlanViewModel {
         await loadWeek()
     }
 
+    func addToShoppingList(_ ingredient: String) async -> (success: Bool, itemId: Int?) {
+        do {
+            let item = try await api.addShoppingItem(ShoppingItemCreate(name: ingredient, quantity: ""))
+            if item.created == true {
+                return (true, item.id)
+            }
+            return (false, nil)
+        } catch {
+            return (false, nil)
+        }
+    }
+
+    func undoShoppingAdd(_ itemId: Int) async {
+        try? await api.deleteShoppingItem(itemId)
+    }
+
     private func checkNextWeek() async {
         do {
             let status = try await api.getNextWeekStatus()

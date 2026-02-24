@@ -6,6 +6,7 @@ struct MainTabView: View {
     @Environment(TourManager.self) private var tourManager
 
     @State private var userContext: UserContextViewModel
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab = 0
     @State private var welcomeChecked = false
 
@@ -64,6 +65,12 @@ struct MainTabView: View {
         }
         .onChange(of: userContext.contextVersion) {
             selectedTab = selectedTab
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase == .active {
+                userContext.refreshVersion += 1
+                Task { await userContext.loadUser() }
+            }
         }
     }
 

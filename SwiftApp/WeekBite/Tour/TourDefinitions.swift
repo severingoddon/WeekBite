@@ -20,12 +20,6 @@ enum TourDefinitions {
             text: "Springe direkt zu einer bestimmten Woche über den Kalender.",
             position: .bottom
         ),
-        TourStep(
-            anchorID: "context-switcher",
-            title: "Kontext wechseln",
-            text: "Wechsle hier zwischen deinem privaten Bereich und deinen Familien. Wochenpläne und Einkaufslisten werden pro Kontext getrennt.",
-            position: .bottom
-        ),
     ]
 
     static let menuPopup: [TourStep] = [

@@ -27,13 +27,14 @@ struct ShoppingItemRowView: View {
 
                 Spacer()
 
-                HStack(spacing: 4) {
+                HStack(spacing: 12) {
                     Button {
                         onEdit()
                     } label: {
                         Image(systemName: "pencil")
                             .font(.system(size: 14))
                             .foregroundStyle(WBColor.textMuted)
+                            .frame(width: 28, height: 28)
                     }
                     .buttonStyle(.plain)
 
@@ -43,6 +44,7 @@ struct ShoppingItemRowView: View {
                         Image(systemName: "trash")
                             .font(.system(size: 14))
                             .foregroundStyle(WBColor.textMuted)
+                            .frame(width: 28, height: 28)
                     }
                     .buttonStyle(.plain)
                 }

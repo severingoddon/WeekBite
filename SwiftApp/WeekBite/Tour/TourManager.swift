@@ -41,7 +41,7 @@ final class TourManager {
     }
 
     func startTour(_ tourId: String, steps: [TourStep]) {
-        guard !hasSeenTour(tourId), !isActive, !steps.isEmpty else { return }
+        guard !hasSeenTour(tourId), !isActive, !showWelcome, !steps.isEmpty else { return }
         self.steps = steps
         self.currentIndex = 0
         self.currentTourId = tourId
@@ -55,6 +55,20 @@ final class TourManager {
         } else {
             currentIndex = next
         }
+    }
+
+    /// Skip current step if its anchor is missing; advance to the next step that has an anchor, or end the tour.
+    func skipMissingStep(availableAnchors: Set<String>) {
+        var idx = currentIndex + 1
+        while idx < steps.count {
+            if availableAnchors.contains(steps[idx].anchorID) {
+                currentIndex = idx
+                return
+            }
+            idx += 1
+        }
+        // No remaining step has an anchor — end tour
+        endTour()
     }
 
     func endTour() {

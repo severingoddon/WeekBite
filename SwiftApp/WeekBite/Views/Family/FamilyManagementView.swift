@@ -87,8 +87,11 @@ struct FamilyManagementView: View {
         }
         .background(WBColor.bgDeepest)
         .toast($toast)
-        .onAppear { initVM() }
-        .onChange(of: userContext.contextVersion) { initVM() }
+        .onAppear {
+            if viewModel == nil { resetVM() } else { Task { await viewModel?.loadData() } }
+        }
+        .onChange(of: userContext.contextVersion) { resetVM() }
+        .onChange(of: userContext.refreshVersion) { Task { await viewModel?.loadData() } }
     }
 
     private func createFamily(_ vm: FamilyManagementViewModel) {
@@ -100,7 +103,13 @@ struct FamilyManagementView: View {
         }
     }
 
-    private func initVM() {
+    private func ensureVM() {
+        if viewModel == nil {
+            resetVM()
+        }
+    }
+
+    private func resetVM() {
         let vm = FamilyManagementViewModel(api: api)
         viewModel = vm
         Task {

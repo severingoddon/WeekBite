@@ -25,6 +25,10 @@ struct WeekPlanView: View {
                                 selectedDay = day
                             }, onRemove: {
                                 Task { await vm.updateWeekDay(day, menuId: nil) }
+                            }, onAddToShopping: { ingredient in
+                                await vm.addToShoppingList(ingredient)
+                            }, onUndoShopping: { itemId in
+                                await vm.undoShoppingAdd(itemId)
                             })
                             .tourAnchor(index == 0 ? "day-card" : "")
                         }
@@ -35,8 +39,11 @@ struct WeekPlanView: View {
         }
         .background(WBColor.bgDeepest)
         .toast($toast)
-        .onAppear { initVM() }
-        .onChange(of: userContext.contextVersion) { initVM() }
+        .onAppear {
+            if viewModel == nil { resetVM() } else { Task { await viewModel?.loadWeek() } }
+        }
+        .onChange(of: userContext.contextVersion) { resetVM() }
+        .onChange(of: userContext.refreshVersion) { Task { await viewModel?.loadWeek() } }
         .fullScreenCover(item: $selectedDay) { day in
             MenuPopupView(dayName: day.day) { menuId in
                 if let vm = viewModel {
@@ -139,7 +146,13 @@ struct WeekPlanView: View {
         .preferredColorScheme(.dark)
     }
 
-    private func initVM() {
+    private func ensureVM() {
+        if viewModel == nil {
+            resetVM()
+        }
+    }
+
+    private func resetVM() {
         let vm = WeekPlanViewModel(api: api)
         viewModel = vm
         Task {

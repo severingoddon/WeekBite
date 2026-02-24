@@ -27,6 +27,8 @@ struct UserAvatarMenu: View {
         } label: {
             avatarView
         }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
     }
 
     @ViewBuilder

@@ -62,6 +62,7 @@ struct ShoppingListView: View {
                             Text("Keine Artikel auf der Einkaufsliste.")
                                 .font(.system(size: 14))
                                 .foregroundStyle(WBColor.textMuted)
+                                .frame(maxWidth: .infinity)
                                 .padding(20)
                         }
 
@@ -91,8 +92,11 @@ struct ShoppingListView: View {
         }
         .background(WBColor.bgDeepest)
         .toast($toast)
-        .onAppear { initVM() }
-        .onChange(of: userContext.contextVersion) { initVM() }
+        .onAppear {
+            if viewModel == nil { resetVM() } else { Task { await viewModel?.loadItems() } }
+        }
+        .onChange(of: userContext.contextVersion) { resetVM() }
+        .onChange(of: userContext.refreshVersion) { Task { await viewModel?.loadItems() } }
         .confirmationDialog("Liste leeren?", isPresented: $showClearConfirm, titleVisibility: .visible) {
             Button("Alle Artikel löschen", role: .destructive) {
                 Task {
@@ -132,7 +136,13 @@ struct ShoppingListView: View {
         .padding(.vertical, 8)
     }
 
-    private func initVM() {
+    private func ensureVM() {
+        if viewModel == nil {
+            resetVM()
+        }
+    }
+
+    private func resetVM() {
         let vm = ShoppingListViewModel(api: api)
         viewModel = vm
         Task {
