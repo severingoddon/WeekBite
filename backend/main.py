@@ -97,8 +97,10 @@ def get_context(session: SessionModel):
 
 
 @app.get("/api/auth/google/login")
-async def google_login(request: Request):
+async def google_login(request: Request, platform: str = ""):
     redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback")
+    if platform:
+        request.session["platform"] = platform
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
@@ -128,6 +130,10 @@ async def google_callback(request: Request, db: DBSession = Depends(get_db)):
     db.add(SessionModel(token=session_token, user_id=user.id))
 
     db.commit()
+
+    platform = request.session.pop("platform", "")
+    if platform == "ios":
+        return RedirectResponse(url=f"weekbite://auth?token={session_token}")
 
     return RedirectResponse(url=f"{FRONTEND_URL}/login?token={session_token}")
 
