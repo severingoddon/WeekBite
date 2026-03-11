@@ -117,6 +117,15 @@
   margin: 4px 0 8px;
 }
 
+.menu-note ::ng-deep .note-link {
+  color: #5b9bd5;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .menu-effort {
   white-space: nowrap;
 }

@@ -101,7 +101,7 @@
         </div>
         <div class="menu-meta">
           @if (menu.note) {
-            <span class="menu-note">{{ menu.note }}</span>
+            <span class="menu-note" [innerHTML]="menu.note | linkify"></span>
           }
           <span class="menu-effort">{{ menu.effort_min }} Min.</span>
         </div>

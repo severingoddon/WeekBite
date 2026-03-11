@@ -55,7 +55,7 @@
         @if (expandedMenuId === menu.id) {
           <div class="menu-detail" (click)="$event.stopPropagation()">
             @if (menu.note) {
-              <p class="menu-note">{{ menu.note }}</p>
+              <p class="menu-note" [innerHTML]="menu.note | linkify"></p>
             }
             <div class="menu-effort-detail">
               <mat-icon>timer</mat-icon>

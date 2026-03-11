@@ -14,6 +14,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
 import { TourService } from '../../services/tour.service';
 import { Menu } from '../../models/menu.model';
+import { LinkifyPipe } from '../../pipes/linkify.pipe';
 
 @Component({
   selector: 'app-menu-popup',
@@ -29,6 +30,7 @@ import { Menu } from '../../models/menu.model';
     MatInputModule,
     FormsModule,
     MatSnackBarModule,
+    LinkifyPipe,
   ],
   templateUrl: './menu-popup.component.html',
   styleUrl: './menu-popup.component.scss',

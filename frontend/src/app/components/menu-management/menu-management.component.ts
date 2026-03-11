@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ApiService } from '../../services/api.service';
 import { TourService } from '../../services/tour.service';
 import { Menu, MenuCreate } from '../../models/menu.model';
+import { LinkifyPipe } from '../../pipes/linkify.pipe';
 
 @Component({
   selector: 'app-menu-management',
@@ -26,6 +27,7 @@ import { Menu, MenuCreate } from '../../models/menu.model';
     MatChipsModule,
     MatSnackBarModule,
     MatDividerModule,
+    LinkifyPipe,
   ],
   templateUrl: './menu-management.component.html',
   styleUrl: './menu-management.component.scss',

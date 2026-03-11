@@ -111,6 +111,15 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
   margin: 0 0 8px;
+
+  ::ng-deep .note-link {
+    color: #5b9bd5;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .menu-effort-detail {

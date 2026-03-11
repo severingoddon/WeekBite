@@ -35,9 +35,17 @@ struct MenuPopupCardView: View {
             if isExpanded {
                 VStack(alignment: .leading, spacing: 10) {
                     if !menu.note.isEmpty {
-                        Text(menu.note)
+                        Text(menu.note.linkHighlighted(baseColor: WBColor.textSecondary))
                             .font(.system(size: 13))
-                            .foregroundStyle(WBColor.textSecondary)
+                            .tint(.blue)
+                            .environment(\.openURL, OpenURLAction { url in
+                                #if os(iOS)
+                                UIApplication.shared.open(url)
+                                #elseif os(macOS)
+                                NSWorkspace.shared.open(url)
+                                #endif
+                                return .handled
+                            })
                     }
 
                     HStack(spacing: 6) {
