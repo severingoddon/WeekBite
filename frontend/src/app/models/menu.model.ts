@@ -4,6 +4,7 @@ export interface Menu {
   ingredients: string[];
   note: string;
   effort_min: number;
+  link: string;
   is_own?: boolean;
   owner_name?: string | null;
 }
@@ -13,6 +14,7 @@ export interface MenuCreate {
   ingredients: string[];
   note: string;
   effort_min: number;
+  link: string;
 }
 
 export interface WeekDay {

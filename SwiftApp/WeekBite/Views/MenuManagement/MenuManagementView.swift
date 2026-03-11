@@ -1,5 +1,4 @@
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct MenuManagementView: View {
     @Environment(APIClient.self) private var api
@@ -7,95 +6,98 @@ struct MenuManagementView: View {
 
     @State private var viewModel: MenuManagementViewModel?
     @State private var toast: ToastMessage?
-    @State private var showFileImporter = false
+    @State private var showFormSheet = false
 
     var body: some View {
-        ScrollViewReader { scrollProxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
                     GradientText(text: "Menus verwalten")
-                        .id("menu-form-top")
-
-                    if let vm = viewModel {
-                        MenuFormView(viewModel: vm, toast: $toast)
-
-                        Divider().background(WBColor.borderSubtle)
-
-                        // List header with CSV buttons
-                        HStack {
-                            Text("Bestehende Menus (\(vm.menus.count))")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(WBColor.textPrimary)
-                            Spacer()
-                            if !vm.menus.isEmpty {
-                                ShareLink(item: vm.exportCSV()) {
-                                    Label("CSV", systemImage: "arrow.down.doc")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(WBColor.textSecondary)
-                                }
-                            }
-                            Button {
-                                showFileImporter = true
-                            } label: {
-                                Label("CSV", systemImage: "arrow.up.doc")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(WBColor.textSecondary)
-                            }
-                        }
-
-                        if vm.menus.isEmpty {
-                            Text("Noch keine Menus vorhanden.")
-                                .font(.system(size: 14))
-                                .foregroundStyle(WBColor.textMuted)
-                                .padding(.vertical, 20)
-                        }
-
-                        ForEach(vm.menus) { menu in
-                            MenuCardView(menu: menu, onEdit: {
-                                vm.editMenu(menu)
-                                withAnimation {
-                                    scrollProxy.scrollTo("menu-form-top", anchor: .top)
-                                }
-                            }, onDelete: {
-                                if let msg = vm.deleteMenu(menu) {
-                                    toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                                }
-                            })
-                        }
+                    Spacer()
+                    Button {
+                        viewModel?.resetForm()
+                        showFormSheet = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(WBColor.accentCyan)
                     }
                 }
-                .padding()
+
+                if let vm = viewModel {
+                    if vm.menus.isEmpty {
+                        Text("Noch keine Menus vorhanden.")
+                            .font(.system(size: 14))
+                            .foregroundStyle(WBColor.textMuted)
+                            .padding(.vertical, 20)
+                    }
+
+                    ForEach(vm.menus) { menu in
+                        MenuCardView(menu: menu, onEdit: {
+                            vm.editMenu(menu)
+                            showFormSheet = true
+                        }, onDelete: {
+                            if let msg = vm.deleteMenu(menu) {
+                                toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
+                            }
+                        })
+                    }
+                }
             }
+            .padding()
         }
         .background(WBColor.bgDeepest)
         .toast($toast)
+        .sheet(isPresented: $showFormSheet) {
+            if let vm = viewModel {
+                MenuFormSheet(viewModel: vm, toast: $toast, isPresented: $showFormSheet)
+            }
+        }
         .onAppear {
             if viewModel == nil { resetVM() } else { Task { await viewModel?.loadMenus() } }
         }
         .onChange(of: userContext.contextVersion) { resetVM() }
         .onChange(of: userContext.refreshVersion) { Task { await viewModel?.loadMenus() } }
-        .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [UTType.commaSeparatedText, UTType.plainText]) { result in
-            switch result {
-            case .success(let url):
-                guard url.startAccessingSecurityScopedResource() else { return }
-                defer { url.stopAccessingSecurityScopedResource() }
-                if let data = try? Data(contentsOf: url), let text = String(data: data, encoding: .utf8) {
-                    Task {
-                        if let vm = viewModel {
-                            let msg = await vm.importCSV(from: text)
-                            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                        }
-                    }
-                }
-            case .failure:
-                break
-            }
-        }
     }
 
     private func resetVM() {
         let vm = MenuManagementViewModel(api: api)
         viewModel = vm
         Task { await vm.loadMenus() }
+    }
+}
+
+struct MenuFormSheet: View {
+    @Bindable var viewModel: MenuManagementViewModel
+    @Binding var toast: ToastMessage?
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                MenuFormView(viewModel: viewModel, toast: $toast, onDone: {
+                    isPresented = false
+                })
+                .padding()
+            }
+            .background(WBColor.bgDeepest)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Abbrechen") {
+                        viewModel.resetForm()
+                        isPresented = false
+                    }
+                    .foregroundStyle(WBColor.textSecondary)
+                }
+                ToolbarItem(placement: .principal) {
+                    Text(viewModel.editingMenu != nil ? "Menu bearbeiten" : "Neues Menu")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(WBColor.textPrimary)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 }

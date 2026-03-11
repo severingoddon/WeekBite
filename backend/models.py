@@ -50,6 +50,7 @@ class Menu(Base):
     title = Column(String, nullable=False)
     note = Column(String, nullable=False, default="")
     effort_min = Column(Integer, nullable=False, default=20)
+    link = Column(String, nullable=False, default="")
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     ingredients = relationship("Ingredient", secondary=menu_ingredients, cascade="all, delete", lazy="joined")
 
@@ -144,6 +145,10 @@ def migrate_sessions_table():
             if insp.has_table("menu_ingredients"):
                 menu_ingredients.drop(engine)
             Menu.__table__.drop(engine)
+        elif "link" not in columns:
+            with engine.connect() as conn:
+                conn.execute(text("ALTER TABLE menus ADD COLUMN link TEXT NOT NULL DEFAULT ''"))
+                conn.commit()
 
     # Drop and recreate users if it lacks active_family_id
     if insp.has_table("users"):

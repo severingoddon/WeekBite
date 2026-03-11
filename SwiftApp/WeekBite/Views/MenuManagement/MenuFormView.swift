@@ -3,13 +3,10 @@ import SwiftUI
 struct MenuFormView: View {
     @Bindable var viewModel: MenuManagementViewModel
     @Binding var toast: ToastMessage?
+    var onDone: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(viewModel.editingMenu != nil ? "Menu bearbeiten" : "Neues Menu erstellen")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(WBColor.textPrimary)
-
             TextField("Menu Titel", text: $viewModel.menuTitle)
                 .textFieldStyle(WBTextFieldStyle())
 
@@ -21,6 +18,12 @@ struct MenuFormView: View {
                     .frame(width: 70)
                     .keyboardType(.numberPad)
             }
+
+            TextField("Link (optional)", text: $viewModel.menuLink)
+                .textFieldStyle(WBTextFieldStyle())
+                .keyboardType(.URL)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
 
             HStack(spacing: 8) {
                 TextField("Zutat hinzufügen", text: $viewModel.ingredientInput)
@@ -57,25 +60,17 @@ struct MenuFormView: View {
                 }
             }
 
-            HStack(spacing: 12) {
-                GradientButton(
-                    title: viewModel.editingMenu != nil ? "Aktualisieren" : "Hinzufügen",
-                    action: {
-                        if let msg = viewModel.saveMenu() {
-                            toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
-                        }
-                    },
-                    disabled: viewModel.menuTitle.trimmingCharacters(in: .whitespaces).isEmpty
-                )
-                if viewModel.editingMenu != nil {
-                    OutlineButton(title: "Abbrechen") {
-                        viewModel.resetForm()
+            GradientButton(
+                title: viewModel.editingMenu != nil ? "Aktualisieren" : "Hinzufügen",
+                action: {
+                    if let msg = viewModel.saveMenu() {
+                        toast = ToastMessage(text: msg, actionLabel: nil, action: nil)
                     }
-                }
-            }
+                    onDone?()
+                },
+                disabled: viewModel.menuTitle.trimmingCharacters(in: .whitespaces).isEmpty
+            )
         }
-        .padding(16)
-        .cardStyle()
     }
 }
 

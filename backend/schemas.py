@@ -6,6 +6,7 @@ class MenuBase(BaseModel):
     ingredients: list[str]
     note: str = ""
     effort_min: int = 20
+    link: str = ""
 
 
 class MenuResponse(BaseModel):
@@ -14,6 +15,7 @@ class MenuResponse(BaseModel):
     ingredients: list[str]
     note: str
     effort_min: int
+    link: str
     is_own: bool = True
     owner_name: str | None = None
 

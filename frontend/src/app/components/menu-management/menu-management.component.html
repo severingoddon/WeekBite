@@ -1,66 +1,12 @@
 <div class="management">
-  <h2 class="gradient-text">Menus verwalten</h2>
+  <div class="title-row">
+    <h2 class="gradient-text">Menus verwalten</h2>
+    <button mat-icon-button class="add-btn-header" (click)="openForm()" aria-label="Neues Menu">
+      <mat-icon>add_circle</mat-icon>
+    </button>
+  </div>
 
-  <!-- Form -->
-  <mat-card class="form-card" #formCard>
-    <mat-card-content>
-      <h3>{{ editingMenu ? 'Menu bearbeiten' : 'Neues Menu erstellen' }}</h3>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Menu Titel</mat-label>
-        <input matInput [(ngModel)]="menuTitle" placeholder="z.B. Spaghetti Bolognese">
-      </mat-form-field>
-
-      <div class="note-effort-row">
-        <mat-form-field appearance="outline" class="note-field">
-          <mat-label>Notiz</mat-label>
-          <input matInput [(ngModel)]="menuNote" placeholder="z.B. Rezept von Oma">
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="effort-field">
-          <mat-label>Aufwand (Min.)</mat-label>
-          <input matInput type="number" [(ngModel)]="menuEffort" min="0">
-        </mat-form-field>
-      </div>
-
-      <div class="ingredient-input-row">
-        <mat-form-field appearance="outline" class="ingredient-field">
-          <mat-label>Zutat hinzufügen</mat-label>
-          <input matInput [(ngModel)]="ingredientInput" (keyup.enter)="addIngredient()" placeholder="z.B. Tomaten">
-        </mat-form-field>
-        <button mat-icon-button color="primary" (click)="addIngredient()" [disabled]="!ingredientInput.trim()">
-          <mat-icon>add_circle</mat-icon>
-        </button>
-      </div>
-
-      @if (ingredients.length > 0) {
-        <mat-chip-set class="ingredient-chips">
-          @for (ingredient of ingredients; track ingredient) {
-            <mat-chip (removed)="removeIngredient(ingredient)">
-              {{ ingredient }}
-              <button matChipRemove>
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </mat-chip>
-          }
-        </mat-chip-set>
-      }
-
-      <div class="form-actions">
-        <button mat-flat-button color="primary" (click)="saveMenu()" [disabled]="!menuTitle.trim()">
-          {{ editingMenu ? 'Aktualisieren' : 'Hinzufügen' }}
-        </button>
-        @if (editingMenu) {
-          <button mat-stroked-button (click)="resetForm()">Abbrechen</button>
-        }
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-divider class="divider"></mat-divider>
-
-  <!-- Existing menus list -->
-  <div class="list-header">
-    <h3>Bestehende Menus ({{ menus.length }})</h3>
+  <div class="csv-actions">
     @if (menus.length > 0) {
       <button mat-stroked-button class="csv-export" (click)="exportCsv()">
         <mat-icon>download</mat-icon>
@@ -103,7 +49,14 @@
           @if (menu.note) {
             <span class="menu-note" [innerHTML]="menu.note | linkify"></span>
           }
-          <span class="menu-effort">{{ menu.effort_min }} Min.</span>
+          <span class="menu-effort">
+            {{ menu.effort_min }} Min.
+            @if (menu.link) {
+              <a [href]="menu.link" target="_blank" rel="noopener" class="menu-link-icon" (click)="$event.stopPropagation()">
+                <mat-icon>link</mat-icon>
+              </a>
+            }
+          </span>
         </div>
         @if (menu.ingredients.length > 0) {
           <mat-chip-set class="ingredient-chips">
@@ -116,3 +69,68 @@
     </mat-card>
   }
 </div>
+
+<!-- Form Dialog -->
+@if (showFormDialog) {
+  <div class="dialog-backdrop" (click)="closeForm()">
+    <div class="dialog-panel" (click)="$event.stopPropagation()">
+      <div class="dialog-header">
+        <h3>{{ editingMenu ? 'Menu bearbeiten' : 'Neues Menu erstellen' }}</h3>
+        <button mat-icon-button (click)="closeForm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Menu Titel</mat-label>
+        <input matInput [(ngModel)]="menuTitle" placeholder="z.B. Spaghetti Bolognese">
+      </mat-form-field>
+
+      <div class="note-effort-row">
+        <mat-form-field appearance="outline" class="note-field">
+          <mat-label>Notiz</mat-label>
+          <input matInput [(ngModel)]="menuNote" placeholder="z.B. Rezept von Oma">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="effort-field">
+          <mat-label>Aufwand (Min.)</mat-label>
+          <input matInput type="number" [(ngModel)]="menuEffort" min="0">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Link (optional)</mat-label>
+        <input matInput [(ngModel)]="menuLink" placeholder="https://...">
+      </mat-form-field>
+
+      <div class="ingredient-input-row">
+        <mat-form-field appearance="outline" class="ingredient-field">
+          <mat-label>Zutat hinzufügen</mat-label>
+          <input matInput [(ngModel)]="ingredientInput" (keyup.enter)="addIngredient()" placeholder="z.B. Tomaten">
+        </mat-form-field>
+        <button mat-icon-button color="primary" (click)="addIngredient()" [disabled]="!ingredientInput.trim()">
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </div>
+
+      @if (ingredients.length > 0) {
+        <mat-chip-set class="ingredient-chips">
+          @for (ingredient of ingredients; track ingredient) {
+            <mat-chip (removed)="removeIngredient(ingredient)">
+              {{ ingredient }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          }
+        </mat-chip-set>
+      }
+
+      <div class="form-actions">
+        <button mat-flat-button color="primary" (click)="saveMenu()" [disabled]="!menuTitle.trim()">
+          {{ editingMenu ? 'Aktualisieren' : 'Hinzufügen' }}
+        </button>
+        <button mat-stroked-button (click)="closeForm()">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+}

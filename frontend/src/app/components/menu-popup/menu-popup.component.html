@@ -46,7 +46,14 @@
         <mat-card-content class="menu-card-content">
           <div class="menu-info">
             <span class="menu-title">{{ menu.title }}</span>
-            <span class="menu-subtitle">{{ menu.ingredients.length }} Zutaten · {{ menu.effort_min }} Min.</span>
+            <span class="menu-subtitle">
+              {{ menu.ingredients.length }} Zutaten · {{ menu.effort_min }} Min.
+              @if (menu.link) {
+                <a [href]="menu.link" target="_blank" rel="noopener" class="menu-link-icon" (click)="$event.stopPropagation()">
+                  <mat-icon>link</mat-icon>
+                </a>
+              }
+            </span>
           </div>
           <button mat-icon-button (click)="toggleDetails(menu.id, $event)" aria-label="Details anzeigen">
             <mat-icon>{{ expandedMenuId === menu.id ? 'expand_less' : 'expand_more' }}</mat-icon>
@@ -60,6 +67,11 @@
             <div class="menu-effort-detail">
               <mat-icon>timer</mat-icon>
               <span>{{ menu.effort_min }} Minuten</span>
+              @if (menu.link) {
+                <a [href]="menu.link" target="_blank" rel="noopener" class="menu-link-icon" (click)="$event.stopPropagation()">
+                  <mat-icon>link</mat-icon>
+                </a>
+              }
             </div>
             <mat-chip-set class="ingredient-chips">
               @for (ingredient of menu.ingredients; track ingredient) {

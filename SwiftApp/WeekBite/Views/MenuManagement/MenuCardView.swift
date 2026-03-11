@@ -21,23 +21,23 @@ struct MenuCardView: View {
                     }
                 }
                 Spacer()
-                Text("\(menu.effort_min) Min.")
-                    .font(.system(size: 12))
-                    .foregroundStyle(WBColor.textMuted)
+                HStack(spacing: 4) {
+                    Text("\(menu.effort_min) Min.")
+                        .font(.system(size: 12))
+                        .foregroundStyle(WBColor.textMuted)
+                    if !menu.link.isEmpty, let url = URL(string: menu.link) {
+                        Link(destination: url) {
+                            Image(systemName: "link")
+                                .font(.system(size: 12))
+                                .foregroundStyle(WBColor.accentCyan)
+                        }
+                    }
+                }
             }
 
             if !menu.note.isEmpty {
-                Text(menu.note.linkHighlighted(baseColor: WBColor.textSecondary))
+                menu.note.linkHighlighted(baseColor: WBColor.textSecondary)
                     .font(.system(size: 12))
-                    .tint(.blue)
-                    .environment(\.openURL, OpenURLAction { url in
-                        #if os(iOS)
-                        UIApplication.shared.open(url)
-                        #elseif os(macOS)
-                        NSWorkspace.shared.open(url)
-                        #endif
-                        return .handled
-                    })
             }
 
             if !menu.ingredients.isEmpty {

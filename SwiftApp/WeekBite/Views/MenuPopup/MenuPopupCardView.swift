@@ -15,9 +15,18 @@ struct MenuPopupCardView: View {
                         Text(menu.title)
                             .font(.system(size: 15, weight: .medium))
                             .foregroundStyle(WBColor.textPrimary)
-                        Text("\(menu.ingredients.count) Zutaten · \(menu.effort_min) Min.")
-                            .font(.system(size: 12))
-                            .foregroundStyle(WBColor.textSecondary)
+                        HStack(spacing: 4) {
+                            Text("\(menu.ingredients.count) Zutaten · \(menu.effort_min) Min.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(WBColor.textSecondary)
+                            if !menu.link.isEmpty, let url = URL(string: menu.link) {
+                                Link(destination: url) {
+                                    Image(systemName: "link")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(WBColor.accentCyan)
+                                }
+                            }
+                        }
                     }
                     Spacer()
                     Button {
@@ -35,17 +44,8 @@ struct MenuPopupCardView: View {
             if isExpanded {
                 VStack(alignment: .leading, spacing: 10) {
                     if !menu.note.isEmpty {
-                        Text(menu.note.linkHighlighted(baseColor: WBColor.textSecondary))
+                        menu.note.linkHighlighted(baseColor: WBColor.textSecondary)
                             .font(.system(size: 13))
-                            .tint(.blue)
-                            .environment(\.openURL, OpenURLAction { url in
-                                #if os(iOS)
-                                UIApplication.shared.open(url)
-                                #elseif os(macOS)
-                                NSWorkspace.shared.open(url)
-                                #endif
-                                return .handled
-                            })
                     }
 
                     HStack(spacing: 6) {
@@ -55,6 +55,13 @@ struct MenuPopupCardView: View {
                         Text("\(menu.effort_min) Minuten")
                             .font(.system(size: 13))
                             .foregroundStyle(WBColor.textSecondary)
+                        if !menu.link.isEmpty, let url = URL(string: menu.link) {
+                            Link(destination: url) {
+                                Image(systemName: "link")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(WBColor.accentCyan)
+                            }
+                        }
                     }
 
                     FlowLayout(spacing: 6) {
