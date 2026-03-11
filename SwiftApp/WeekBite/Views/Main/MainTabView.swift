@@ -3,7 +3,6 @@ import SwiftUI
 struct MainTabView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(APIClient.self) private var api
-    @Environment(TourManager.self) private var tourManager
 
     @State private var userContext: UserContextViewModel
     @Environment(\.scenePhase) private var scenePhase
@@ -58,7 +57,6 @@ struct MainTabView: View {
             userContext = UserContextViewModel(api: api)
             Task { await userContext.loadUser() }
             configureTabBarAppearance()
-            tourManager.tryShowWelcome()
         }
         .onChange(of: userContext.contextVersion) {
             selectedTab = selectedTab

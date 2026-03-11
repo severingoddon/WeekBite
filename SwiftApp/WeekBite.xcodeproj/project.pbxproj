@@ -18,11 +18,9 @@
 		4A3EE30F28C5BD49FBA7F425 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F041E37712C554271F74D594 /* APIEndpoints.swift */; };
 		57E8D65521BCF68F288963E1 /* ShoppingListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23907C3EDCC0E792F3EB4368 /* ShoppingListViewModel.swift */; };
 		59B4D810E40D73E8C6278835 /* PendingInviteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C763F6B4EC459F3D0C8C46A /* PendingInviteCardView.swift */; };
-		6229B3FB93EF3FE3D0CA461F /* WelcomeOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA656F6F9628EF8E1999133 /* WelcomeOverlayView.swift */; };
 		66B27D85CF20FCE2215C7791 /* ContextSwitcherMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE0224CF0D75EAF1388265 /* ContextSwitcherMenu.swift */; };
 		6BD8B0717787388F66CDC105 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8774FF2D3CDB8E8215B7988C /* KeychainHelper.swift */; };
 		825F4EE7791942C5FF0947D5 /* WeekEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DED02E15468E42F4CA0CA68 /* WeekEmptyStateView.swift */; };
-		8A4AFE99C3C068047CB6EE27 /* TourManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52ACBDEC466FC888A430A9DB /* TourManager.swift */; };
 		9315F45484D84310E6153F2B /* UserAvatarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C06A0ECDBD495729A197C2 /* UserAvatarMenu.swift */; };
 		9447D228FDDA47E133FA97F3 /* Color+WeekBite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBF48CE454C6ABEBBF11AC8 /* Color+WeekBite.swift */; };
 		9A0C8530E9FE97913FFA7F0E /* MenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD0A09DA48E1470347A2FD7 /* MenuPopupView.swift */; };
@@ -70,7 +68,6 @@
 		37F397D016AD2188BF095A42 /* DayCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCardView.swift; sourceTree = "<group>"; };
 		4495581E959B80B230BFA834 /* View+Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Toast.swift"; sourceTree = "<group>"; };
 		4ACE0224CF0D75EAF1388265 /* ContextSwitcherMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextSwitcherMenu.swift; sourceTree = "<group>"; };
-		52ACBDEC466FC888A430A9DB /* TourManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourManager.swift; sourceTree = "<group>"; };
 		5625E6720E77EB3C7CAA2B3D /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		5DED02E15468E42F4CA0CA68 /* WeekEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekEmptyStateView.swift; sourceTree = "<group>"; };
 		5FB28AF46755473C32B56822 /* Week.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Week.swift; sourceTree = "<group>"; };
@@ -98,7 +95,6 @@
 		D9E4A83F17B2C5E0A46F9D12 /* String+LinkHighlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+LinkHighlight.swift"; sourceTree = "<group>"; };
 		C70B46201B5C6F6750BCDA68 /* GradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
 		CEC1FA4DCBAE89409AED66B3 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
-		CFA656F6F9628EF8E1999133 /* WelcomeOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOverlayView.swift; sourceTree = "<group>"; };
 		D527C2A05376BF060E9FA28D /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		D83647B763C942B73693F93F /* FamilyManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyManagementView.swift; sourceTree = "<group>"; };
 		F041E37712C554271F74D594 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
@@ -213,7 +209,6 @@
 				28301AE0E9799E88584AB014 /* Models */,
 				4384072A407F3008F4F196F2 /* Network */,
 				4005AE7BECAC050E3193BF11 /* Theme */,
-				F42EC3BBA205C48B87509870 /* Tour */,
 				40D32451AFC4F6EB09156D38 /* ViewModels */,
 				D79852952920A1CC103DF3C9 /* Views */,
 			);
@@ -248,7 +243,6 @@
 				86B01AD710321ED856ECBE0C /* MenuManagement */,
 				D628D964F25013279F57CD3F /* MenuPopup */,
 				D6E4AC26AC249D35897563B5 /* ShoppingList */,
-				E8F1AD9EA936BE32ED35BF31 /* Tour */,
 				5D1916EC82D7B3EDF6A3D5B1 /* WeekPlan */,
 			);
 			path = Views;
@@ -263,15 +257,7 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
-		E8F1AD9EA936BE32ED35BF31 /* Tour */ = {
-			isa = PBXGroup;
-			children = (
-				CFA656F6F9628EF8E1999133 /* WelcomeOverlayView.swift */,
-			);
-			path = Tour;
-			sourceTree = "<group>";
-		};
-		EFD9793D27E51F0FC6E398ED /* Login */ = {
+			EFD9793D27E51F0FC6E398ED /* Login */ = {
 			isa = PBXGroup;
 			children = (
 				C3B56B1C9327DB9C9A3D7BA4 /* LoginView.swift */,
@@ -279,15 +265,7 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
-		F42EC3BBA205C48B87509870 /* Tour */ = {
-			isa = PBXGroup;
-			children = (
-				52ACBDEC466FC888A430A9DB /* TourManager.swift */,
-			);
-			path = Tour;
-			sourceTree = "<group>";
-		};
-		F4DEC4F6B1A19AFDFADEC089 /* Family */ = {
+			F4DEC4F6B1A19AFDFADEC089 /* Family */ = {
 			isa = PBXGroup;
 			children = (
 				94B91047A9EC609CF20C35C4 /* FamilyCardView.swift */,
@@ -402,7 +380,6 @@
 				3FC6BB21875BFA30A1A16408 /* ShoppingListView.swift in Sources */,
 				A3F72B1C8E4D09AF52BC6E71 /* String+LinkHighlight.swift in Sources */,
 				57E8D65521BCF68F288963E1 /* ShoppingListViewModel.swift in Sources */,
-				8A4AFE99C3C068047CB6EE27 /* TourManager.swift in Sources */,
 				9315F45484D84310E6153F2B /* UserAvatarMenu.swift in Sources */,
 				EAB393920B95930A377EFFA0 /* UserContextViewModel.swift in Sources */,
 				DB29314DCC482052332ED4A9 /* UserInfo.swift in Sources */,
@@ -413,7 +390,6 @@
 				825F4EE7791942C5FF0947D5 /* WeekEmptyStateView.swift in Sources */,
 				C10C4A1F82CA50BCBB71274D /* WeekPlanView.swift in Sources */,
 				9CCBF30A8182971C832EC0F4 /* WeekPlanViewModel.swift in Sources */,
-				6229B3FB93EF3FE3D0CA461F /* WelcomeOverlayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

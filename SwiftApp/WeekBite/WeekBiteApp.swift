@@ -4,23 +4,17 @@ import SwiftUI
 struct WeekBiteApp: App {
     @State private var authManager = AuthManager()
     @State private var apiClient = APIClient()
-    @State private var tourManager = TourManager()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environment(authManager)
                 .environment(apiClient)
-                .environment(tourManager)
                 .onAppear {
                     apiClient.authManager = authManager
                 }
                 .onOpenURL { url in
                     handleCallback(url)
-                }
-                .overlay {
-                    WelcomeOverlayView()
-                        .environment(tourManager)
                 }
                 .preferredColorScheme(.dark)
         }
