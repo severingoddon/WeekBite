@@ -40,7 +40,7 @@
     </div>
   } @else {
     @for (weekDay of currentWeek?.days; track weekDay.id) {
-      <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" (click)="openMenuPopup(weekDay)">
+      <mat-card class="day-card" [class.weekend]="weekDay.day === 'Samstag' || weekDay.day === 'Sonntag'" [class.today]="isCurrentWeek && weekDay.day === todayName" (click)="openMenuPopup(weekDay)">
         <mat-card-content class="day-content">
           <div class="day-info">
             <span class="day-name">{{ weekDay.day }}</span>

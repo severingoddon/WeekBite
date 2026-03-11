@@ -36,6 +36,7 @@ export class WeekPlanComponent implements OnInit {
   nextWeekExists = false;
   nextWeekStartDate = '';
   noWeekFound = false;
+  todayName = '';
 
   @ViewChild('picker') picker!: MatDatepicker<Date>;
 
@@ -45,7 +46,10 @@ export class WeekPlanComponent implements OnInit {
     private snackBar: MatSnackBar,
   ) {}
 
+  private static readonly WEEKDAY_NAMES = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+
   ngOnInit() {
+    this.todayName = WeekPlanComponent.WEEKDAY_NAMES[new Date().getDay()];
     this.loadWeek();
   }
 

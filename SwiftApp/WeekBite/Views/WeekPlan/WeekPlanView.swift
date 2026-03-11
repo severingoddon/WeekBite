@@ -11,6 +11,13 @@ struct WeekPlanView: View {
     @State private var showResetConfirm = false
     @State private var toast: ToastMessage?
 
+    private static let weekdayNames = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"]
+
+    private var todayName: String {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return Self.weekdayNames[weekday - 1]
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
@@ -20,7 +27,7 @@ struct WeekPlanView: View {
                         WeekEmptyStateView()
                     } else if let week = vm.currentWeek {
                         ForEach(Array(week.days.enumerated()), id: \.element.id) { index, day in
-                            DayCardView(day: day, onTap: {
+                            DayCardView(day: day, isToday: vm.isCurrentWeek && day.day == todayName, onTap: {
                                 selectedDay = day
                             }, onRemove: {
                                 vm.updateWeekDay(day, menuId: nil)

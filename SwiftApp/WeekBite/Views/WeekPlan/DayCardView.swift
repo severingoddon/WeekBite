@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DayCardView: View {
     let day: WeekDay
+    let isToday: Bool
     let onTap: () -> Void
     let onRemove: () -> Void
     let onAddToShopping: (String) async -> (success: Bool, itemId: Int?)
@@ -39,6 +40,12 @@ struct DayCardView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .cardStyle(isWeekend: isWeekend)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(WBColor.accentGreen.opacity(0.4), lineWidth: 1)
+                .shadow(color: WBColor.accentGreen.opacity(0.1), radius: 4)
+                .opacity(isToday ? 1 : 0)
+        )
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()

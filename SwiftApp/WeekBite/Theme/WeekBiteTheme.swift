@@ -10,6 +10,7 @@ enum WBColor {
 
     static let accentCyan = Color(hex: 0x06B6D4)
     static let accentViolet = Color(hex: 0x8B5CF6)
+    static let accentGreen = Color(hex: 0x34D399)
 
     static let textPrimary = Color(hex: 0xE2E8F0)
     static let textSecondary = Color(hex: 0x94A3B8)

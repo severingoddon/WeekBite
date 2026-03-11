@@ -69,6 +69,11 @@
     background: var(--bg-weekend) !important;
   }
 
+  &.today {
+    border: 1px solid rgba(52, 211, 153, 0.4) !important;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.1);
+  }
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-hover) !important;
