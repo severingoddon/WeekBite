@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -12,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
-import { TourService } from '../../services/tour.service';
 import { Menu } from '../../models/menu.model';
 import { LinkifyPipe } from '../../pipes/linkify.pipe';
 
@@ -35,7 +34,7 @@ import { LinkifyPipe } from '../../pipes/linkify.pipe';
   templateUrl: './menu-popup.component.html',
   styleUrl: './menu-popup.component.scss',
 })
-export class MenuPopupComponent implements OnInit, OnDestroy {
+export class MenuPopupComponent implements OnInit {
   menus: Menu[] = [];
   filteredMenus: Menu[] = [];
   searchQuery = '';
@@ -47,7 +46,6 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private dialogRef: MatDialogRef<MenuPopupComponent>,
     private snackBar: MatSnackBar,
-    private tour: TourService,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: { day: string },
   ) {}
@@ -56,7 +54,7 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
     this.api.getMenus().subscribe((menus) => {
       this.menus = menus;
       this.filteredMenus = menus;
-      if (menus.length === 0 && !this.tour.hasSeenTour('no-menus-hint')) {
+      if (menus.length === 0 && !localStorage.getItem('weekbite_no_menus_hint_seen')) {
         this.showNoMenusHint = true;
       }
     });
@@ -64,14 +62,14 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
 
   goToMenus() {
     this.showNoMenusHint = false;
-    this.tour.markSeen('no-menus-hint');
+    localStorage.setItem('weekbite_no_menus_hint_seen', '1');
     this.dialogRef.close();
     this.router.navigate(['/menus']);
   }
 
   dismissHint() {
     this.showNoMenusHint = false;
-    this.tour.markSeen('no-menus-hint');
+    localStorage.setItem('weekbite_no_menus_hint_seen', '1');
   }
 
   filterMenus() {
@@ -95,29 +93,6 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
   toggleDetails(menuId: number, event: Event) {
     event.stopPropagation();
     this.expandedMenuId = this.expandedMenuId === menuId ? null : menuId;
-    if (this.expandedMenuId !== null) {
-      this.tryStartTour();
-    }
-  }
-
-  private tryStartTour() {
-    if (this.tour.hasSeenTour('menu-popup')) return;
-    setTimeout(() => {
-      this.tour.startTour('menu-popup', [
-        {
-          selector: '[data-tour="ingredient-chip"]',
-          title: 'Zutat zur Einkaufsliste',
-          text: 'Tippe auf eine Zutat, um sie direkt zur Einkaufsliste hinzuzufügen.',
-          position: 'bottom',
-        },
-        {
-          selector: '[data-tour="menu-select"]',
-          title: 'Menu auswählen',
-          text: 'Tippe auf eine Menu-Karte, um dieses Menu dem Tag zuzuweisen.',
-          position: 'bottom',
-        },
-      ]);
-    }, 350);
   }
 
   addToShoppingList(ingredient: string, event: Event) {
@@ -129,12 +104,6 @@ export class MenuPopupComponent implements OnInit, OnDestroy {
         this.api.deleteShoppingItem(item.id).subscribe();
       });
     });
-  }
-
-  ngOnDestroy() {
-    if (this.tour.isActive) {
-      this.tour.endTour();
-    }
   }
 
   close() {

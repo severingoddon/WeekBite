@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,7 +10,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
-import { TourService } from '../../services/tour.service';
 import { ShoppingItem } from '../../models/menu.model';
 import { ConfirmClearDialogComponent } from './confirm-clear-dialog.component';
 
@@ -29,7 +28,7 @@ import { ConfirmClearDialogComponent } from './confirm-clear-dialog.component';
   templateUrl: './shopping-list.component.html',
   styleUrl: './shopping-list.component.scss',
 })
-export class ShoppingListComponent implements OnInit, AfterViewInit {
+export class ShoppingListComponent implements OnInit {
   items: ShoppingItem[] = [];
   newName = '';
   newQuantity = '';
@@ -37,29 +36,10 @@ export class ShoppingListComponent implements OnInit, AfterViewInit {
   editName = '';
   editQuantity = '';
 
-  constructor(private api: ApiService, private dialog: MatDialog, private snackBar: MatSnackBar, private tour: TourService) {}
+  constructor(private api: ApiService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.loadItems();
-  }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.tour.startTour('shopping-list', [
-        {
-          selector: '[data-tour="shopping-form"]',
-          title: 'Artikel hinzufügen',
-          text: 'Füge Artikel mit optionaler Mengenangabe zu deiner Einkaufsliste hinzu.',
-          position: 'bottom',
-        },
-        {
-          selector: '[data-tour="shopping-items"]',
-          title: 'Einkaufsliste',
-          text: 'Tippe auf einen Artikel, um ihn als gekauft abzuhaken. Bearbeite oder lösche Einträge über die Icons.',
-          position: 'top',
-        },
-      ]);
-    }, 800);
   }
 
   loadItems() {

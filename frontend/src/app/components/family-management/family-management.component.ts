@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +12,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
 import { AuthService, UserInfo } from '../../services/auth.service';
-import { TourService } from '../../services/tour.service';
 import { Family, PendingInvite } from '../../models/menu.model';
 
 @Component({
@@ -33,7 +32,7 @@ import { Family, PendingInvite } from '../../models/menu.model';
   templateUrl: './family-management.component.html',
   styleUrl: './family-management.component.scss',
 })
-export class FamilyManagementComponent implements OnInit, AfterViewInit {
+export class FamilyManagementComponent implements OnInit {
   families: Family[] = [];
   pendingInvites: PendingInvite[] = [];
   newFamilyName = '';
@@ -46,30 +45,10 @@ export class FamilyManagementComponent implements OnInit, AfterViewInit {
     private api: ApiService,
     private auth: AuthService,
     private snackBar: MatSnackBar,
-    private tour: TourService,
   ) {}
 
   ngOnInit() {
     this.loadData();
-  }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.tour.startTour('family-management', [
-        {
-          selector: '[data-tour="family-create"]',
-          title: 'Familie erstellen',
-          text: 'Erstelle eine Familie, um Wochenpläne und Einkaufslisten mit anderen zu teilen.',
-          position: 'bottom',
-        },
-        {
-          selector: '[data-tour="context-info"]',
-          title: 'Kontext wechseln',
-          text: 'Wechsle oben in der Toolbar zwischen "Privat" und deinen Familien, um geteilte Daten zu sehen.',
-          position: 'bottom',
-        },
-      ]);
-    }, 800);
   }
 
   loadData() {

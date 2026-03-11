@@ -30,7 +30,7 @@ The app has two frontends that share the same backend:
 - **Web App** (`frontend/`) — Angular 19 SPA, served via Nginx, runs in browser
 - **iOS App** (`SwiftApp/`) — Native SwiftUI app for iPhone (iOS 17+)
 
-Both clients are feature-equivalent: week plan, menu management, shopping list, families, context switching, tour/onboarding, Google OAuth.
+Both clients are feature-equivalent: week plan, menu management, shopping list, families, context switching, Google OAuth.
 
 ## Tech Stack
 
