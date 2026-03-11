@@ -1,29 +1,29 @@
 <div class="management">
   <div class="title-row">
     <h2 class="gradient-text">Menus verwalten</h2>
-    <button mat-icon-button class="add-btn-header" (click)="openForm()" aria-label="Neues Menu">
-      <mat-icon>add_circle</mat-icon>
-    </button>
-  </div>
-
-  <div class="csv-actions">
-    @if (menus.length > 0) {
-      <button mat-stroked-button class="csv-export" (click)="exportCsv()">
-        <mat-icon>download</mat-icon>
-        CSV Export
+    <div class="header-actions">
+      @if (menus.length > 0) {
+        <button mat-stroked-button class="csv-btn" (click)="exportCsv()">
+          <mat-icon>download</mat-icon>
+          CSV Export
+        </button>
+      }
+      <button mat-stroked-button class="csv-btn" (click)="csvInput.click()">
+        <mat-icon>upload</mat-icon>
+        CSV Import
       </button>
-    }
-    <button mat-stroked-button class="csv-import" (click)="csvInput.click()">
-      <mat-icon>upload</mat-icon>
-      CSV Import
-    </button>
-    <input #csvInput type="file" accept=".csv" hidden (change)="importCsv($event)">
+      <input #csvInput type="file" accept=".csv" hidden (change)="importCsv($event)">
+      <button mat-icon-button class="add-btn-header" (click)="openForm()" aria-label="Neues Menu">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+    </div>
   </div>
 
   @if (menus.length === 0) {
     <p class="empty-hint">Noch keine Menus vorhanden.</p>
   }
 
+  <div class="menu-grid">
   @for (menu of menus; track menu.id) {
     <mat-card class="menu-item-card" [class.foreign-menu]="menu.is_own === false">
       <mat-card-content>
@@ -68,6 +68,7 @@
       </mat-card-content>
     </mat-card>
   }
+  </div>
 </div>
 
 <!-- Form Dialog -->
