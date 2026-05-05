@@ -30,7 +30,7 @@ struct MenuCardView: View {
                             Image(systemName: "link")
                                 .font(.system(size: 12))
                                 .foregroundStyle(WBColor.accentCyan)
-                        }
+                        } 
                     }
                 }
             }

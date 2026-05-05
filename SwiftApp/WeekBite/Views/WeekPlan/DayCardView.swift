@@ -100,6 +100,13 @@ struct DayIngredientSheet: View {
                         Text("\(menu.effort_min) Minuten")
                             .font(.system(size: 13))
                             .foregroundStyle(WBColor.textSecondary)
+                        if !menu.link.isEmpty, let url = URL(string: menu.link) {
+                            Link(destination: url) {
+                                Image(systemName: "link")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(WBColor.accentCyan)
+                            }
+                        }
                     }
 
                     if !menu.note.isEmpty {
