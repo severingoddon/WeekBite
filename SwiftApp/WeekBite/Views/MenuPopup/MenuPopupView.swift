@@ -86,6 +86,11 @@ struct MenuPopupView: View {
                     }
                     .padding(.top, 8)
                 }
+                .scrollDismissesKeyboard(.interactively)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
                 .toast($toast)
             }
             .navigationBarTitleDisplayMode(.inline)

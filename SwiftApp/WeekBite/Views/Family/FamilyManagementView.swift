@@ -78,6 +78,11 @@ struct FamilyManagementView: View {
             }
             .padding()
         }
+        .scrollDismissesKeyboard(.interactively)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
         .background(WBColor.bgDeepest)
         .toast($toast)
         .onAppear {

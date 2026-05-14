@@ -145,6 +145,9 @@ struct FamilyCardView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isActive ? WBColor.accentCyan.opacity(0.3) : .clear, lineWidth: 1)
         )
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
 
     private func saveRename() {
