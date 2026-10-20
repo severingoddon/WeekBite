@@ -1,8 +1,18 @@
 ---
+# Deploys only the WeekBite compose project.
+# Never touches other projects on the Pi (e.g. GoddoniTracker):
+# no global "docker rmi", "docker volume rm" or "docker ... prune".
 - name: Deploy WeekBite to Raspi
   hosts: raspi
   vars:
     project_dir: ~/WeekBite/WeekBite
+    backup_dir: ~/WeekBite/backups
+    # Must match the volume name in docker-compose.yml
+    db_volume: weekbite_db-data
+    # Only these images are removed before the rebuild
+    weekbite_images:
+      - weekbite-backend
+      - weekbite-frontend
 
   tasks:
     - name: Pull latest code
@@ -10,18 +20,45 @@
       args:
         chdir: "{{ project_dir }}"
 
-    - name: Stop containers
+    - name: Check that the DB volume exists
+      ansible.builtin.command: docker volume inspect {{ db_volume }}
+      register: volume_check
+      changed_when: false
+      failed_when: false
+
+    - name: Stop if the DB volume is missing (first deploy -> run with -e first_deploy=true)
+      ansible.builtin.fail:
+        msg: >
+          Volume {{ db_volume }} not found. Deploying now would start with an empty DB.
+          Check "docker volume ls" on the Pi.
+      when: volume_check.rc != 0 and not (first_deploy | default(false) | bool)
+
+    - name: Create backup directory
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Back up database
+      ansible.builtin.shell: >
+        docker cp weekbite-backend:/app/data/cooking.db
+        {{ backup_dir }}/cooking-$(date +%Y%m%d-%H%M%S).db
+      register: db_backup
+      changed_when: db_backup.rc == 0
+      failed_when: db_backup.rc != 0 and volume_check.rc == 0
+
+    - name: Stop WeekBite containers (volumes are kept)
       community.docker.docker_compose_v2:
         project_src: "{{ project_dir }}"
         state: absent
+        remove_volumes: false
 
-    - name: Remove all Docker images
-      ansible.builtin.shell: docker rmi $(docker images -q) 2>/dev/null || true
-      changed_when: false
-
-    - name: Remove all Docker volumes
-      ansible.builtin.shell: docker volume rm $(docker volume ls -q) 2>/dev/null || true
-      changed_when: false
+    - name: Remove WeekBite images only
+      ansible.builtin.command: docker rmi {{ item }}
+      loop: "{{ weekbite_images }}"
+      register: rmi_result
+      changed_when: rmi_result.rc == 0
+      failed_when: false
 
     - name: Build from scratch
       community.docker.docker_compose_v2:
@@ -31,6 +68,14 @@
       environment:
         COMPOSE_DOCKER_CLI_BUILD: "1"
         DOCKER_BUILDKIT: "1"
+
+    - name: Check that the backend uses the DB volume
+      ansible.builtin.command: >
+        docker inspect weekbite-backend
+        --format '{% raw %}{{ range .Mounts }}{{ .Name }} {{ end }}{% endraw %}'
+      register: backend_mounts
+      changed_when: false
+      failed_when: db_volume not in backend_mounts.stdout
 
     - name: Wait for startup
       ansible.builtin.pause:

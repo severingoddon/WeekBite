@@ -1,7 +1,7 @@
 import Foundation
 
 enum APIEndpoints {
-    static let baseURL = "https://weekbite.goddoni.org:3003"
+    static let baseURL = "https://weekbite.goddoni.org"
 
     // Auth
     static let googleLogin = "/api/auth/google/login?platform=ios"

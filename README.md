@@ -92,7 +92,7 @@ open WeekBite.xcodeproj
 
 In Xcode, select your development team under **Signing & Capabilities**, then build to a simulator or device.
 
-The API base URL is configured in `SwiftApp/WeekBite/Network/APIEndpoints.swift`. For local development, change it to `http://localhost:8000`. For production it points to `https://weekbite.goddoni.org:3003`.
+The API base URL is configured in `SwiftApp/WeekBite/Network/APIEndpoints.swift`. For local development, change it to `http://localhost:8000`. For production it points to `https://weekbite.goddoni.org` (served via Cloudflare Tunnel, no port).
 
 The iOS OAuth flow uses `ASWebAuthenticationSession` with the `weekbite://` URL scheme. The backend detects `?platform=ios` on the login endpoint and redirects the OAuth callback to `weekbite://auth?token=...` instead of the web frontend.
 
@@ -117,7 +117,7 @@ Deploy:
 ansible-playbook ansible/deploy.yml -i ansible/inventory.ini
 ```
 
-This will pull the latest code on the Raspi, rebuild all Docker images from scratch, and restart the containers.
+This will pull the latest code on the Raspi, back up the database to `~/WeekBite/backups/`, rebuild the WeekBite images from scratch, and restart the containers. The DB volume `weekbite_db-data` is kept, and nothing outside the WeekBite project (other containers, images or volumes on the Pi) is touched. If the volume does not exist yet (first deploy), run with `-e first_deploy=true`.
 
 ## API Endpoints
 
