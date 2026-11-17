@@ -8,6 +8,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
+from sqlalchemy import func
 from sqlalchemy.orm import Session as DBSession
 
 from database import Base, engine, get_db
@@ -62,6 +63,8 @@ oauth.register(
 )
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+# Comma-separated emails seeded into the allowed_emails table at startup.
+ALLOWED_EMAILS = {e.strip().lower() for e in os.getenv("ALLOWED_EMAILS", "").split(",") if e.strip()}
 WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
 
@@ -76,7 +79,19 @@ def get_current_session(request: Request, db: DBSession = Depends(get_db)):
     session = db.query(SessionModel).filter(SessionModel.token == token).first()
     if not session:
         raise HTTPException(status_code=401, detail="Invalid session")
+    if not is_email_allowed(db, session.user.email):
+        raise HTTPException(status_code=403, detail="Access denied")
     return session
+
+
+def is_email_allowed(db: DBSession, email: str | None) -> bool:
+    if not email:
+        return False
+    return db.query(AllowedEmail).filter(func.lower(AllowedEmail.email) == email.lower()).first() is not None
+
+
+def has_pending_invite(db: DBSession, email: str) -> bool:
+    return db.query(FamilyInvite).filter(FamilyInvite.email == email.lower()).first() is not None
 
 
 def require_admin(session: SessionModel = Depends(get_current_session)):
@@ -113,6 +128,15 @@ async def google_callback(request: Request, db: DBSession = Depends(get_db)):
 
     google_id = userinfo["sub"]
     email = userinfo["email"]
+
+    # Access: allowlisted emails, or anyone with a pending family invite
+    # (they are added to the allowlist so access survives accepting the invite).
+    if not userinfo.get("email_verified"):
+        raise HTTPException(status_code=403, detail="Access denied")
+    if not is_email_allowed(db, email):
+        if not has_pending_invite(db, email):
+            raise HTTPException(status_code=403, detail="Access denied")
+        db.add(AllowedEmail(email=email.lower()))
     name = userinfo.get("name", "")
     picture = userinfo.get("picture", "")
 
@@ -198,10 +222,14 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     db = next(get_db())
     try:
-        # Seed admin email into allowed_emails (dormant)
-        if ADMIN_EMAIL and not db.query(AllowedEmail).filter(AllowedEmail.email == ADMIN_EMAIL).first():
-            db.add(AllowedEmail(email=ADMIN_EMAIL))
-            db.commit()
+        # Seed ADMIN_EMAIL and ALLOWED_EMAILS into allowed_emails (only adds, never removes)
+        seed = set(ALLOWED_EMAILS)
+        if ADMIN_EMAIL:
+            seed.add(ADMIN_EMAIL.strip().lower())
+        for email in seed:
+            if not is_email_allowed(db, email):
+                db.add(AllowedEmail(email=email))
+        db.commit()
     finally:
         db.close()
 
@@ -651,10 +679,10 @@ def list_members(_=Depends(require_admin), db: DBSession = Depends(get_db)):
 
 @app.post("/api/admin/members", response_model=AllowedEmailResponse)
 def add_member(data: AllowedEmailCreate, _=Depends(require_admin), db: DBSession = Depends(get_db)):
-    existing = db.query(AllowedEmail).filter(AllowedEmail.email == data.email).first()
-    if existing:
+    email = data.email.strip().lower()
+    if is_email_allowed(db, email):
         raise HTTPException(status_code=400, detail="Email already allowed")
-    allowed = AllowedEmail(email=data.email)
+    allowed = AllowedEmail(email=email)
     db.add(allowed)
     db.commit()
     db.refresh(allowed)
