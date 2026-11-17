@@ -1,3 +1,10 @@
 __pycache__
 *.pyc
 cooking.db
+tests
+pytest.ini
+requirements-dev.txt
+.pytest_cache
+venv
+.env
+.env.*
