@@ -253,6 +253,16 @@ def check_week_access(week: Week, session: SessionModel):
     raise HTTPException(status_code=403, detail="Access denied")
 
 
+def menu_owner_ids_for_week(week: Week, session: SessionModel, db: DBSession) -> list[int]:
+    """Users whose menus may be assigned to a week: the owner, or all members of the week's family."""
+    if week.family_id:
+        rows = db.execute(
+            family_members.select().where(family_members.c.family_id == week.family_id)
+        ).fetchall()
+        return [row.user_id for row in rows]
+    return [session.user.id]
+
+
 def check_shopping_access(item: ShoppingItem, session: SessionModel):
     """Verify user has access to a shopping item."""
     user = session.user
@@ -606,7 +616,10 @@ def update_weekday(week_id: int, day: str, update: WeekDayUpdate, session: Sessi
         raise HTTPException(status_code=404, detail="Weekday not found")
 
     if update.menu_id is not None:
-        menu = db.query(Menu).filter(Menu.id == update.menu_id).first()
+        menu = db.query(Menu).filter(
+            Menu.id == update.menu_id,
+            Menu.user_id.in_(menu_owner_ids_for_week(week, session, db)),
+        ).first()
         if not menu:
             raise HTTPException(status_code=404, detail="Menu not found")
 
