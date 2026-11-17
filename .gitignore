@@ -48,3 +48,6 @@ build/
 # Swift Package Manager
 .build/
 .swiftpm/
+
+# Local deployment config (contains the Raspi IP)
+ansible/inventory.ini
